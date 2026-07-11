@@ -41,7 +41,7 @@ export default function ProductionTimeline() {
     observer.observe(el); return () => observer.disconnect();
   }, []);
 
-  const sorted = [...experience].sort((a, b) => (b.displayOrder || 0) - (a.displayOrder || 0));
+  const sorted = [...experience].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
 
   return (
     <section id="process" ref={sectionRef} className="py-20 md:py-32 bg-cinema-black reveal">
