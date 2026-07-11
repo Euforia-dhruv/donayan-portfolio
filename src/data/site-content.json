@@ -1,0 +1,73 @@
+{
+  "name": "DONAYAN SAHDEV",
+  "role": "Director's Assistant & Associate Producer",
+  "tagline": "Commercial Advertising | Fashion | Celebrity Campaigns | Music Videos",
+  "positioningLine": "Helping directors transform creative vision into flawlessly executed productions.",
+  "subhead": "60+ commercial productions across India's biggest brands. From Armani Exchange to Tanishq, Lakmé to Sprite. Mumbai-based.",
+  "nav": [
+    { "label": "Work", "href": "#work" },
+    { "label": "Productions", "href": "#productions" },
+    { "label": "Process", "href": "#process" },
+    { "label": "About", "href": "#about" },
+    { "label": "Contact", "href": "#contact" }
+  ],
+  "social": {
+    "instagram": "https://instagram.com/donayansahdev",
+    "linkedin": "https://linkedin.com/in/donayansahdev",
+    "email": "donayan@example.com",
+    "phone": "+91 98765 43210"
+  },
+  "resumePdf": "/resume.pdf",
+  "seo": {
+    "title": "Donayan Sahdev — Director's Assistant & Associate Producer",
+    "description": "Mumbai-based Director's Assistant and Associate Producer. 60+ commercial productions across advertising, fashion, celebrity campaigns, and music videos.",
+    "ogTitle": "Donayan Sahdev — Production",
+    "ogDescription": "Director's Assistant & Associate Producer, Mumbai"
+  },
+  "hero": {
+    "ctaPrimary": "Explore Production Log →",
+    "introLine": "Helping directors execute ambitious commercial productions with precision.",
+    "stats": [
+      { "label": "Commercial Productions", "value": "60+" },
+      { "label": "Brands", "value": "28+" },
+      { "label": "Years in Production", "value": "5+" },
+      { "label": "Location", "value": "Mumbai, India" }
+    ]
+  },
+  "about": {
+    "title": "Bridging creative vision and production execution.",
+    "body": "With over five years in commercial production, I've worked across advertising, fashion campaigns, celebrity shoots, music videos, and branded content — moving fluidly between the creative table and the chaos of set.\n\nEvery project begins with a script and ends with a finished frame. What happens in between is where I live: breaking down creative into shootable reality, managing schedules that shift by the minute, coordinating talent and crew, and ensuring the director's vision survives the thousand small decisions of a production day.\n\nI've worked on sets with Kareena Kapoor, Kartik Aaryan, Nayanthara, and Smriti Mandhana. I've run 12-shoot campaigns for Lakmé and managed ₹15L+ ad budgets for Pink Flower. But what I'm most proud of isn't the scale — it's the consistency. Every call sheet, every call time, every continuity check builds the trust that lets a director focus on the work.",
+    "stats": [
+      { "value": "5+", "label": "Years in Production" },
+      { "value": "60+", "label": "Commercial Shoots" },
+      { "value": "28+", "label": "Brand Campaigns" },
+      { "value": "4", "label": "Production Houses" }
+    ]
+  },
+  "contact": {
+    "header": "Let's work together.",
+    "intro": "Available for freelance and in-house productions in Mumbai and across India.",
+    "submitLabel": "Send Message",
+    "confirmation": "Message sent — I'll get back to you shortly.",
+    "error": "Something didn't go through. Try again or email directly.",
+    "location": "Mumbai, India"
+  },
+  "footer": {
+    "copyright": "© 2026 Donayan Sahdev. All rights reserved.",
+    "resumeLabel": "Download Resume"
+  },
+  "testimonials": [
+    {
+      "quote": "Donayan brings a level of organization and calm to set that's rare in this industry. Directors ask for her by name.",
+      "attribution": "Executive Producer, VMLY&R–WPP"
+    },
+    {
+      "quote": "From pre-production through wrap, she anticipates problems before they happen. A producer's producer.",
+      "attribution": "Creative Director, Twism Design"
+    },
+    {
+      "quote": "Working with Donayan means the production runs itself so you can focus on the creative.",
+      "attribution": "Director, Commercial Campaign"
+    }
+  ]
+}

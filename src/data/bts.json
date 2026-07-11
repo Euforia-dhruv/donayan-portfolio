@@ -1,0 +1,66 @@
+[
+  {
+    "id": "bts-1",
+    "projectName": "Armani Exchange SS'25",
+    "brand": "Armani Exchange",
+    "role": "Director's Assistant",
+    "year": "2025",
+    "imageUrl": ""
+  },
+  {
+    "id": "bts-2",
+    "projectName": "Tanishq Rivaah",
+    "brand": "Tanishq",
+    "role": "Director's Assistant",
+    "year": "2024",
+    "imageUrl": ""
+  },
+  {
+    "id": "bts-3",
+    "projectName": "Lakmé DIY Campaign",
+    "brand": "Lakmé India",
+    "role": "Director's Assistant",
+    "year": "2023",
+    "imageUrl": ""
+  },
+  {
+    "id": "bts-4",
+    "projectName": "Fossil Made for This",
+    "brand": "Fossil",
+    "role": "Director's Assistant",
+    "year": "2024",
+    "imageUrl": ""
+  },
+  {
+    "id": "bts-5",
+    "projectName": "Titan Skinn Noura",
+    "brand": "Titan",
+    "role": "Associate Producer",
+    "year": "2023",
+    "imageUrl": ""
+  },
+  {
+    "id": "bts-6",
+    "projectName": "Centrum Claims",
+    "brand": "Centrum",
+    "role": "Director's Assistant",
+    "year": "2025",
+    "imageUrl": ""
+  },
+  {
+    "id": "bts-7",
+    "projectName": "Pee Safe",
+    "brand": "Pee Safe",
+    "role": "Director's Assistant",
+    "year": "2026",
+    "imageUrl": ""
+  },
+  {
+    "id": "bts-8",
+    "projectName": "Dove Stop the Beauty Test",
+    "brand": "Dove",
+    "role": "Director's Assistant",
+    "year": "2024",
+    "imageUrl": ""
+  }
+]

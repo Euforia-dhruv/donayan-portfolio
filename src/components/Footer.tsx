@@ -1,0 +1,35 @@
+import siteContent from "@/data/site-content.json";
+
+export default function Footer() {
+  return (
+    <footer className="bg-cinema-black border-t border-white/5 py-12 md:py-16">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+          <div>
+            <h3 className="text-heading-sm md:text-heading font-display font-[400] text-cinema-white leading-[1.2]">
+              Donayan Sahdev
+            </h3>
+            <p className="mt-2 text-body-sm font-sans font-[300] text-cinema-white/40 tracking-[0.02em]">
+              {siteContent.tagline}
+            </p>
+          </div>
+
+          <div className="flex gap-6 text-caption font-sans font-[400] text-cinema-white/40 uppercase tracking-[0.1em]">
+            <a href={siteContent.social.instagram} target="_blank" rel="noopener noreferrer" className="no-underline text-inherit hover:text-champagne transition-colors">Instagram</a>
+            <a href={siteContent.social.linkedin} target="_blank" rel="noopener noreferrer" className="no-underline text-inherit hover:text-champagne transition-colors">LinkedIn</a>
+            <a href={siteContent.resumePdf} target="_blank" rel="noopener noreferrer" className="no-underline text-inherit hover:text-champagne transition-colors">Resume</a>
+          </div>
+        </div>
+
+        <div className="mt-10 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between gap-4">
+          <p className="text-caption font-sans font-[400] text-cinema-white/20">
+            {siteContent.footer.copyright}
+          </p>
+          <p className="text-caption font-sans font-[400] text-cinema-white/20">
+            {siteContent.contact.location}
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}

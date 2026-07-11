@@ -1,0 +1,22 @@
+[
+  { "id": "g-1", "label": "PPM DECK", "sub": "Sprite · Heat Happens", "width": 240, "height": 300, "doc": "/assets/docs/Sprite PPM.pdf", "brand": "Sprite", "year": "2024" },
+  { "id": "g-2", "label": "PPM DECK", "sub": "Centrum Claims", "width": 280, "height": 200, "doc": "/assets/docs/Centrum Claim PPM Deck - 10 Oct (1).pdf", "brand": "Centrum", "year": "2025" },
+  { "id": "g-3", "label": "PPM DECK", "sub": "Armani Exchange SS'25", "width": 180, "height": 240, "doc": "/assets/docs/AX Celebrity Shoot SS_25.pdf", "brand": "Armani Exchange", "year": "2025" },
+  { "id": "g-4", "label": "PPM DECK", "sub": "Fossil SS'25", "width": 260, "height": 320, "doc": "/assets/docs/Fossil - SS_25 - PPM DECK.pdf", "brand": "Fossil", "year": "2024" },
+  { "id": "g-5", "label": "PPM DECK", "sub": "Kinder Print Shoot", "width": 300, "height": 220, "doc": "/assets/docs/Kinder Print Shoot.pdf", "brand": "Kinder", "year": "2025" },
+  { "id": "g-6", "label": "PPM DECK", "sub": "IDÉE Campaign", "width": 200, "height": 280, "doc": "/assets/docs/IDEE PPM.pdf", "brand": "IDÉE", "year": "2025" },
+  { "id": "g-7", "label": "POST PPM DECK", "sub": "HDFC KVS", "width": 270, "height": 340, "doc": "/assets/docs/HDFC KVS Post PPM Deck.pdf", "brand": "HDFC", "year": "2024" },
+  { "id": "g-8", "label": "DIRECTOR'S NOTE", "sub": "Godrej Capital", "width": 220, "height": 260, "doc": "/assets/docs/Godrej Capital - Director_s Note.pdf", "brand": "Godrej Capital", "year": "2025" },
+  { "id": "g-9", "label": "TREATMENT NOTES", "sub": "Pond's BB Cream", "width": 190, "height": 250, "doc": "/assets/docs/Ponds  BB cream TN.pdf", "brand": "Pond's", "year": "2025" },
+  { "id": "g-10", "label": "CASTING PDF", "sub": "Tanishq Rivaah", "width": 310, "height": 210, "doc": "/assets/docs/Tanishq Casting.pdf", "brand": "Tanishq", "year": "2024" },
+  { "id": "g-11", "label": "CASTING PDF", "sub": "Lifestyle SS'24 Bangkok", "width": 170, "height": 220, "doc": "/assets/docs/Lifestyle SS_24 Cast Batch 5 (Bangkok).pdf", "brand": "Lifestyle", "year": "2024" },
+  { "id": "g-12", "label": "MARKETING PITCH", "sub": "Artkalaa", "width": 280, "height": 200, "doc": "/assets/docs/Artkalaa Pitch Deck.pdf", "brand": "Artkalaa", "year": "2024" },
+  { "id": "g-13", "label": "MARKETING PITCH", "sub": "Just Be", "width": 230, "height": 180, "doc": "/assets/docs/Just Be.pdf", "brand": "Just Be", "year": "2024" },
+  { "id": "g-14", "label": "DIGITAL STRATEGY", "sub": "OOOL", "width": 250, "height": 180, "doc": "/assets/docs/OOOL Digital Strategy.pdf", "brand": "OOOL", "year": "2024" },
+  { "id": "g-15", "label": "MARKETING PITCH", "sub": "Deva's Khayal", "width": 290, "height": 230, "doc": "/assets/docs/Deva_s Khayal.pdf", "brand": "Deva's Khayal", "year": "2024" },
+  { "id": "g-16", "label": "MARKETING DECK", "sub": "Kitser August Sale", "width": 210, "height": 280, "doc": "/assets/docs/Kitser August Sale.pdf", "brand": "Kitser", "year": "2024" },
+  { "id": "g-17", "label": "FILM PITCH", "sub": "Murgi", "width": 240, "height": 200, "doc": "/assets/docs/Murgi.pdf", "brand": "Murgi", "year": "2024" },
+  { "id": "g-18", "label": "SERIES PITCH", "sub": "Pathan Brothers", "width": 180, "height": 260, "doc": "/assets/docs/Pathan Brothers Series.pdf", "brand": "Pathan Brothers", "year": "2024" },
+  { "id": "g-19", "label": "MARKETING PLAN", "sub": "The Bubbling Fish & Nirala", "width": 220, "height": 300, "doc": "/assets/docs/The Bubbling Fish and Nirala - The Plan.pdf", "brand": "The Bubbling Fish & Nirala", "year": "2024" },
+  { "id": "g-20", "label": "PHOTOSHOOT SHEET", "sub": "Fossil SS'26", "width": 320, "height": 200, "doc": "/assets/docs/Fossil SS'26 Photoshoot.xlsx", "brand": "Fossil", "year": "2025" }
+]
