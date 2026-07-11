@@ -1,7 +1,3 @@
-"use client";
-
-import { useRef, useEffect, useState, useCallback } from "react";
-
 interface WallImage {
   id: string;
   src: string;
@@ -42,156 +38,42 @@ function shuffle(arr: WallImage[]) {
   return a;
 }
 
-function ImageCard({ img, index, onSelect }: { img: WallImage; index: number; onSelect: (src: string) => void }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const delay = Math.min(index * 0.06, 1.5);
+const shuffled = shuffle(images);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.style.opacity = "1";
-          el.style.transform = "translateY(0)";
-          obs.unobserve(el);
-        }
-      },
-      { rootMargin: "80px", threshold: 0.01 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
+function Card({ img }: { img: WallImage }) {
   return (
-    <div
-      ref={ref}
-      className="break-inside-avoid mb-6 group cursor-pointer"
-      style={{
-        opacity: 0,
-        transform: "translateY(40px)",
-        transition: `opacity 0.7s ease, transform 0.7s ease`,
-        transitionDelay: `${delay}s`,
-      }}
-      onClick={() => onSelect(img.src)}
-    >
+    <div className="break-inside-avoid mb-6">
       <div className="relative w-full overflow-hidden" style={{ aspectRatio: img.aspect, borderRadius: "10px", backgroundColor: "#1a1a1a" }}>
         <img
           src={img.src}
           alt=""
-          className="absolute inset-0 w-full h-full object-cover transition-all duration-300 ease-out group-hover:scale-[1.03]"
+          className="w-full h-full object-cover"
+          style={{ display: "block", borderRadius: "10px" }}
           loading="lazy"
-          style={{ borderRadius: "10px" }}
         />
-        <div className="absolute inset-0 bg-cinema-black/0 group-hover:bg-cinema-black/30 transition-all duration-300" style={{ borderRadius: "10px" }} />
-      </div>
-    </div>
-  );
-}
-
-function Lightbox({ images, currentIndex, onClose, onNavigate }: { images: WallImage[]; currentIndex: number; onClose: () => void; onNavigate: (i: number) => void }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const img = images[currentIndex];
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight" && currentIndex < images.length - 1) onNavigate(currentIndex + 1);
-      if (e.key === "ArrowLeft" && currentIndex > 0) onNavigate(currentIndex - 1);
-    };
-    document.addEventListener("keydown", handler);
-    document.body.style.overflow = "hidden";
-    return () => { document.removeEventListener("keydown", handler); document.body.style.overflow = ""; };
-  }, [onClose, currentIndex, onNavigate, images.length]);
-
-  const handleClick = (e: React.MouseEvent) => {
-    if (e.target === ref.current) onClose();
-  };
-
-  return (
-    <div
-      ref={ref}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-cinema-black/95 backdrop-blur-xl cursor-pointer"
-      onClick={handleClick}
-    >
-      <button
-        onClick={onClose}
-        className="absolute top-6 right-6 text-cinema-white/50 hover:text-cinema-white bg-transparent border-none cursor-pointer z-10 transition-colors"
-      >
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-          <path d="M18 6L6 18M6 6l12 12" />
-        </svg>
-      </button>
-
-      {currentIndex > 0 && (
-        <button
-          onClick={(e) => { e.stopPropagation(); onNavigate(currentIndex - 1); }}
-          className="absolute left-6 top-1/2 -translate-y-1/2 text-cinema-white/50 hover:text-cinema-white bg-transparent border-none cursor-pointer z-10 transition-colors p-2"
-        >
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-        </button>
-      )}
-
-      {currentIndex < images.length - 1 && (
-        <button
-          onClick={(e) => { e.stopPropagation(); onNavigate(currentIndex + 1); }}
-          className="absolute right-6 top-1/2 -translate-y-1/2 text-cinema-white/50 hover:text-cinema-white bg-transparent border-none cursor-pointer z-10 transition-colors p-2"
-        >
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-        </button>
-      )}
-
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-caption font-switzer font-[400] text-cinema-white/40 z-10">
-        {currentIndex + 1} / {images.length}
-      </div>
-
-      <div className="max-w-[90vw] max-h-[90vh] flex items-center justify-center p-4" onClick={(e) => e.stopPropagation()}>
-        <img src={img.src} alt="" className="max-w-full max-h-[90vh] object-contain" />
       </div>
     </div>
   );
 }
 
 export default function ProductionWall() {
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [items] = useState(() => shuffle(images));
-  const handleClose = useCallback(() => setLightboxIndex(null), []);
-  const imgCount = items.length;
-
   return (
-    <>
-      <section className="py-24 md:py-32 bg-cinema-black">
-        <div className="max-w-[1440px] mx-auto px-8 md:px-10">
-          <div className="mb-14">
-            <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">Production Archive</p>
-            <h2 className="text-display md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.04em] mt-3">The Wall</h2>
-          </div>
-
-          {imgCount > 0 && (
-            <div
-              className="columns-2 md:columns-3 xl:columns-5"
-              style={{ columnGap: "24px", columnFill: "auto" }}
-            >
-              {items.map((img, i) => (
-                <ImageCard key={img.id} img={img} index={i} onSelect={() => setLightboxIndex(i)} />
-              ))}
-            </div>
-          )}
+    <section className="py-24 md:py-32 bg-cinema-black">
+      <div className="max-w-[1440px] mx-auto px-8 md:px-10">
+        <div className="mb-14">
+          <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">Production Archive</p>
+          <h2 className="text-display md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.04em] mt-3">The Wall</h2>
         </div>
-      </section>
 
-      {lightboxIndex !== null && (
-        <Lightbox
-          images={items}
-          currentIndex={lightboxIndex}
-          onClose={handleClose}
-          onNavigate={setLightboxIndex}
-        />
-      )}
-    </>
+        <div
+          className="columns-2 md:columns-3 xl:columns-5"
+          style={{ columnGap: "24px", columnFill: "auto" }}
+        >
+          {shuffled.map((img) => (
+            <Card key={img.id} img={img} />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
