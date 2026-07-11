@@ -66,10 +66,10 @@ export default function AboutSection() {
 
           {/* Stats + set image */}
           <div className="lg:col-span-2 flex flex-col justify-between">
-            {/* Still from Pronamel campaign as BTS visual */}
+            {/* BTS production still */}
             <div className="relative aspect-[4/3] rounded-sm overflow-hidden mb-8 reveal reveal-delay-4">
               <img
-                src="https://img.youtube.com/vi/1wqdb9s3kfo/maxresdefault.jpg"
+                src="/hero-bg.jpg"
                 alt="On set production"
                 className="w-full h-full object-cover"
                 loading="lazy"
@@ -77,7 +77,7 @@ export default function AboutSection() {
               <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-3 left-3">
                 <span className="text-[9px] font-sans font-[400] text-cinema-white/50 uppercase tracking-[0.15em]">
-                  Pronamel · On Set
+                  On Set · Director's Monitor
                 </span>
               </div>
             </div>

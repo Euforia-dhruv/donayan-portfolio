@@ -36,7 +36,7 @@ export default function CinematicHero() {
       ref={sectionRef}
       className="relative min-h-screen flex items-center overflow-hidden bg-cinema-black"
     >
-      {/* Background image — Pronamel campaign BTS */}
+      {/* Background image */}
       <div
         className="absolute inset-0 scale-[1.08]"
         style={{
@@ -44,14 +44,10 @@ export default function CinematicHero() {
         }}
       >
         <img
-          src="https://img.youtube.com/vi/1wqdb9s3kfo/maxresdefault.jpg"
-          alt="On Set"
+          src="/hero-bg.jpg"
+          alt="Donayan Sahdev on set"
           className="w-full h-full object-cover"
           loading="eager"
-          onError={(e) => {
-            const el = e.currentTarget;
-            el.style.display = "none";
-          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-cinema-black via-cinema-black/70 to-cinema-black/40" />
         <div className="absolute inset-0 bg-gradient-to-r from-cinema-black/80 via-transparent to-cinema-black/60" />

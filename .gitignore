@@ -37,3 +37,4 @@ public/assets/docs/*.pdf
 public/assets/docs/*.pptx
 public/assets/docs/*.docx
 public/assets/docs/*.xlsx
+.env*
