@@ -67,6 +67,16 @@ const localFiles: ShowcaseProject[] = localVideoFiles.map((f, i) => ({
   aspect: f.aspect,
 }));
 
+const marketingPitches: ShowcaseProject[] = [
+  { id: "pitch-artkalaa-1", title: "Pitch Deck", client: "Artkalaa", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/artkalaa.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Artkalaa Pitch Deck.pdf" },
+  { id: "pitch-artkalaa-2", title: "Brand Strategy", client: "Artkalaa", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/artkalaa 2.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Artkalaa Pitch Deck.pdf" },
+  { id: "pitch-oool", title: "Digital Strategy", client: "OOOL", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/oool.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/OOOL Digital Strategy.pdf" },
+  { id: "pitch-kitser", title: "August Sale", client: "Kitser", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/kister.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Kitser August Sale.pdf" },
+  { id: "pitch-deva", title: "Marketing Pitch", client: "Deva's Khayal", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/Deva.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Deva_s Khayal.pdf" },
+  { id: "pitch-justbe", title: "Brand Campaign", client: "Just Be", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/Just be.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Just Be.pdf" },
+  { id: "pitch-bubbling", title: "Marketing Plan", client: "The Bubbling Fish & Nirala", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/the.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/The Bubbling Fish and Nirala - The Plan.pdf" },
+];
+
 function buildProjects(): ShowcaseProject[] {
   const items: ShowcaseProject[] = [];
   const seen = new Set<string>();
@@ -93,9 +103,15 @@ function buildProjects(): ShowcaseProject[] {
     items.push(f);
   });
 
+  marketingPitches.forEach((p) => {
+    items.push(p);
+  });
+
   galleryCards.forEach((c) => {
     const matched = archive.find((a) => a.brand.toLowerCase() === c.brand.toLowerCase() && a.url);
     if (matched && seen.has(matched.url.toLowerCase())) return;
+    const existingDoc = marketingPitches.find((p) => p.client.toLowerCase() === c.brand.toLowerCase());
+    if (existingDoc) return;
     items.push({
       id: `wall-${c.id}`,
       title: c.label,
