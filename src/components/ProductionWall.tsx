@@ -1,11 +1,23 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 
 interface WallImage {
   id: string;
   src: string;
   aspect: string;
+}
+
+interface CardLayout {
+  id: string;
+  src: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  rot: number;
+  z: number;
+  sizeMul: number;
 }
 
 const images: WallImage[] = [
@@ -33,13 +45,54 @@ const images: WallImage[] = [
   { id: "w-pathan-2", src: "/Movie - OTT pitches/Pathan 2.png", aspect: "3:4" },
 ];
 
-function shuffle(arr: WallImage[]) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
+function getDim(aspect: string, base: number): [number, number] {
+  const [a, b] = aspect.split(":").map(Number);
+  const r = a / b;
+  return r >= 1 ? [base * r, base] : [base, base / r];
+}
+
+function seededRand(seed: number) {
+  let s = seed * 9301 + 49297;
+  s = ((s << 13) ^ s) & 0x7fffffff;
+  return () => {
+    s = (s * 16807) & 0x7fffffff;
+    return (s & 0x7fffffff) / 0x7fffffff;
+  };
+}
+
+function genLayout(imgs: WallImage[], containerW: number): CardLayout[] {
+  const base = Math.min(180, containerW * 0.12);
+  const pad = 60;
+  const useW = containerW - pad * 2;
+  const cols = Math.max(3, Math.ceil(Math.sqrt(imgs.length * 2.5)));
+  const rows = Math.ceil(imgs.length / cols);
+  const cellW = useW / cols;
+  const cellH = cellW * 0.85;
+  const totalH = rows * cellH + pad * 2;
+
+  const rand = seededRand(42);
+
+  return imgs.map((img, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const sizeMul = 0.75 + rand() * 0.5;
+    const [w, h] = getDim(img.aspect, base * sizeMul);
+    const ox = rand() * (cellW - w * 0.7);
+    const oy = rand() * (cellH - h * 0.7);
+    const rot = (rand() - 0.5) * 8;
+    const z = Math.floor(rand() * images.length);
+    return {
+      id: img.id,
+      src: img.src,
+      x: pad + col * cellW + ox,
+      y: pad + row * cellH + oy,
+      w: Math.round(w),
+      h: Math.round(h),
+      rot: Math.round(rot * 10) / 10,
+      z,
+      sizeMul,
+    };
+  });
 }
 
 function Lightbox({ images, currentIndex, onClose, onNavigate }: { images: WallImage[]; currentIndex: number; onClose: () => void; onNavigate: (i: number) => void }) {
@@ -60,10 +113,10 @@ function Lightbox({ images, currentIndex, onClose, onNavigate }: { images: WallI
   return (
     <div
       ref={ref}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-cinema-black/95 backdrop-blur-xl cursor-pointer"
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-cinema-black/95 backdrop-blur-xl cursor-pointer"
       onClick={(e) => { if (e.target === ref.current) onClose(); }}
     >
-      <button onClick={onClose} className="absolute top-6 right-6 text-cinema-white/50 hover:text-cinema-white bg-transparent border-none cursor-pointer z-10 transition-colors">
+      <button onClick={onClose} className="absolute top-6 right-6 text-cinema-white/50 hover:text-cinema-white bg-transparent border-none cursor-pointer z-10 transition-colors" aria-label="Close">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
           <path d="M18 6L6 18M6 6l12 12" />
         </svg>
@@ -71,8 +124,7 @@ function Lightbox({ images, currentIndex, onClose, onNavigate }: { images: WallI
 
       {currentIndex > 0 && (
         <button onClick={(e) => { e.stopPropagation(); onNavigate(currentIndex - 1); }}
-          className="absolute left-6 top-1/2 -translate-y-1/2 text-cinema-white/50 hover:text-cinema-white bg-transparent border-none cursor-pointer z-10 transition-colors p-2"
-          aria-label="Previous">
+          className="absolute left-6 top-1/2 -translate-y-1/2 text-cinema-white/50 hover:text-cinema-white bg-transparent border-none cursor-pointer z-10 transition-colors p-2" aria-label="Previous">
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 18l-6-6 6-6" />
           </svg>
@@ -81,8 +133,7 @@ function Lightbox({ images, currentIndex, onClose, onNavigate }: { images: WallI
 
       {currentIndex < images.length - 1 && (
         <button onClick={(e) => { e.stopPropagation(); onNavigate(currentIndex + 1); }}
-          className="absolute right-6 top-1/2 -translate-y-1/2 text-cinema-white/50 hover:text-cinema-white bg-transparent border-none cursor-pointer z-10 transition-colors p-2"
-          aria-label="Next">
+          className="absolute right-6 top-1/2 -translate-y-1/2 text-cinema-white/50 hover:text-cinema-white bg-transparent border-none cursor-pointer z-10 transition-colors p-2" aria-label="Next">
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 18l6-6-6-6" />
           </svg>
@@ -100,42 +151,114 @@ function Lightbox({ images, currentIndex, onClose, onNavigate }: { images: WallI
   );
 }
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export default function ProductionWall() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [layout, setLayout] = useState<CardLayout[]>([]);
+  const [visible, setVisible] = useState(false);
+  const [sectionH, setSectionH] = useState(0);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [items] = useState(() => shuffle(images));
   const handleClose = useCallback(() => setLightboxIndex(null), []);
+  const [ordered] = useState(() => shuffle(images));
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const parent = el.parentElement!;
+    const w = parent.clientWidth;
+    const lay = genLayout(ordered, w);
+    setLayout(lay);
+    const maxY = lay.reduce((m, c) => Math.max(m, c.y + c.h), 0);
+    setSectionH(Math.max(window.innerHeight, maxY + 80));
+    requestAnimationFrame(() => requestAnimationFrame(() => setVisible(true)));
+  }, [ordered]);
 
   return (
     <>
-      <section className="py-24 md:py-32 bg-cinema-black">
-        <div className="max-w-[1440px] mx-auto px-8 md:px-10">
-          <div className="mb-14">
-            <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">Production Archive</p>
-            <h2 className="text-display md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.04em] mt-3">The Wall</h2>
-          </div>
+      <section
+        ref={sectionRef}
+        className="w-full relative"
+        style={{ backgroundColor: "#0b0b0b", minHeight: sectionH || "100vh" }}
+      >
+        <div className="absolute inset-0 pointer-events-none" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E")`,
+          backgroundRepeat: "repeat",
+          backgroundSize: "256px 256px",
+          opacity: 0.035,
+        }} />
 
-          <div className="columns-2 md:columns-3 xl:columns-5" style={{ columnGap: "24px", columnFill: "auto" }}>
-            {items.map((img, i) => (
-              <div key={img.id} className="break-inside-avoid mb-6 group cursor-pointer" onClick={() => setLightboxIndex(i)}>
-                <div className="relative w-full overflow-hidden" style={{ aspectRatio: img.aspect, borderRadius: "10px", backgroundColor: "#1a1a1a" }}>
+        <div className="absolute top-12 left-0 right-0 z-10 pointer-events-none text-center">
+          <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">Production Archive</p>
+          <h2 className="text-display md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.04em] mt-3">The Wall</h2>
+        </div>
+
+        <div style={{ paddingTop: 140, paddingBottom: 60 }}>
+          {layout.map((card, i) => {
+            const delay = Math.min(i * 0.06, 1.8);
+            const origZ = card.z;
+            return (
+              <div
+                key={card.id}
+                className="absolute cursor-pointer"
+                style={{
+                  left: card.x,
+                  top: card.y + 140,
+                  width: card.w,
+                  height: card.h,
+                  zIndex: origZ,
+                  opacity: 0,
+                  animation: visible ? `cardEntrance 0.8s ease-out ${delay}s forwards` : "none",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.zIndex = "999"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.zIndex = String(origZ); }}
+                onClick={() => setLightboxIndex(i)}
+              >
+                <div
+                  className="w-full h-full overflow-hidden"
+                  style={{
+                    transform: `rotate(${card.rot}deg)`,
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 24px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.3)",
+                    transition: "transform 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget;
+                    el.style.transform = `rotate(${card.rot}deg) scale(1.03)`;
+                    el.style.boxShadow = "0 12px 48px rgba(0,0,0,0.7), 0 2px 8px rgba(0,0,0,0.4)";
+                    el.style.filter = "brightness(1.12)";
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget;
+                    el.style.transform = `rotate(${card.rot}deg)`;
+                    el.style.boxShadow = "0 4px 24px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.3)";
+                    el.style.filter = "brightness(1)";
+                  }}
+                >
                   <img
-                    src={img.src}
+                    src={card.src}
                     alt=""
-                    className="w-full h-full object-cover transition-all duration-300 ease-out group-hover:scale-[1.03]"
-                    style={{ display: "block", borderRadius: "10px" }}
+                    className="w-full h-full object-cover"
                     loading="lazy"
+                    style={{ display: "block" }}
                   />
-                  <div className="absolute inset-0 bg-cinema-black/0 group-hover:bg-cinema-black/30 transition-all duration-300" style={{ borderRadius: "10px" }} />
                 </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </section>
 
       {lightboxIndex !== null && (
         <Lightbox
-          images={items}
+          images={ordered}
           currentIndex={lightboxIndex}
           onClose={handleClose}
           onNavigate={setLightboxIndex}
