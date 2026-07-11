@@ -1,0 +1,11 @@
+work/
+public/assets/docs/
+*.pdf
+*.pptx
+*.docx
+*.xlsx
+DESIGN.md
+yup.md
+yup.md.md
+Donayan*.md
+Donayan*.pdf
