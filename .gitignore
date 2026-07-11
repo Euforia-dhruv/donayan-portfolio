@@ -41,5 +41,5 @@ public/assets/work-images/*.png
 
 # root-level stray images
 *.jpeg
-*.png
+/*.png
 .env*

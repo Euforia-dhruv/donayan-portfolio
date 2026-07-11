@@ -75,12 +75,13 @@ function ImageCard({ img, index, onSelect }: { img: WallImage; index: number; on
       }}
       onClick={() => onSelect(img.src)}
     >
-      <div className="relative w-full overflow-hidden bg-smoke" style={{ aspectRatio: img.aspect, borderRadius: "10px" }}>
+      <div className="relative w-full overflow-hidden" style={{ aspectRatio: img.aspect, borderRadius: "10px", backgroundColor: "#1a1a1a" }}>
         <img
           src={img.src}
           alt=""
           className="absolute inset-0 w-full h-full object-cover transition-all duration-300 ease-out group-hover:scale-[1.03]"
           loading="lazy"
+          style={{ borderRadius: "10px" }}
         />
         <div className="absolute inset-0 bg-cinema-black/0 group-hover:bg-cinema-black/30 transition-all duration-300" style={{ borderRadius: "10px" }} />
       </div>
@@ -159,6 +160,7 @@ export default function ProductionWall() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [items] = useState(() => shuffle(images));
   const handleClose = useCallback(() => setLightboxIndex(null), []);
+  const imgCount = items.length;
 
   return (
     <>
@@ -169,11 +171,16 @@ export default function ProductionWall() {
             <h2 className="text-display md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.04em] mt-3">The Wall</h2>
           </div>
 
-          <div className="columns-2 md:columns-3 xl:columns-5 gap-6" style={{ columnFill: "auto" }}>
-            {items.map((img, i) => (
-              <ImageCard key={img.id} img={img} index={i} onSelect={() => setLightboxIndex(i)} />
-            ))}
-          </div>
+          {imgCount > 0 && (
+            <div
+              className="columns-2 md:columns-3 xl:columns-5"
+              style={{ columnGap: "24px", columnFill: "auto" }}
+            >
+              {items.map((img, i) => (
+                <ImageCard key={img.id} img={img} index={i} onSelect={() => setLightboxIndex(i)} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
