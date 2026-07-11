@@ -1,6 +1,6 @@
 work/
 public/assets/docs/
-*.pdf
+/*.pdf
 *.pptx
 *.docx
 *.xlsx
