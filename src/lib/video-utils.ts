@@ -10,10 +10,22 @@ export function getYouTubeId(url: string): string | null {
   return null;
 }
 
-export function getYouTubeEmbedUrl(url: string, autoplay = false): string | null {
+export function getInstagramCode(url: string): string | null {
+  const m = url.match(/(?:instagram\.com\/(?:p|reel|tv)\/)([a-zA-Z0-9_-]+)/);
+  return m ? m[1] : null;
+}
+
+export function getYouTubeEmbedUrl(url: string, autoplay = false, loop = false): string | null {
   const id = getYouTubeId(url);
   if (!id) return null;
-  return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1${autoplay ? "&autoplay=1" : ""}`;
+  let params = "rel=0&modestbranding=1&playsinline=1";
+  if (autoplay) params += "&autoplay=1&mute=1";
+  if (loop) params += `&loop=1&playlist=${id}`;
+  return `https://www.youtube.com/embed/${id}?${params}`;
+}
+
+export function getYouTubeAutoplayUrl(url: string): string | null {
+  return getYouTubeEmbedUrl(url, true, true);
 }
 
 export function getYouTubeThumbnail(url: string): string | null {
@@ -23,14 +35,17 @@ export function getYouTubeThumbnail(url: string): string | null {
 }
 
 export function getDurationLabel(url: string): string {
-  if (url.includes("shorts")) return "0:15–1:00";
-  if (url.includes("youtube.com") || url.includes("youtu.be")) return "0:30–2:00";
+  if (url.includes("shorts")) return "Short";
+  if (url.includes("youtube.com") || url.includes("youtu.be")) return "Film";
+  if (url.includes("instagram.com/reel")) return "Reel";
+  if (url.includes("instagram.com/p")) return "Campaign";
   return "";
 }
 
-export function getVideoType(url: string): "youtube" | "youtube-shorts" {
+export function getVideoType(url: string): "youtube" | "youtube-shorts" | "instagram" {
   if (url.includes("youtube.com/shorts") || url.includes("youtu.be/shorts")) return "youtube-shorts";
-  return "youtube";
+  if (url.includes("youtube.com") || url.includes("youtu.be")) return "youtube";
+  return "instagram";
 }
 
 export function isEmbeddable(url: string): boolean {
@@ -40,5 +55,7 @@ export function isEmbeddable(url: string): boolean {
 export function getPlatformLabel(url: string): string {
   if (url.includes("youtube.com/shorts")) return "YouTube Shorts";
   if (url.includes("youtube.com") || url.includes("youtu.be")) return "YouTube";
+  if (url.includes("instagram.com/reel")) return "Instagram Reel";
+  if (url.includes("instagram.com/p")) return "Instagram";
   return "";
 }

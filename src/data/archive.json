@@ -1,326 +1,38 @@
 [
-  {
-    "id": "archive-1",
-    "title": "Pronamel Active Shield",
-    "brand": "Pronamel",
-    "year": "2024",
-    "role": "Director's Assistant",
-    "url": "https://youtu.be/1wqdb9s3kfo",
-    "type": "youtube",
-    "category": "Featured Campaigns",
-    "featured": true,
-    "thumbnail": "https://img.youtube.com/vi/1wqdb9s3kfo/hqdefault.jpg",
-    "description": "Oral care commercial featuring active shield protection product demonstration.",
-    "documents": []
-  },
-  {
-    "id": "archive-2",
-    "title": "Centrum Claims",
-    "brand": "Centrum",
-    "year": "2025",
-    "role": "Director's Assistant",
-    "url": "https://youtu.be/zlQc2GHojL8",
-    "type": "youtube",
-    "category": "Featured Campaigns",
-    "featured": true,
-    "thumbnail": "https://img.youtube.com/vi/zlQc2GHojL8/hqdefault.jpg",
-    "description": "Multivitamin brand campaign shoot with detailed casting and scripting across multiple languages.",
-    "documents": [
-      { "label": "PPM Deck", "path": "/assets/docs/Centrum Claim PPM Deck - 10 Oct (1).pdf" },
-      { "label": "Casting Briefs", "path": "/assets/docs/CASTING BRIEFS CENTRUM.docx" },
-      { "label": "Final Scripts", "path": "/assets/docs/Centrum Claim Final Scripts.docx" },
-      { "label": "KA Dialogues", "path": "/assets/docs/Centrum Claim KA Dialogues.docx" },
-      { "label": "Secondary Cast Dialogues", "path": "/assets/docs/Centrum Claim Secondary Cast Dialogues.docx" }
-    ]
-  },
-  {
-    "id": "archive-3",
-    "title": "The Bear House",
-    "brand": "The Bear House",
-    "year": "2024",
-    "role": "Director's Assistant",
-    "url": "https://youtu.be/E924AYIaCRw",
-    "type": "youtube",
-    "category": "Featured Campaigns",
-    "featured": true,
-    "thumbnail": "https://img.youtube.com/vi/E924AYIaCRw/hqdefault.jpg",
-    "description": "Premium lifestyle brand commercial highlighting artisanal craftsmanship.",
-    "documents": []
-  },
-  {
-    "id": "archive-5",
-    "title": "Brand Campaign",
-    "brand": "Featured Project",
-    "year": "2024",
-    "role": "Associate Producer",
-    "url": "https://youtu.be/F9m4xEH2-dU",
-    "type": "youtube",
-    "category": "Featured Campaigns",
-    "featured": true,
-    "thumbnail": "https://img.youtube.com/vi/F9m4xEH2-dU/hqdefault.jpg",
-    "description": "Brand campaign produced end-to-end as Associate Producer.",
-    "documents": []
-  },
-  {
-    "id": "archive-17",
-    "title": "Short Film",
-    "brand": "Featured Production",
-    "year": "2024",
-    "role": "Director's Assistant",
-    "url": "https://youtube.com/shorts/kVqN7LIbLUM",
-    "type": "youtube",
-    "category": "Brand Films",
-    "featured": false,
-    "thumbnail": "https://img.youtube.com/vi/kVqN7LIbLUM/hqdefault.jpg",
-    "description": "Brand short film production.",
-    "documents": []
-  },
-  {
-    "id": "archive-19",
-    "title": "Brand Film",
-    "brand": "Pink Flower",
-    "year": "2025",
-    "role": "Digital Media & Creative Head",
-    "url": "https://youtu.be/or5XQteDzYU",
-    "type": "youtube",
-    "category": "Brand Films",
-    "featured": false,
-    "thumbnail": "https://img.youtube.com/vi/or5XQteDzYU/hqdefault.jpg",
-    "description": "Brand film production for lifestyle label.",
-    "documents": []
-  },
-  {
-    "id": "archive-22",
-    "title": "Commercial Production",
-    "brand": "Twism Design",
-    "year": "2024",
-    "role": "Creative Producer",
-    "url": "https://youtu.be/W2KMt80-Kg0",
-    "type": "youtube",
-    "category": "Brand Films",
-    "featured": false,
-    "thumbnail": "https://img.youtube.com/vi/W2KMt80-Kg0/hqdefault.jpg",
-    "description": "Commercial production for design agency.",
-    "documents": []
-  },
-  {
-    "id": "archive-23",
-    "title": "Campaign Film",
-    "brand": "Twism Design",
-    "year": "2024",
-    "role": "Creative Producer",
-    "url": "https://youtu.be/OjwGqh_jB6Y",
-    "type": "youtube",
-    "category": "Commercial Films",
-    "featured": false,
-    "thumbnail": "https://img.youtube.com/vi/OjwGqh_jB6Y/hqdefault.jpg",
-    "description": "Brand campaign film produced for design client.",
-    "documents": []
-  },
-  {
-    "id": "archive-24",
-    "title": "Production Reel",
-    "brand": "The Glitch",
-    "year": "2023",
-    "role": "Project Manager",
-    "url": "https://youtu.be/RKjF5jTDbC8",
-    "type": "youtube",
-    "category": "Brand Films",
-    "featured": false,
-    "thumbnail": "https://img.youtube.com/vi/RKjF5jTDbC8/hqdefault.jpg",
-    "description": "Production reel for creative studio.",
-    "documents": []
-  },
-  {
-    "id": "archive-25",
-    "title": "Print Shoot",
-    "brand": "Kinder",
-    "year": "2025",
-    "role": "Director's Assistant",
-    "url": "",
-    "type": "document",
-    "category": "Commercial Films",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Kinder Joy print campaign shoot.",
-    "documents": [
-      { "label": "PPM Deck", "path": "/assets/docs/Kinder Print Shoot.pdf" }
-    ]
-  },
-  {
-    "id": "archive-26",
-    "title": "IDEE Campaign",
-    "brand": "IDÉE",
-    "year": "2025",
-    "role": "Director's Assistant",
-    "url": "",
-    "type": "document",
-    "category": "Brand Films",
-    "featured": false,
-    "thumbnail": "",
-    "description": "IDEE brand campaign production.",
-    "documents": [
-      { "label": "PPM Deck", "path": "/assets/docs/IDEE PPM.pdf" }
-    ]
-  },
-  {
-    "id": "archive-27",
-    "title": "BB Cream Campaign",
-    "brand": "Pond's",
-    "year": "2025",
-    "role": "Director's Assistant",
-    "url": "",
-    "type": "document",
-    "category": "Commercial Films",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Pond's BB cream commercial with detailed treatment notes.",
-    "documents": [
-      { "label": "Treatment Notes", "path": "/assets/docs/Ponds  BB cream TN.pdf" }
-    ]
-  },
-  {
-    "id": "archive-28",
-    "title": "SS'24 Casting Bangkok",
-    "brand": "Lifestyle",
-    "year": "2024",
-    "role": "Director's Assistant",
-    "url": "",
-    "type": "document",
-    "category": "Fashion Campaigns",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Lifestyle Spring/Summer 2024 casting in Bangkok.",
-    "documents": [
-      { "label": "Casting Batch 5", "path": "/assets/docs/Lifestyle SS_24 Cast Batch 5 (Bangkok).pdf" }
-    ]
-  },
-  {
-    "id": "archive-29",
-    "title": "Artkalaa Pitch",
-    "brand": "Artkalaa",
-    "year": "2024",
-    "role": "Creative Producer",
-    "url": "",
-    "type": "document",
-    "category": "Brand Films",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Artkalaa brand marketing pitch deck.",
-    "documents": [
-      { "label": "Marketing Pitch", "path": "/assets/docs/Artkalaa Pitch Deck.pdf" }
-    ]
-  },
-  {
-    "id": "archive-30",
-    "title": "Just Be Campaign",
-    "brand": "Just Be",
-    "year": "2024",
-    "role": "Creative Producer",
-    "url": "",
-    "type": "document",
-    "category": "Brand Films",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Just Be brand campaign pitch and creative strategy.",
-    "documents": [
-      { "label": "Marketing Pitch", "path": "/assets/docs/Just Be.pdf" }
-    ]
-  },
-  {
-    "id": "archive-31",
-    "title": "OOOL Digital Strategy",
-    "brand": "OOOL",
-    "year": "2024",
-    "role": "Digital Media & Creative Head",
-    "url": "",
-    "type": "document",
-    "category": "Digital & Social Content",
-    "featured": false,
-    "thumbnail": "",
-    "description": "OOOL digital marketing strategy and social content plan.",
-    "documents": [
-      { "label": "Strategy Deck", "path": "/assets/docs/OOOL Digital Strategy.pdf" }
-    ]
-  },
-  {
-    "id": "archive-32",
-    "title": "Deva's Khayal",
-    "brand": "Deva's Khayal",
-    "year": "2024",
-    "role": "Creative Producer",
-    "url": "",
-    "type": "document",
-    "category": "Music Videos",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Music marketing pitch for Deva's Khayal project.",
-    "documents": [
-      { "label": "Marketing Pitch", "path": "/assets/docs/Deva_s Khayal.pdf" }
-    ]
-  },
-  {
-    "id": "archive-33",
-    "title": "Kitser August Sale",
-    "brand": "Kitser",
-    "year": "2024",
-    "role": "Creative Producer",
-    "url": "",
-    "type": "document",
-    "category": "Digital & Social Content",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Kitser August sale digital campaign.",
-    "documents": [
-      { "label": "Marketing Deck", "path": "/assets/docs/Kitser August Sale.pdf" }
-    ]
-  },
-  {
-    "id": "archive-34",
-    "title": "Murgi (Film Pitch)",
-    "brand": "Murgi",
-    "year": "2024",
-    "role": "Creative Producer",
-    "url": "",
-    "type": "document",
-    "category": "Behind the Scenes",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Feature film project pitch.",
-    "documents": [
-      { "label": "Film Pitch", "path": "/assets/docs/Murgi.pdf" }
-    ]
-  },
-  {
-    "id": "archive-35",
-    "title": "Pathan Brothers Series",
-    "brand": "Pathan Brothers",
-    "year": "2024",
-    "role": "Creative Producer",
-    "url": "",
-    "type": "document",
-    "category": "Behind the Scenes",
-    "featured": false,
-    "thumbnail": "",
-    "description": "OTT series pitch for Pathan Brothers project.",
-    "documents": [
-      { "label": "Series Pitch", "path": "/assets/docs/Pathan Brothers Series.pdf" }
-    ]
-  },
-  {
-    "id": "archive-36",
-    "title": "The Bubbling Fish & Nirala",
-    "brand": "The Bubbling Fish & Nirala",
-    "year": "2024",
-    "role": "Creative Producer",
-    "url": "",
-    "type": "document",
-    "category": "Behind the Scenes",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Restaurant brand marketing pitch.",
-    "documents": [
-      { "label": "Marketing Plan", "path": "/assets/docs/The Bubbling Fish and Nirala - The Plan.pdf" }
-    ]
-  }
+  { "id": "archive-1", "title": "Pronamel Active Shield", "brand": "Pronamel", "year": "2024", "role": "Director's Assistant", "url": "https://youtu.be/1wqdb9s3kfo", "type": "youtube", "category": "Featured Campaigns", "featured": true, "thumbnail": "https://img.youtube.com/vi/1wqdb9s3kfo/hqdefault.jpg", "description": "Oral care commercial featuring active shield protection product demonstration.", "documents": [] },
+  { "id": "archive-2", "title": "Centrum Claims", "brand": "Centrum", "year": "2025", "role": "Director's Assistant", "url": "https://youtu.be/zlQc2GHojL8", "type": "youtube", "category": "Featured Campaigns", "featured": true, "thumbnail": "https://img.youtube.com/vi/zlQc2GHojL8/hqdefault.jpg", "description": "Multivitamin brand campaign with detailed casting and scripting across multiple languages.", "documents": [{ "label": "PPM Deck", "path": "/assets/docs/Centrum Claim PPM Deck - 10 Oct (1).pdf" }, { "label": "Casting Briefs", "path": "/assets/docs/CASTING BRIEFS CENTRUM.docx" }, { "label": "Final Scripts", "path": "/assets/docs/Centrum Claim Final Scripts.docx" }, { "label": "KA Dialogues", "path": "/assets/docs/Centrum Claim KA Dialogues.docx" }, { "label": "Secondary Cast Dialogues", "path": "/assets/docs/Centrum Claim Secondary Cast Dialogues.docx" }] },
+  { "id": "archive-3", "title": "The Bear House", "brand": "The Bear House", "year": "2024", "role": "Director's Assistant", "url": "https://youtu.be/E924AYIaCRw", "type": "youtube", "category": "Featured Campaigns", "featured": true, "thumbnail": "https://img.youtube.com/vi/E924AYIaCRw/hqdefault.jpg", "description": "Premium lifestyle brand commercial.", "documents": [] },
+  { "id": "archive-4", "title": "Campaign Reel", "brand": "Pink Flower", "year": "2025", "role": "Digital Media & Creative Head", "url": "https://www.instagram.com/reel/DPVoyKujVe4/", "type": "instagram", "category": "Digital & Social Content", "featured": false, "thumbnail": "", "description": "Social media campaign reel for lifestyle brand.", "documents": [] },
+  { "id": "archive-5", "title": "Brand Campaign", "brand": "Featured Project", "year": "2024", "role": "Associate Producer", "url": "https://youtu.be/F9m4xEH2-dU", "type": "youtube", "category": "Featured Campaigns", "featured": true, "thumbnail": "https://img.youtube.com/vi/F9m4xEH2-dU/hqdefault.jpg", "description": "Brand campaign produced end-to-end as Associate Producer.", "documents": [] },
+  { "id": "archive-6", "title": "Celebrity Shoot SS'25", "brand": "Armani Exchange", "year": "2025", "role": "Director's Assistant", "url": "https://www.instagram.com/p/Cz-2Mi0C6Bg/", "type": "instagram", "category": "Fashion Campaigns", "featured": true, "thumbnail": "", "description": "Celebrity fashion campaign shoot for Armani Exchange Spring/Summer 2025.", "documents": [{ "label": "PPM Deck", "path": "/assets/docs/AX Celebrity Shoot SS_25.pdf" }] },
+  { "id": "archive-7", "title": "SS'25 Photoshoot", "brand": "Fossil", "year": "2024", "role": "Director's Assistant", "url": "https://www.instagram.com/reel/C24lSvovffw/", "type": "instagram", "category": "Celebrity Campaigns", "featured": true, "thumbnail": "", "description": "Fossil Spring/Summer 2025 campaign content production.", "documents": [{ "label": "PPM Deck", "path": "/assets/docs/Fossil - SS_25 - PPM DECK.pdf" }, { "label": "Photoshoot Sheet", "path": "/assets/docs/Fossil SS'26 Photoshoot.xlsx" }] },
+  { "id": "archive-8", "title": "Skinn Noura", "brand": "Titan", "year": "2024", "role": "Associate Producer", "url": "https://www.instagram.com/reel/C7bjXlbtp4Z/", "type": "instagram", "category": "Celebrity Campaigns", "featured": false, "thumbnail": "", "description": "Titan Skinn Noura fragrance campaign.", "documents": [] },
+  { "id": "archive-9", "title": "DIY Campaign", "brand": "Lakmé India", "year": "2023", "role": "Director's Assistant", "url": "https://www.instagram.com/reel/C-MkhP6ykXP/", "type": "instagram", "category": "Fashion Campaigns", "featured": false, "thumbnail": "", "description": "Lakmé DIY beauty tutorial social campaign.", "documents": [] },
+  { "id": "archive-10", "title": "Stop Beauty Test", "brand": "Dove", "year": "2024", "role": "Director's Assistant", "url": "https://www.instagram.com/reel/C4h8FkuN7Li/", "type": "instagram", "category": "Digital & Social Content", "featured": false, "thumbnail": "", "description": "Dove's empowering beauty campaign social content.", "documents": [] },
+  { "id": "archive-11", "title": "Heat Happens", "brand": "Sprite", "year": "2024", "role": "Director's Assistant", "url": "https://www.instagram.com/reel/C7RB6gGoVDQ/", "type": "instagram", "category": "Commercial Films", "featured": true, "thumbnail": "", "description": "Sprite 'Heat Happens' commercial production.", "documents": [{ "label": "PPM Deck", "path": "/assets/docs/Sprite PPM.pdf" }] },
+  { "id": "archive-12", "title": "Rivaah Collection", "brand": "Tanishq", "year": "2024", "role": "Director's Assistant", "url": "https://www.instagram.com/p/C6BbgzXoyLR/", "type": "instagram", "category": "Celebrity Campaigns", "featured": true, "thumbnail": "", "description": "Tanishq Rivaah bridal jewellery campaign featuring Nayanthara.", "documents": [{ "label": "Casting PDF", "path": "/assets/docs/Tanishq Casting.pdf" }] },
+  { "id": "archive-13", "title": "Fashion Editorial", "brand": "Armani Exchange", "year": "2024", "role": "Director's Assistant", "url": "https://www.instagram.com/p/C2Zu8u2p7di/", "type": "instagram", "category": "Fashion Campaigns", "featured": false, "thumbnail": "", "description": "Armani Exchange fashion editorial campaign stills.", "documents": [] },
+  { "id": "archive-14", "title": "Music Video Production", "brand": "Featured Artist", "year": "2024", "role": "Director's Assistant", "url": "https://www.instagram.com/reel/C9Hady1yVDJ/", "type": "instagram", "category": "Music Videos", "featured": false, "thumbnail": "", "description": "Music video production set coordination and assistant direction.", "documents": [] },
+  { "id": "archive-15", "title": "KVS Campaign", "brand": "HDFC", "year": "2024", "role": "Project Manager", "url": "https://www.instagram.com/reel/C22aMEvoiJl/", "type": "instagram", "category": "Brand Films", "featured": false, "thumbnail": "", "description": "HDFC KVS (Kisan Vikas Patra) campaign production.", "documents": [{ "label": "Post PPM Deck", "path": "/assets/docs/HDFC KVS Post PPM Deck.pdf" }] },
+  { "id": "archive-16", "title": "Festive Campaign", "brand": "Budweiser", "year": "2023", "role": "Project Manager", "url": "https://www.instagram.com/reel/Cr0W-g_NBpu/", "type": "instagram", "category": "Digital & Social Content", "featured": false, "thumbnail": "", "description": "Budweiser festive season social campaign management.", "documents": [] },
+  { "id": "archive-17", "title": "Short Film", "brand": "Featured Production", "year": "2024", "role": "Director's Assistant", "url": "https://youtube.com/shorts/kVqN7LIbLUM", "type": "youtube", "category": "Brand Films", "featured": false, "thumbnail": "https://img.youtube.com/vi/kVqN7LIbLUM/hqdefault.jpg", "description": "Brand short film production.", "documents": [] },
+  { "id": "archive-18", "title": "Capital Campaign", "brand": "Godrej Capital", "year": "2025", "role": "Director's Assistant", "url": "https://www.instagram.com/p/C2uMuHjJmk_/", "type": "instagram", "category": "Commercial Films", "featured": false, "thumbnail": "", "description": "Godrej Capital brand campaign shoot.", "documents": [{ "label": "Director's Note", "path": "/assets/docs/Godrej Capital - Director_s Note.pdf" }] },
+  { "id": "archive-19", "title": "Brand Film", "brand": "Pink Flower", "year": "2025", "role": "Digital Media & Creative Head", "url": "https://youtu.be/or5XQteDzYU", "type": "youtube", "category": "Brand Films", "featured": false, "thumbnail": "https://img.youtube.com/vi/or5XQteDzYU/hqdefault.jpg", "description": "Brand film production for lifestyle label.", "documents": [] },
+  { "id": "archive-20", "title": "Social Content Series", "brand": "Pink Flower", "year": "2025", "role": "Digital Media & Creative Head", "url": "https://www.instagram.com/reel/CmoS25uhkQG/", "type": "instagram", "category": "Digital & Social Content", "featured": false, "thumbnail": "", "description": "Ongoing social media content series production.", "documents": [] },
+  { "id": "archive-21", "title": "Campaign Reel", "brand": "Pink Flower", "year": "2024", "role": "Digital Media & Creative Head", "url": "https://www.instagram.com/reel/ClgcOJiDf2n/", "type": "instagram", "category": "Digital & Social Content", "featured": false, "thumbnail": "", "description": "Seasonal campaign reel for social platforms.", "documents": [] },
+  { "id": "archive-22", "title": "Commercial Production", "brand": "Twism Design", "year": "2024", "role": "Creative Producer", "url": "https://youtu.be/W2KMt80-Kg0", "type": "youtube", "category": "Brand Films", "featured": false, "thumbnail": "https://img.youtube.com/vi/W2KMt80-Kg0/hqdefault.jpg", "description": "Commercial production for design agency.", "documents": [] },
+  { "id": "archive-23", "title": "Campaign Film", "brand": "Twism Design", "year": "2024", "role": "Creative Producer", "url": "https://youtu.be/OjwGqh_jB6Y", "type": "youtube", "category": "Commercial Films", "featured": false, "thumbnail": "https://img.youtube.com/vi/OjwGqh_jB6Y/hqdefault.jpg", "description": "Brand campaign film produced for design client.", "documents": [] },
+  { "id": "archive-24", "title": "Production Reel", "brand": "The Glitch", "year": "2023", "role": "Project Manager", "url": "https://youtu.be/RKjF5jTDbC8", "type": "youtube", "category": "Brand Films", "featured": false, "thumbnail": "https://img.youtube.com/vi/RKjF5jTDbC8/hqdefault.jpg", "description": "Production reel for creative studio.", "documents": [] },
+  { "id": "archive-25", "title": "Print Shoot", "brand": "Kinder", "year": "2025", "role": "Director's Assistant", "url": "", "type": "document", "category": "Commercial Films", "featured": false, "thumbnail": "", "description": "Kinder Joy print campaign shoot.", "documents": [{ "label": "PPM Deck", "path": "/assets/docs/Kinder Print Shoot.pdf" }] },
+  { "id": "archive-26", "title": "IDEE Campaign", "brand": "IDÉE", "year": "2025", "role": "Director's Assistant", "url": "", "type": "document", "category": "Brand Films", "featured": false, "thumbnail": "", "description": "IDEE brand campaign production.", "documents": [{ "label": "PPM Deck", "path": "/assets/docs/IDEE PPM.pdf" }] },
+  { "id": "archive-27", "title": "BB Cream Campaign", "brand": "Pond's", "year": "2025", "role": "Director's Assistant", "url": "", "type": "document", "category": "Commercial Films", "featured": false, "thumbnail": "", "description": "Pond's BB cream commercial with detailed treatment notes.", "documents": [{ "label": "Treatment Notes", "path": "/assets/docs/Ponds  BB cream TN.pdf" }] },
+  { "id": "archive-28", "title": "SS'24 Casting Bangkok", "brand": "Lifestyle", "year": "2024", "role": "Director's Assistant", "url": "", "type": "document", "category": "Fashion Campaigns", "featured": false, "thumbnail": "", "description": "Lifestyle Spring/Summer 2024 casting in Bangkok.", "documents": [{ "label": "Casting Batch 5", "path": "/assets/docs/Lifestyle SS_24 Cast Batch 5 (Bangkok).pdf" }] },
+  { "id": "archive-29", "title": "Artkalaa Pitch", "brand": "Artkalaa", "year": "2024", "role": "Creative Producer", "url": "", "type": "document", "category": "Brand Films", "featured": false, "thumbnail": "", "description": "Artkalaa brand marketing pitch deck.", "documents": [{ "label": "Marketing Pitch", "path": "/assets/docs/Artkalaa Pitch Deck.pdf" }] },
+  { "id": "archive-30", "title": "Just Be Campaign", "brand": "Just Be", "year": "2024", "role": "Creative Producer", "url": "", "type": "document", "category": "Brand Films", "featured": false, "thumbnail": "", "description": "Just Be brand campaign pitch and creative strategy.", "documents": [{ "label": "Marketing Pitch", "path": "/assets/docs/Just Be.pdf" }] },
+  { "id": "archive-31", "title": "OOOL Digital Strategy", "brand": "OOOL", "year": "2024", "role": "Digital Media & Creative Head", "url": "", "type": "document", "category": "Digital & Social Content", "featured": false, "thumbnail": "", "description": "OOOL digital marketing strategy and social content plan.", "documents": [{ "label": "Strategy Deck", "path": "/assets/docs/OOOL Digital Strategy.pdf" }] },
+  { "id": "archive-32", "title": "Deva's Khayal", "brand": "Deva's Khayal", "year": "2024", "role": "Creative Producer", "url": "", "type": "document", "category": "Music Videos", "featured": false, "thumbnail": "", "description": "Music marketing pitch for Deva's Khayal project.", "documents": [{ "label": "Marketing Pitch", "path": "/assets/docs/Deva_s Khayal.pdf" }] },
+  { "id": "archive-33", "title": "Kitser August Sale", "brand": "Kitser", "year": "2024", "role": "Creative Producer", "url": "", "type": "document", "category": "Digital & Social Content", "featured": false, "thumbnail": "", "description": "Kitser August sale digital campaign.", "documents": [{ "label": "Marketing Deck", "path": "/assets/docs/Kitser August Sale.pdf" }] },
+  { "id": "archive-34", "title": "Murgi (Film Pitch)", "brand": "Murgi", "year": "2024", "role": "Creative Producer", "url": "", "type": "document", "category": "Behind the Scenes", "featured": false, "thumbnail": "", "description": "Feature film project pitch.", "documents": [{ "label": "Film Pitch", "path": "/assets/docs/Murgi.pdf" }] },
+  { "id": "archive-35", "title": "Pathan Brothers Series", "brand": "Pathan Brothers", "year": "2024", "role": "Creative Producer", "url": "", "type": "document", "category": "Behind the Scenes", "featured": false, "thumbnail": "", "description": "OTT series pitch for Pathan Brothers project.", "documents": [{ "label": "Series Pitch", "path": "/assets/docs/Pathan Brothers Series.pdf" }] },
+  { "id": "archive-36", "title": "The Bubbling Fish & Nirala", "brand": "The Bubbling Fish & Nirala", "year": "2024", "role": "Creative Producer", "url": "", "type": "document", "category": "Behind the Scenes", "featured": false, "thumbnail": "", "description": "Restaurant brand marketing pitch.", "documents": [{ "label": "Marketing Plan", "path": "/assets/docs/The Bubbling Fish and Nirala - The Plan.pdf" }] }
 ]
