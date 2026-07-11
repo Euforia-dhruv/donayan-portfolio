@@ -41,7 +41,7 @@ export default function VideoLightbox({ url, type, title, onClose }: VideoLightb
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-cinema-black/95 backdrop-blur-md"
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-charcoal/95 backdrop-blur-md"
       onClick={onClose}
     >
       <div
@@ -50,12 +50,13 @@ export default function VideoLightbox({ url, type, title, onClose }: VideoLightb
       >
         <button
           onClick={onClose}
-          className="absolute -top-12 right-0 text-cinema-white/60 hover:text-cinema-white text-body-sm font-sans uppercase tracking-[0.15em] bg-transparent border-none cursor-pointer transition-colors"
+          className="absolute -top-12 right-0 text-cream-paper/60 hover:text-cream-paper font-geist uppercase bg-transparent border-none cursor-pointer transition-colors"
+          style={{ fontSize: "13px", letterSpacing: "0.15em" }}
         >
           Close [ESC]
         </button>
 
-        <div className="aspect-video bg-cinema-black rounded overflow-hidden border border-white/10">
+        <div className="aspect-video bg-dew-drop rounded-xl overflow-hidden border border-charcoal/10">
           {type === "youtube" ? (
             <iframe
               src={embedUrl}
@@ -65,15 +66,16 @@ export default function VideoLightbox({ url, type, title, onClose }: VideoLightb
               allowFullScreen
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center flex-col gap-4 bg-smoke">
-              <p className="text-body font-sans font-[300] text-cinema-white/60">
+            <div className="w-full h-full flex items-center justify-center flex-col gap-4 bg-dew-drop">
+              <p className="font-geist font-[300] text-charcoal/60" style={{ fontSize: "16px" }}>
                 Instagram content
               </p>
               <a
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 border border-champagne text-champagne text-caption font-sans font-[500] uppercase tracking-[0.15em] no-underline rounded hover:bg-champagne/10 transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 border border-charcoal/30 text-charcoal/70 font-geist font-[500] uppercase no-underline rounded-xl hover:border-charcoal/60 hover:text-charcoal transition-colors"
+                style={{ fontSize: "11px", letterSpacing: "0.15em" }}
               >
                 Open in Instagram
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -84,7 +86,7 @@ export default function VideoLightbox({ url, type, title, onClose }: VideoLightb
           )}
         </div>
 
-        <p className="mt-4 text-body-sm font-sans font-[400] text-cinema-white/60 tracking-[0.02em]">
+        <p className="mt-4 font-geist font-[400] text-charcoal/60" style={{ fontSize: "14px" }}>
           {title}
         </p>
       </div>

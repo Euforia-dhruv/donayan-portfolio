@@ -43,7 +43,7 @@ function ThumbnailRow({ brands }: { brands: string[] }) {
       {thumbs.slice(0, 5).map((t, i) => (
         <div
           key={i}
-          className="w-14 h-14 md:w-16 md:h-16 rounded-sm overflow-hidden border border-white/5"
+          className="w-14 h-14 md:w-16 md:h-16 rounded-lg overflow-hidden border border-charcoal/10"
         >
           <img
             src={t.thumb}
@@ -84,18 +84,19 @@ export default function ProductionTimeline() {
     <section
       id="process"
       ref={sectionRef}
-      className="py-20 md:py-32 bg-cinema-black reveal"
+      className="py-20 md:py-32 bg-cream-paper reveal"
     >
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10">
-        <p className="text-caption font-sans font-[500] text-champagne uppercase tracking-[0.2em] mb-4">
+      <div className="max-w-[1200px] mx-auto px-6 md:px-8">
+        <p className="font-geist font-[500] text-charcoal/50 uppercase mb-4" style={{ fontSize: "11px", letterSpacing: "0.2em" }}>
           Career
         </p>
-        <h2 className="text-display md:text-hero font-display font-[400] leading-[0.95] tracking-[-0.04em] text-cinema-white text-balance mb-16 md:mb-20">
-          Production Timeline
+        <h2 className="font-gelica font-[500] text-cocoa-ink leading-[1.08] mb-16 md:mb-20 lowercase"
+          style={{ fontSize: "clamp(36px, 4vw, 56px)" }}>
+          production timeline
         </h2>
 
         <div className="relative max-w-4xl">
-          <div className="absolute left-[7px] md:left-[11px] top-0 bottom-0 w-px bg-white/10" />
+          <div className="absolute left-[7px] md:left-[11px] top-0 bottom-0 w-px bg-charcoal/10" />
 
           {sorted.map((entry, i) => {
             const brands = houseBrandMap[entry.productionHouseId] || [];
@@ -105,33 +106,32 @@ export default function ProductionTimeline() {
                 className="relative pl-8 md:pl-12 pb-12 md:pb-16 last:pb-0"
                 style={{
                   opacity: 0,
-                  animation: `fadeInUp 0.6s ease ${i * 0.15}s forwards`,
+                  animation: `heroFade 0.6s ease ${i * 0.15}s forwards`,
                 }}
               >
-                <div className="absolute left-0 top-1 w-[15px] h-[15px] md:w-[23px] md:h-[23px] rounded-full border-2 border-champagne bg-cinema-black z-10" />
+                <div className="absolute left-0 top-1 w-[15px] h-[15px] md:w-[23px] md:h-[23px] rounded-full border-2 border-cocoa-ink bg-cream-paper z-10" />
 
-                <div className="glass rounded px-6 py-5 md:px-8 md:py-6">
+                <div className="bg-dew-drop rounded-xl px-6 py-5 md:px-8 md:py-6 border border-charcoal/5">
                   <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 mb-2">
-                    <span className="text-caption font-sans font-[500] text-champagne uppercase tracking-[0.15em]">
+                    <span className="font-geist font-[500] text-cocoa-ink uppercase" style={{ fontSize: "11px", letterSpacing: "0.15em" }}>
                       {formatDate(entry.startDate)} – {entry.endDate ? formatDate(entry.endDate) : "Present"}
                     </span>
-                    <span className="hidden md:block text-cinema-white/20">/</span>
-                    <span className="text-caption font-sans font-[400] text-cinema-white/50 uppercase tracking-[0.1em]">
+                    <span className="hidden md:block text-charcoal/20">/</span>
+                    <span className="font-geist font-[400] text-charcoal/50 uppercase" style={{ fontSize: "11px", letterSpacing: "0.1em" }}>
                       {phMap.get(entry.productionHouseId) || entry.productionHouseId}
                     </span>
                   </div>
 
-                  <h3 className="text-heading-sm md:text-heading font-display font-[400] text-cinema-white leading-[1.2] tracking-[-0.01em]">
+                  <h3 className="font-gelica font-[500] text-cocoa-ink leading-[1.2]" style={{ fontSize: "clamp(20px, 2.2vw, 28px)" }}>
                     {entry.roleTitle}
                   </h3>
 
                   {entry.description && (
-                    <p className="mt-2 text-body-sm font-sans font-[300] text-cinema-white/50 leading-[1.5] max-w-xl">
+                    <p className="mt-2 font-geist font-[300] text-charcoal/60 leading-[1.5] max-w-xl" style={{ fontSize: "14px" }}>
                       {entry.description}
                     </p>
                   )}
 
-                  {/* Campaign imagery from real productions */}
                   <ThumbnailRow brands={brands} />
 
                   {brands.length > 0 && (
@@ -139,7 +139,8 @@ export default function ProductionTimeline() {
                       {brands.map((b) => (
                         <span
                           key={b}
-                          className="text-[9px] font-sans font-[400] text-cinema-white/30 uppercase tracking-[0.1em] border border-white/5 px-2 py-0.5 rounded"
+                          className="font-geist font-[400] text-charcoal/40 uppercase border border-charcoal/10 px-2 py-0.5 rounded-lg"
+                          style={{ fontSize: "9px", letterSpacing: "0.1em" }}
                         >
                           {b}
                         </span>

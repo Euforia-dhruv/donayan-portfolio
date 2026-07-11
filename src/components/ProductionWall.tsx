@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useMemo, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 import galleryCards from "@/data/gallery-cards.json";
 import archiveData from "@/data/archive.json";
 import VideoModal from "@/components/VideoModal";
-import { getYouTubeThumbnail, isEmbeddable } from "@/lib/video-utils";
+import { getYouTubeThumbnail } from "@/lib/video-utils";
 
 interface CardDim {
   id: string;
@@ -65,7 +65,7 @@ export default function ProductionWall() {
         x, y,
         w: c.width,
         h: c.height,
-        rotation: rand(-4, 4),
+        rotation: rand(-3, 3),
         z: 10 + i,
       };
     });
@@ -111,10 +111,11 @@ export default function ProductionWall() {
         <div className="absolute inset-0 paper-bg pointer-events-none" />
 
         <div className="relative z-30 max-w-[1400px] mx-auto px-6 md:px-10 mb-16 md:mb-20">
-          <p className="text-caption font-sans font-[500] text-stone-500 uppercase tracking-[0.2em]">
+          <p className="font-geist font-[500] text-charcoal/50 uppercase" style={{ fontSize: "11px", letterSpacing: "0.2em" }}>
             Production Archive
           </p>
-          <h2 className="text-display md:text-hero font-display font-[400] leading-[0.95] tracking-[-0.04em] text-stone-900 text-balance mt-3 max-w-3xl">
+          <h2 className="font-gelica font-[500] text-cocoa-ink leading-[1.08] mt-3 lowercase"
+            style={{ fontSize: "clamp(48px, 6vw, 80px)" }}>
             The Wall
           </h2>
         </div>
@@ -152,47 +153,47 @@ export default function ProductionWall() {
                 }}
               >
                 <div
-                  className="w-full h-full rounded-sm overflow-hidden"
+                  className="w-full h-full rounded-xl overflow-hidden"
                   style={{
                     background: `linear-gradient(135deg, #FAFAF8 0%, #F0EFEA 100%)`,
                     boxShadow: `0 2px 12px rgba(0,0,0,0.08), 0 8px 40px rgba(0,0,0,0.04), inset 0 0 0 1px rgba(255,255,255,0.8)`,
                   }}
                 >
-                  <div className="w-full h-full flex flex-col items-center justify-center p-3 bg-gradient-to-br from-stone-100/60 via-zinc-50/40 to-stone-200/40 transition-all duration-500 relative group-hover:from-stone-100/80 group-hover:via-zinc-50/60">
+                  <div className="w-full h-full flex flex-col items-center justify-center p-3 bg-gradient-to-br from-cream-paper/80 via-dew-drop/60 to-cream-paper/70 transition-all duration-500 relative group-hover:from-cream-paper group-hover:via-dew-drop">
                     {thumb ? (
                       <img
                         src={thumb}
                         alt={card.brand}
-                        className="absolute inset-0 w-full h-full object-cover opacity-25 group-hover:opacity-40 transition-opacity duration-500"
+                        className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500"
                         loading="lazy"
                       />
                     ) : null}
 
                     <div className="relative z-10 text-center">
-                      {/* Icon: play icon for video cards, document icon for doc cards */}
-                      <div className="w-8 h-8 mx-auto mb-2 rounded-full border border-stone-300/50 flex items-center justify-center group-hover:border-champagne/50 transition-colors duration-500">
+                      <div className="w-8 h-8 mx-auto mb-2 rounded-full border border-charcoal/20 flex items-center justify-center group-hover:border-cocoa-ink/40 transition-colors duration-500">
                         {isVideo ? (
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-stone-400 group-hover:text-champagne transition-colors duration-500 ml-0.5">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-charcoal/40 group-hover:text-cocoa-ink transition-colors duration-500 ml-0.5">
                             <path d="M8 5v14l11-7L8 5z" fill="currentColor" />
                           </svg>
                         ) : (
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-stone-400 group-hover:text-champagne transition-colors duration-500">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-charcoal/40 group-hover:text-cocoa-ink transition-colors duration-500">
                             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                             <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                         )}
                       </div>
-                      <p className="text-caption font-sans font-[500] text-stone-500 uppercase tracking-[0.15em] leading-[1.2] group-hover:text-stone-700 transition-colors duration-500">
+                      <p className="font-geist font-[500] text-charcoal/60 uppercase leading-[1.2] group-hover:text-cocoa-ink transition-colors duration-500"
+                        style={{ fontSize: "11px", letterSpacing: "0.15em" }}>
                         {card.label}
                       </p>
-                      <p className="mt-1 text-[9px] font-sans font-[400] text-stone-400 tracking-[0.1em] uppercase">
+                      <p className="mt-1 font-geist font-[400] text-charcoal/40 uppercase" style={{ fontSize: "9px", letterSpacing: "0.1em" }}>
                         {card.sub}
                       </p>
-                      <p className="mt-1 text-[8px] font-sans font-[400] text-stone-300 uppercase tracking-[0.1em]">
+                      <p className="mt-1 font-geist font-[400] text-charcoal/30 uppercase" style={{ fontSize: "8px", letterSpacing: "0.1em" }}>
                         {card.brand} · {card.year}
                       </p>
                       <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                        <span className="text-caption font-sans font-[500] text-champagne uppercase tracking-[0.1em] text-[10px]">
+                        <span className="font-geist font-[500] text-cocoa-ink uppercase" style={{ fontSize: "10px", letterSpacing: "0.1em" }}>
                           {isVideo ? "Watch Campaign →" : card.doc ? "Open Document →" : "View Campaign →"}
                         </span>
                       </div>
@@ -207,10 +208,11 @@ export default function ProductionWall() {
         <div className="relative z-30 flex justify-center mt-20 md:mt-24">
           <a
             href="#featured"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-stone-900/10 text-stone-700 text-caption font-sans font-[500] uppercase tracking-[0.2em] no-underline rounded hover:bg-stone-900/20 transition-all duration-300"
+            className="inline-flex items-center gap-2 px-6 py-3 border border-charcoal/20 text-charcoal/60 font-geist font-[500] uppercase no-underline rounded-xl hover:border-charcoal/40 hover:text-charcoal transition-all duration-300"
+            style={{ fontSize: "11px", letterSpacing: "0.2em" }}
           >
             Explore All Productions
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-stone-700">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-charcoal/60">
               <path d="M3 7h8M11 7L7 3M11 7L7 11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </a>

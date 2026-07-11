@@ -28,8 +28,6 @@ const localImages = [
   { src: "/assets/work-images/WhatsApp Image 2026-07-11 at 12.00.52 PM.jpeg", brand: "Campaign Still", year: "2025", category: "Production Stills" },
 ];
 
-const gl = { lat: 0 };
-
 function buildItems(): WallItem[] {
   const items: WallItem[] = [];
 
@@ -88,7 +86,6 @@ function buildItems(): WallItem[] {
     });
   });
 
-  /* assign random span weights for masonry variety */
   items.forEach((item) => {
     const aspect = item.aspect.split("/").map(Number);
     const ratio = aspect[1] / aspect[0];
@@ -99,7 +96,6 @@ function buildItems(): WallItem[] {
     else item.span = 2;
   });
 
-  /* shuffle */
   for (let i = items.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [items[i], items[j]] = [items[j], items[i]];
@@ -137,7 +133,6 @@ function ShowcaseItem({
     return () => obs.disconnect();
   }, []);
 
-  /* pause/resume youtube when off-screen */
   useEffect(() => {
     const ifr = iframeRef.current;
     if (!ifr || item.type !== "youtube") return;
@@ -151,8 +146,6 @@ function ShowcaseItem({
   const isVideoCard = item.type === "youtube" || item.type === "instagram";
   const isYoutube = item.type === "youtube";
   const embedUrl = isYoutube ? getYouTubeAutoplayUrl(item.src) : null;
-
-  /* stagger reveal delay */
   const delay = Math.min(index * 0.04, 1.2);
 
   return (
@@ -162,7 +155,7 @@ function ShowcaseItem({
       style={{
         opacity: 0,
         transform: "translateY(24px)",
-        animation: `fadeInUp 0.6s cubic-bezier(0.25,0.46,0.45,0.94) ${delay}s forwards`,
+        animation: `heroFade 0.6s cubic-bezier(0.25,0.46,0.45,0.94) ${delay}s forwards`,
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -170,38 +163,33 @@ function ShowcaseItem({
         if (item.src && isVideoCard) setVideo({ url: item.src, title: item.title });
       }}
     >
-      {/* aspect ratio container */}
       <div
-        className="relative w-full overflow-hidden rounded-lg bg-[#111]"
+        className="relative w-full overflow-hidden rounded-xl bg-dew-drop"
         style={{ aspectRatio: item.aspect }}
       >
-        {/* thumbnail or image */}
         {(item.type === "image" || !isYoutube) && item.thumbnail && (
           <img
             src={item.thumbnail}
             alt={item.title}
             className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
               imgLoaded ? "opacity-100" : "opacity-0"
-            } ${isHovered ? "scale-102 brightness-110" : "brightness-90 saturate-90"}`}
-            style={{ filter: isHovered ? "brightness(1.05) saturate(1.05)" : "brightness(0.85) saturate(0.85)" }}
+            }`}
+            style={{ filter: isHovered ? "brightness(1.02)" : "brightness(0.95)" }}
             loading="lazy"
             onLoad={() => setImgLoaded(true)}
           />
         )}
 
-        {/* YouTube autoplay iframe (only when hovered + visible) */}
         {isYoutube && embedUrl && isHovered && visible && (
           <iframe
             ref={iframeRef}
             src={embedUrl}
             className="absolute inset-0 w-full h-full pointer-events-none"
-            style={{ filter: "brightness(1.05)" }}
             allow="autoplay; muted"
             title={item.title}
           />
         )}
 
-        {/* thumbnail fallback for youtube */}
         {isYoutube && item.thumbnail && !(isHovered && visible) && (
           <img
             src={item.thumbnail}
@@ -209,72 +197,67 @@ function ShowcaseItem({
             className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
               imgLoaded ? "opacity-100" : "opacity-0"
             }`}
-            style={{ filter: isHovered ? "brightness(1.05) saturate(1.05)" : "brightness(0.85) saturate(0.85)" }}
+            style={{ filter: "brightness(0.95)" }}
             loading="lazy"
             onLoad={() => setImgLoaded(true)}
           />
         )}
 
-        {/* Document placeholder */}
         {item.type === "document" && !item.thumbnail && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#151515] to-[#0D0D0D]">
+          <div className="absolute inset-0 flex items-center justify-center bg-dew-drop">
             <div className="text-center">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="mx-auto text-white/10 mb-2">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="mx-auto text-charcoal/20 mb-2">
                 <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              <p className="text-[9px] font-sans font-[400] text-white/20 uppercase tracking-[0.15em]">{item.brand}</p>
+              <p className="font-geist font-[400] text-charcoal/30 uppercase" style={{ fontSize: "10px", letterSpacing: "0.1em" }}>{item.brand}</p>
             </div>
           </div>
         )}
 
-        {/* play indicator for video cards */}
         {isVideoCard && !isHovered && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center transition-all duration-300 group-hover:bg-white/20 group-hover:scale-110">
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-cream-paper/80 border border-charcoal/20 flex items-center justify-center transition-all duration-300 group-hover:bg-cream-paper group-hover:scale-110">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="ml-0.5">
-                <path d="M8 5v14l11-7L8 5z" fill="white" />
+                <path d="M8 5v14l11-7L8 5z" fill="#171717" />
               </svg>
             </div>
           </div>
         )}
 
-        {/* hover overlay — project info */}
         <div
-          className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex flex-col justify-end p-4 md:p-5"
+          className="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-charcoal/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex flex-col justify-end p-4 md:p-5"
           style={{ transitionTimingFunction: "cubic-bezier(0.25,0.46,0.45,0.94)" }}
         >
           <div className="transform translate-y-3 group-hover:translate-y-0 transition-transform duration-400" style={{ transitionTimingFunction: "cubic-bezier(0.25,0.46,0.45,0.94)" }}>
             <div className="flex flex-wrap items-center gap-2 mb-1.5">
-              <span className="text-[9px] font-sans font-[500] text-white/70 uppercase tracking-[0.15em]">
+              <span className="font-geist font-[500] text-cream-paper/70 uppercase" style={{ fontSize: "10px", letterSpacing: "0.15em" }}>
                 {item.category}
               </span>
-              <span className="text-[8px] font-sans font-[400] text-white/40">·</span>
-              <span className="text-[9px] font-sans font-[400] text-white/40 uppercase tracking-[0.1em]">
+              <span className="text-cream-paper/40" style={{ fontSize: "9px" }}>·</span>
+              <span className="font-geist font-[400] text-cream-paper/40 uppercase" style={{ fontSize: "10px", letterSpacing: "0.1em" }}>
                 {item.year}
               </span>
             </div>
-            <p className="text-[13px] md:text-[15px] font-display font-[400] text-white leading-[1.2]">
+            <p className="font-gelica font-[400] text-cream-paper leading-[1.2]" style={{ fontSize: "clamp(13px, 1.2vw, 15px)" }}>
               {item.brand}
             </p>
-            <p className="text-[10px] font-sans font-[400] text-white/50 mt-0.5 uppercase tracking-[0.1em]">
+            <p className="font-geist font-[400] text-cream-paper/50 mt-0.5 uppercase" style={{ fontSize: "10px", letterSpacing: "0.1em" }}>
               {item.role}
             </p>
-            <p className="text-[10px] font-sans font-[500] text-white/80 mt-2 uppercase tracking-[0.15em] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <p className="font-geist font-[500] text-cream-paper/80 mt-2 uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ fontSize: "10px", letterSpacing: "0.15em" }}>
               View {isVideoCard ? "Project" : "Case Study"} →
             </p>
           </div>
         </div>
 
-        {/* platform badge (top-left) */}
         {isVideoCard && (
-          <div className="absolute top-3 left-3 px-2 py-0.5 text-[8px] font-sans font-[500] uppercase tracking-[0.15em] rounded bg-black/50 text-white/70 backdrop-blur-sm">
+          <div className="absolute top-3 left-3 px-2 py-0.5 font-geist font-[500] uppercase rounded bg-cream-paper/80 text-charcoal/70 backdrop-blur-sm" style={{ fontSize: "9px", letterSpacing: "0.15em" }}>
             {getPlatformLabel(item.src)}
           </div>
         )}
 
-        {/* duration badge (top-right) */}
         {isVideoCard && (
-          <div className="absolute top-3 right-3 px-2 py-0.5 text-[8px] font-sans font-[400] uppercase tracking-[0.1em] rounded bg-black/50 text-white/50 backdrop-blur-sm">
+          <div className="absolute top-3 right-3 px-2 py-0.5 font-geist font-[400] uppercase rounded bg-cream-paper/80 text-charcoal/50 backdrop-blur-sm" style={{ fontSize: "9px", letterSpacing: "0.1em" }}>
             {getDurationLabel(item.src)}
           </div>
         )}
@@ -291,18 +274,18 @@ export default function ShowcaseWall() {
 
   return (
     <>
-      <section className="py-20 md:py-28" style={{ background: "#050505" }}>
+      <section className="py-20 md:py-28 bg-cream-paper border-t border-charcoal/10">
         <div className="max-w-[1440px] mx-auto px-5 md:px-8">
           <div className="mb-12 md:mb-16">
-            <p className="text-[10px] font-sans font-[500] text-white/30 uppercase tracking-[0.25em]">
+            <p className="font-geist font-[500] text-charcoal/50 uppercase reveal" style={{ fontSize: "12px", letterSpacing: "0.2em" }}>
               The Archive
             </p>
-            <h2 className="text-[32px] md:text-[48px] lg:text-[56px] font-display font-[400] leading-[0.95] tracking-[-0.03em] text-white mt-2 max-w-2xl">
-              Showcase
+            <h2 className="font-gelica font-[500] text-cocoa-ink leading-[1.08] mt-2 reveal reveal-delay-2 lowercase"
+              style={{ fontSize: "clamp(36px, 4vw, 56px)" }}>
+              showcase
             </h2>
           </div>
 
-          {/* masonry grid */}
           <div
             className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 md:gap-5"
             style={{ columnFill: "balance" }}
@@ -314,10 +297,9 @@ export default function ShowcaseWall() {
         </div>
       </section>
 
-      {/* video modal */}
       {video && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-charcoal/95 backdrop-blur-xl"
           onClick={handleClose}
         >
           <div
@@ -326,14 +308,15 @@ export default function ShowcaseWall() {
           >
             <button
               onClick={handleClose}
-              className="absolute -top-12 right-0 text-white/60 hover:text-white text-[12px] font-sans uppercase tracking-[0.15em] bg-transparent border-none cursor-pointer transition-colors z-10"
+              className="absolute -top-12 right-0 text-cream-paper/60 hover:text-cream-paper font-geist uppercase bg-transparent border-none cursor-pointer transition-colors z-10"
+              style={{ fontSize: "12px", letterSpacing: "0.15em" }}
             >
               Close [ESC]
             </button>
-            <p className="text-[13px] font-sans font-[400] text-white/50 mb-3 tracking-[0.02em] truncate pr-20">
+            <p className="font-geist font-[400] text-cream-paper/50 mb-3 truncate pr-20" style={{ fontSize: "13px" }}>
               {video.title}
             </p>
-            <div className="relative aspect-video bg-[#111] rounded-lg overflow-hidden">
+            <div className="relative aspect-video bg-dew-drop rounded-xl overflow-hidden">
               {isEmbeddable(video.url) ? (
                 <iframe
                   src={`https://www.youtube.com/embed/${video.url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/)?.[1] || ""}?rel=0&modestbranding=1&autoplay=1`}
@@ -343,16 +326,17 @@ export default function ShowcaseWall() {
                   allowFullScreen
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#151515] to-[#0D0D0D]">
+                <div className="w-full h-full flex items-center justify-center bg-dew-drop">
                   <div className="text-center">
-                    <p className="text-[13px] font-sans font-[400] text-white/40 mb-4">
+                    <p className="font-geist font-[400] text-charcoal/40 mb-4" style={{ fontSize: "13px" }}>
                       Open on Instagram to view
                     </p>
                     <a
                       href={video.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 text-white text-[11px] font-sans font-[500] uppercase tracking-[0.15em] rounded hover:bg-white/20 transition-all duration-300 no-underline"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-charcoal text-cream-paper font-geist font-[500] uppercase no-underline transition-all duration-300 rounded-xl"
+                      style={{ fontSize: "11px", letterSpacing: "0.15em" }}
                     >
                       Open on Instagram
                     </a>

@@ -18,18 +18,17 @@ export default function FeaturedReel() {
 
   return (
     <>
-      <section className="relative py-20 md:py-28 bg-cinema-black border-t border-white/5">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10">
-          <p className="text-caption font-sans font-[500] text-champagne uppercase tracking-[0.2em] mb-3">
+      <section className="relative py-20 md:py-28 bg-cream-paper border-t border-charcoal/10">
+        <div className="max-w-[1200px] mx-auto px-6 md:px-8">
+          <p className="font-geist font-[500] text-charcoal/50 uppercase mb-3" style={{ fontSize: "11px", letterSpacing: "0.2em" }}>
             Featured Campaign
           </p>
-          <h2 className="text-display md:text-heading-lg font-display font-[400] leading-[0.95] tracking-[-0.04em] text-cinema-white text-balance mb-8 max-w-3xl">
+          <h2 className="font-gelica font-[500] text-cocoa-ink leading-[1.08] mb-8 max-w-3xl lowercase"
+            style={{ fontSize: "clamp(36px, 4vw, 56px)" }}>
             {firstFeature.brand}
           </h2>
 
-          {/* 16:9 cinematic player */}
-          <div className="relative aspect-video rounded-sm overflow-hidden bg-smoke group">
-            {/* Thumbnail */}
+          <div className="relative aspect-video rounded-xl overflow-hidden bg-dew-drop group">
             {!playing && firstFeature.thumbnail && (
               <img
                 src={firstFeature.thumbnail}
@@ -40,47 +39,43 @@ export default function FeaturedReel() {
               />
             )}
 
-            {/* Gradient overlay */}
             {!playing && (
-              <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/80 via-cinema-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 via-charcoal/10 to-transparent" />
             )}
 
-            {/* Info overlay */}
             {!playing && (
               <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-10">
                 <div className="flex flex-wrap items-center gap-3 mb-3">
-                  <span className="text-[10px] font-sans font-[500] text-champagne uppercase tracking-[0.15em] px-2 py-1 rounded bg-cinema-black/40 backdrop-blur-sm">
+                  <span className="font-geist font-[500] text-cream-paper uppercase px-2 py-1 rounded bg-cream-paper/20 backdrop-blur-sm" style={{ fontSize: "10px", letterSpacing: "0.15em" }}>
                     {getPlatformLabel(firstFeature.url)}
                   </span>
-                  <span className="text-[10px] font-sans font-[400] text-cinema-white/50 uppercase tracking-[0.1em]">
+                  <span className="font-geist font-[400] text-cream-paper/50 uppercase" style={{ fontSize: "10px", letterSpacing: "0.1em" }}>
                     {firstFeature.category}
                   </span>
-                  <span className="text-[10px] font-sans font-[400] text-cinema-white/50 uppercase tracking-[0.1em]">
+                  <span className="font-geist font-[400] text-cream-paper/50 uppercase" style={{ fontSize: "10px", letterSpacing: "0.1em" }}>
                     {firstFeature.year}
                   </span>
                 </div>
-                <h3 className="text-heading-sm md:text-heading font-display font-[400] text-cinema-white leading-[1.1]">
+                <h3 className="font-gelica font-[400] text-cream-paper leading-[1.1]" style={{ fontSize: "clamp(20px, 2.2vw, 28px)" }}>
                   {firstFeature.title}
                 </h3>
-                <p className="text-body-sm font-sans font-[400] text-cinema-white/50 mt-1">
+                <p className="font-geist font-[400] text-cream-paper/50 mt-1" style={{ fontSize: "13px" }}>
                   {firstFeature.role}
                 </p>
               </div>
             )}
 
-            {/* Play button */}
             {!playing && (
               <button
                 onClick={() => setPlaying(true)}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-16 h-16 md:w-20 md:h-20 rounded-full bg-champagne/90 hover:bg-champagne transition-all duration-300 flex items-center justify-center cursor-pointer border-none group/btn"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-16 h-16 md:w-20 md:h-20 rounded-full bg-cream-paper/90 hover:bg-cream-paper transition-all duration-300 flex items-center justify-center cursor-pointer border border-charcoal/20 group/btn"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="ml-1">
-                  <path d="M8 5v14l11-7L8 5z" fill="#0B0B0B" />
+                  <path d="M8 5v14l11-7L8 5z" fill="#171717" />
                 </svg>
               </button>
             )}
 
-            {/* Embedded player */}
             {playing && embedUrl && (
               <iframe
                 src={embedUrl}
@@ -91,11 +86,11 @@ export default function FeaturedReel() {
               />
             )}
 
-            {/* Watch full button */}
             {!playing && (
               <button
                 onClick={() => setPlaying(true)}
-                className="absolute bottom-6 right-6 md:bottom-10 md:right-10 z-10 inline-flex items-center gap-2 px-5 py-2.5 bg-cinema-black/60 backdrop-blur-sm text-cinema-white text-caption font-sans font-[500] uppercase tracking-[0.15em] rounded border border-white/10 hover:bg-cinema-black/80 transition-all duration-300 cursor-pointer"
+                className="absolute bottom-6 right-6 md:bottom-10 md:right-10 z-10 inline-flex items-center gap-2 px-5 py-2.5 bg-cream-paper/80 backdrop-blur-sm text-charcoal font-geist font-[500] uppercase rounded-xl border border-charcoal/10 hover:bg-cream-paper transition-all duration-300 cursor-pointer"
+                style={{ fontSize: "10px", letterSpacing: "0.15em" }}
               >
                 Watch Full Campaign
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">

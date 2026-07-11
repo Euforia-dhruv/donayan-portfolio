@@ -37,10 +37,10 @@ export default function Testimonials() {
   return (
     <section
       ref={sectionRef}
-      className="py-20 md:py-32 bg-cinema-black border-t border-white/5 reveal"
+      className="py-20 md:py-32 bg-cream-paper border-t border-charcoal/10 reveal"
     >
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10">
-        <p className="text-caption font-sans font-[500] text-champagne uppercase tracking-[0.2em] mb-4">
+      <div className="max-w-[1200px] mx-auto px-6 md:px-8">
+        <p className="font-geist font-[500] text-charcoal/50 uppercase mb-4" style={{ fontSize: "11px", letterSpacing: "0.2em" }}>
           Testimonials
         </p>
 
@@ -55,10 +55,11 @@ export default function Testimonials() {
               }`}
               style={i === active ? { position: "relative" } : {}}
             >
-              <p className="text-heading-lg md:text-display font-display font-[400] text-cinema-white leading-[1.1] tracking-[-0.03em] text-balance">
+              <p className="font-gelica font-[500] text-cocoa-ink leading-[1.08] text-balance lowercase"
+                style={{ fontSize: "clamp(28px, 3.5vw, 48px)" }}>
                 &ldquo;{t.quote}&rdquo;
               </p>
-              <p className="mt-6 text-body-sm font-sans font-[400] text-cinema-white/50 uppercase tracking-[0.1em]">
+              <p className="mt-6 font-geist font-[400] text-charcoal/50 uppercase" style={{ fontSize: "12px", letterSpacing: "0.1em" }}>
                 — {t.attribution}
               </p>
             </div>
@@ -70,9 +71,10 @@ export default function Testimonials() {
             <button
               key={i}
               onClick={() => setActive(i)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer border-none ${
-                i === active ? "bg-champagne w-8" : "bg-white/20"
+              className={`transition-all duration-300 cursor-pointer border-none rounded-full ${
+                i === active ? "bg-charcoal" : "bg-charcoal/20"
               }`}
+              style={{ width: i === active ? "24px" : "8px", height: "8px" }}
             />
           ))}
         </div>

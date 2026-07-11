@@ -33,7 +33,7 @@ export default function VideoModal({ url, title, onClose }: VideoModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-cinema-black/95 backdrop-blur-xl"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-charcoal/95 backdrop-blur-xl"
       onClick={onClose}
     >
       <div
@@ -42,19 +42,20 @@ export default function VideoModal({ url, title, onClose }: VideoModalProps) {
       >
         <button
           onClick={onClose}
-          className="absolute -top-12 right-0 text-cinema-white/60 hover:text-cinema-white text-body-sm font-sans uppercase tracking-[0.15em] bg-transparent border-none cursor-pointer transition-colors z-10"
+          className="absolute -top-12 right-0 text-cream-paper/60 hover:text-cream-paper font-geist uppercase bg-transparent border-none cursor-pointer transition-colors z-10"
+          style={{ fontSize: "13px", letterSpacing: "0.15em" }}
         >
           Close [ESC]
         </button>
 
-        <p className="text-body-sm font-sans font-[400] text-cinema-white/50 mb-3 tracking-[0.02em] truncate pr-20">
+        <p className="font-geist font-[400] text-cream-paper/50 mb-3 truncate pr-20" style={{ fontSize: "14px" }}>
           {title}
         </p>
 
-        <div className="relative aspect-video bg-smoke rounded-sm overflow-hidden">
+        <div className="relative aspect-video bg-dew-drop rounded-xl overflow-hidden">
           {!loaded && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-8 h-8 border-2 border-champagne/30 border-t-champagne rounded-full animate-spin" />
+              <div className="w-8 h-8 border-2 border-charcoal/20 border-t-charcoal rounded-full animate-spin" />
             </div>
           )}
           {embedUrl && (

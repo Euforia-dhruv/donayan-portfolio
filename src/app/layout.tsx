@@ -20,8 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="bg-cinema-black text-cinema-white font-sans antialiased film-grain">
-        <div className="vignette" />
+      <body className="bg-cream-paper text-charcoal font-gelica antialiased">
         <Navigation />
         <main>{children}</main>
         <Footer />

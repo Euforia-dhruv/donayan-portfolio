@@ -1,4 +1,4 @@
-import CinematicHero from "@/components/CinematicHero";
+import Hero from "@/components/Hero";
 import Brands from "@/components/Brands";
 import FeaturedReel from "@/components/FeaturedReel";
 import ProductionWall from "@/components/ProductionWall";
@@ -13,7 +13,7 @@ import ContactSection from "@/components/ContactSection";
 export default function Home() {
   return (
     <>
-      <CinematicHero />
+      <Hero />
       <Brands />
       <FeaturedReel />
       <ProductionWall />

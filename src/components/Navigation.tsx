@@ -25,24 +25,26 @@ export default function Navigation() {
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "bg-cinema-black/80 backdrop-blur-xl border-b border-white/5"
+            ? "bg-cream-paper/80 backdrop-blur-[9px] border-b border-charcoal/10"
             : "bg-transparent"
         }`}
       >
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10 flex items-center justify-between h-20 md:h-24">
+        <div className="max-w-[1200px] mx-auto px-6 md:px-8 flex items-center justify-between h-20 md:h-24">
           <a
             href="#"
-            className="text-body-sm font-sans font-[500] text-cinema-white no-underline tracking-[0.15em] uppercase opacity-70 hover:opacity-100 transition-opacity"
+            className="font-geist font-[500] text-charcoal no-underline"
+            style={{ fontSize: "15px", letterSpacing: "0" }}
           >
             Donayan Sahdev
           </a>
 
-          <div className="hidden md:flex items-center gap-10">
+          <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
               <a
                 key={item.label}
                 href={item.href}
-                className="text-caption font-sans font-[500] text-cinema-white/60 no-underline uppercase tracking-[0.15em] hover:text-cinema-white transition-all duration-300"
+                className="font-geist font-[400] text-charcoal/60 no-underline hover:text-charcoal transition-colors"
+                style={{ fontSize: "15px", letterSpacing: "0" }}
               >
                 {item.label}
               </a>
@@ -51,7 +53,8 @@ export default function Navigation() {
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden text-caption font-sans font-[500] text-cinema-white uppercase tracking-[0.15em] bg-transparent border border-white/20 px-4 py-2 rounded cursor-pointer hover:bg-white/5 transition-colors"
+            className="md:hidden font-geist font-[500] text-charcoal no-underline bg-transparent border border-charcoal/30 px-4 py-2 cursor-pointer hover:border-charcoal/60 transition-colors"
+            style={{ fontSize: "14px", letterSpacing: "0", borderRadius: "20px" }}
           >
             {menuOpen ? "Close" : "Menu"}
           </button>
@@ -59,13 +62,14 @@ export default function Navigation() {
       </nav>
 
       {menuOpen && (
-        <div className="fixed inset-0 z-40 bg-cinema-black/95 backdrop-blur-xl flex items-center justify-center">
-          <div className="flex flex-col items-center gap-8">
+        <div className="fixed inset-0 z-40 bg-cream-paper flex items-center justify-center">
+          <div className="flex flex-col items-center gap-10">
             {navItems.map((item) => (
               <a
                 key={item.label}
                 href={item.href}
-                className="text-heading-sm font-sans font-[300] text-cinema-white no-underline tracking-[0.1em] uppercase hover:text-champagne transition-colors"
+                className="font-gelica font-[500] text-cocoa-ink no-underline"
+                style={{ fontSize: "36px", letterSpacing: "0" }}
                 onClick={() => setMenuOpen(false)}
               >
                 {item.label}
