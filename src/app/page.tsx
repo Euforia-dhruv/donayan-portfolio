@@ -1,8 +1,6 @@
 import Hero from "@/components/Hero";
 import Brands from "@/components/Brands";
 import FeaturedReel from "@/components/FeaturedReel";
-import ProductionWall from "@/components/ProductionWall";
-import ShowcaseWall from "@/components/ShowcaseWall";
 import CampaignCarousel from "@/components/CampaignCarousel";
 import FeaturedProductions from "@/components/FeaturedProductions";
 import AboutSection from "@/components/AboutSection";
@@ -16,8 +14,6 @@ export default function Home() {
       <Hero />
       <Brands />
       <FeaturedReel />
-      <ProductionWall />
-      <ShowcaseWall />
       <CampaignCarousel />
       <FeaturedProductions />
       <AboutSection />
