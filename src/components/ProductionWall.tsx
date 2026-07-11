@@ -31,8 +31,60 @@ const videoCardLabels = new Set([
   "CREW MOMENT", "CAMERA SETUP", "LIGHTING SETUP",
 ]);
 
+const cardThumbnails: Record<string, string> = {};
+galleryCards.forEach((c) => {
+  if ((c as any).thumb) cardThumbnails[c.id] = (c as any).thumb;
+});
 
+const documentWallCards: CardDim[] = [
+  { id: "doc-sprite", label: "PPM DECK", sub: "Sprite · Heat Happens", doc: "/PPM Decks/Sprite PPM.pdf", brand: "Sprite", year: "2024", x: 0, y: 0, w: 200, h: 250, rotation: 0, z: 0 },
+  { id: "doc-centrum", label: "PPM DECK", sub: "Centrum Claims", doc: "/PPM Decks/Centrum Claim PPM Deck - 10 Oct (1).pdf", brand: "Centrum", year: "2025", x: 0, y: 0, w: 220, h: 180, rotation: 0, z: 0 },
+  { id: "doc-ax", label: "PPM DECK", sub: "Armani Exchange SS'25", doc: "/PPM Decks/AX Celebrity Shoot SS_25.pdf", brand: "Armani Exchange", year: "2025", x: 0, y: 0, w: 170, h: 220, rotation: 0, z: 0 },
+  { id: "doc-idee", label: "PPM DECK", sub: "IDÉE Campaign", doc: "/PPM Decks/IDEE PPM.pdf", brand: "IDÉE", year: "2025", x: 0, y: 0, w: 190, h: 260, rotation: 0, z: 0 },
+  { id: "doc-hdfc", label: "POST PPM DECK", sub: "HDFC KVS", doc: "/PPM Decks/HDFC KVS Post PPM Deck.pdf", brand: "HDFC", year: "2024", x: 0, y: 0, w: 210, h: 280, rotation: 0, z: 0 },
+  { id: "doc-kinder", label: "PPM DECK", sub: "Kinder Print Shoot", doc: "/PPM Decks/Kinder Print Shoot.pdf", brand: "Kinder", year: "2025", x: 0, y: 0, w: 230, h: 190, rotation: 0, z: 0 },
+  { id: "doc-fossil", label: "PPM DECK", sub: "Fossil SS'25", doc: "/Treatment Notes/Fossil - SS_25 - PPM DECK.pdf", brand: "Fossil", year: "2024", x: 0, y: 0, w: 200, h: 260, rotation: 0, z: 0 },
+  { id: "doc-godrej", label: "DIRECTOR'S NOTE", sub: "Godrej Capital", doc: "/Treatment Notes/Godrej Capital - Director_s Note.pdf", brand: "Godrej Capital", year: "2025", x: 0, y: 0, w: 180, h: 240, rotation: 0, z: 0 },
+  { id: "doc-ponds", label: "TREATMENT NOTES", sub: "Pond's BB Cream", doc: "/Treatment Notes/Ponds  BB cream TN.pdf", brand: "Pond's", year: "2025", x: 0, y: 0, w: 170, h: 230, rotation: 0, z: 0 },
+  { id: "doc-tanishq", label: "CASTING PDF", sub: "Tanishq Rivaah", doc: "/Others/Tanishq Casting.pdf", brand: "Tanishq", year: "2024", x: 0, y: 0, w: 240, h: 190, rotation: 0, z: 0 },
+  { id: "doc-lifestyle", label: "CASTING PDF", sub: "Lifestyle SS'24 Bangkok", doc: "/Others/Lifestyle SS_24 Cast Batch 5 (Bangkok).pdf", brand: "Lifestyle", year: "2024", x: 0, y: 0, w: 160, h: 200, rotation: 0, z: 0 },
+  { id: "doc-murgi-1", label: "FILM PITCH", sub: "Murgi", doc: "/Movie - OTT pitches/Murgi.pdf", brand: "Murgi", year: "2024", x: 0, y: 0, w: 210, h: 190, rotation: 0, z: 0 },
+  { id: "doc-murgi-2", label: "FILM PITCH", sub: "Murgi", doc: "/Movie - OTT pitches/Murgi.pdf", brand: "Murgi", year: "2024", x: 0, y: 0, w: 190, h: 240, rotation: 0, z: 0 },
+  { id: "doc-pathan-1", label: "SERIES PITCH", sub: "Pathan Brothers", doc: "/Movie - OTT pitches/Pathan Brothers Series.pdf", brand: "Pathan Brothers", year: "2024", x: 0, y: 0, w: 180, h: 250, rotation: 0, z: 0 },
+  { id: "doc-pathan-2", label: "SERIES PITCH", sub: "Pathan Brothers", doc: "/Movie - OTT pitches/Pathan Brothers Series.pdf", brand: "Pathan Brothers", year: "2024", x: 0, y: 0, w: 200, h: 260, rotation: 0, z: 0 },
+  { id: "doc-artkalaa-1", label: "PITCH DECK", sub: "Artkalaa", doc: "/Marketing Pitch/Artkalaa Pitch Deck.pdf", brand: "Artkalaa", year: "2024", x: 0, y: 0, w: 210, h: 180, rotation: 0, z: 0 },
+  { id: "doc-artkalaa-2", label: "BRAND STRATEGY", sub: "Artkalaa", doc: "/Marketing Pitch/Artkalaa Pitch Deck.pdf", brand: "Artkalaa", year: "2024", x: 0, y: 0, w: 190, h: 230, rotation: 0, z: 0 },
+  { id: "doc-oool", label: "DIGITAL STRATEGY", sub: "OOOL", doc: "/Marketing Pitch/OOOL Digital Strategy.pdf", brand: "OOOL", year: "2024", x: 0, y: 0, w: 220, h: 180, rotation: 0, z: 0 },
+  { id: "doc-kitser", label: "SALE CAMPAIGN", sub: "Kitser August Sale", doc: "/Marketing Pitch/Kitser August Sale.pdf", brand: "Kitser", year: "2024", x: 0, y: 0, w: 200, h: 250, rotation: 0, z: 0 },
+  { id: "doc-deva", label: "MARKETING PITCH", sub: "Deva's Khayal", doc: "/Marketing Pitch/Deva_s Khayal.pdf", brand: "Deva's Khayal", year: "2024", x: 0, y: 0, w: 230, h: 200, rotation: 0, z: 0 },
+  { id: "doc-justbe", label: "BRAND CAMPAIGN", sub: "Just Be", doc: "/Marketing Pitch/Just Be.pdf", brand: "Just Be", year: "2024", x: 0, y: 0, w: 180, h: 170, rotation: 0, z: 0 },
+  { id: "doc-bubbling", label: "MARKETING PLAN", sub: "The Bubbling Fish & Nirala", doc: "/Marketing Pitch/The Bubbling Fish and Nirala - The Plan.pdf", brand: "The Bubbling Fish & Nirala", year: "2024", x: 0, y: 0, w: 210, h: 270, rotation: 0, z: 0 },
+];
 
+const docThumbnails: Record<string, string> = {
+  "doc-sprite": "/PPM Decks/Sprite.png",
+  "doc-centrum": "/PPM Decks/Centrum.png",
+  "doc-ax": "/PPM Decks/AX.png",
+  "doc-idee": "/PPM Decks/IDEE.png",
+  "doc-hdfc": "/PPM Decks/HDFC.png",
+  "doc-kinder": "/PPM Decks/Kinder.png",
+  "doc-fossil": "/Treatment Notes/Fossil.png",
+  "doc-godrej": "/Treatment Notes/godrej.png",
+  "doc-ponds": "/Treatment Notes/ponds.png",
+  "doc-tanishq": "/Others/Tanishq.png",
+  "doc-lifestyle": "/Others/lifestyle.png",
+  "doc-murgi-1": "/Movie - OTT pitches/Murgi.png",
+  "doc-murgi-2": "/Movie - OTT pitches/Murgi 1.png",
+  "doc-pathan-1": "/Movie - OTT pitches/Pathan 1.png",
+  "doc-pathan-2": "/Movie - OTT pitches/Pathan 2.png",
+  "doc-artkalaa-1": "/Marketing Pitch/artkalaa.png",
+  "doc-artkalaa-2": "/Marketing Pitch/artkalaa 2.png",
+  "doc-oool": "/Marketing Pitch/oool.png",
+  "doc-kitser": "/Marketing Pitch/kister.png",
+  "doc-deva": "/Marketing Pitch/Deva.png",
+  "doc-justbe": "/Marketing Pitch/Just be.png",
+  "doc-bubbling": "/Marketing Pitch/the.png",
+};
 const localVideos = [
   { src: "/videos/Skinn_Noura_a_gift_from_you,_to_you_💕_Skinn_Titan_1080p,_h264.mp4", brand: "Skinn Titan", label: "Beauty Campaign" },
   { src: "/videos/With_good_always_comes_bad_With_growth_always_comes_pain_You_cannot.mp4", brand: "Motivational", label: "Brand Film" },
@@ -115,13 +167,22 @@ export default function ProductionWall() {
 
   const cards: CardDim[] = useMemo(() => {
     const taken: { x: number; y: number }[] = [];
-    return galleryCards.map((c, i) => {
+    const all: CardDim[] = [];
+    galleryCards.forEach((c, i) => {
       let x: number, y: number, attempts = 0;
       do { x = rand(1, 72); y = rand(2, 62); attempts++; }
       while (attempts < 50 && taken.some((p) => Math.abs(p.x - x) < 9 && Math.abs(p.y - y) < 9));
       taken.push({ x, y });
-      return { id: c.id, label: c.label, sub: c.sub, doc: c.doc, brand: c.brand, year: c.year, x, y, w: c.width, h: c.height, rotation: rand(-3, 3), z: 10 + i };
+      all.push({ id: c.id, label: c.label, sub: c.sub, doc: c.doc, brand: c.brand, year: c.year, x, y, w: c.width, h: c.height, rotation: rand(-3, 3), z: 10 + i });
     });
+    documentWallCards.forEach((c, i) => {
+      let x: number, y: number, attempts = 0;
+      do { x = rand(1, 72); y = rand(2, 62); attempts++; }
+      while (attempts < 50 && taken.some((p) => Math.abs(p.x - x) < 9 && Math.abs(p.y - y) < 9));
+      taken.push({ x, y });
+      all.push({ ...c, x, y, rotation: rand(-3, 3), z: 10 + galleryCards.length + i });
+    });
+    return all;
   }, []);
 
   useEffect(() => {
@@ -191,6 +252,10 @@ export default function ProductionWall() {
                       />
                     ) : thumb ? (
                       <img src={thumb} alt={card.brand} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500" loading="lazy" />
+                    ) : cardThumbnails[card.id] ? (
+                      <img src={cardThumbnails[card.id]} alt={card.brand} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500" loading="lazy" />
+                    ) : docThumbnails[card.id] ? (
+                      <img src={docThumbnails[card.id]} alt={card.brand} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500" loading="lazy" />
                     ) : null}
 
                     <div className="absolute inset-0 bg-gradient-to-br from-cinema-black/70 via-cinema-black/30 to-cinema-black/70 pointer-events-none" />

@@ -67,14 +67,29 @@ const localFiles: ShowcaseProject[] = localVideoFiles.map((f, i) => ({
   aspect: f.aspect,
 }));
 
-const marketingPitches: ShowcaseProject[] = [
-  { id: "pitch-artkalaa-1", title: "Pitch Deck", client: "Artkalaa", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/artkalaa.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Artkalaa Pitch Deck.pdf" },
-  { id: "pitch-artkalaa-2", title: "Brand Strategy", client: "Artkalaa", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/artkalaa 2.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Artkalaa Pitch Deck.pdf" },
-  { id: "pitch-oool", title: "Digital Strategy", client: "OOOL", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/oool.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/OOOL Digital Strategy.pdf" },
-  { id: "pitch-kitser", title: "August Sale", client: "Kitser", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/kister.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Kitser August Sale.pdf" },
-  { id: "pitch-deva", title: "Marketing Pitch", client: "Deva's Khayal", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/Deva.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Deva_s Khayal.pdf" },
-  { id: "pitch-justbe", title: "Brand Campaign", client: "Just Be", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/Just be.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Just Be.pdf" },
-  { id: "pitch-bubbling", title: "Marketing Plan", client: "The Bubbling Fish & Nirala", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/the.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/The Bubbling Fish and Nirala - The Plan.pdf" },
+const documentProjects: ShowcaseProject[] = [
+  { id: "doc-sprite", title: "Heat Happens", client: "Sprite", year: "2024", type: "Document", platform: null, thumbnail: "/PPM Decks/Sprite.png", video: "", aspect: "4:5", doc: "/PPM Decks/Sprite PPM.pdf" },
+  { id: "doc-centrum", title: "Claims Campaign", client: "Centrum", year: "2025", type: "Document", platform: null, thumbnail: "/PPM Decks/Centrum.png", video: "", aspect: "4:5", doc: "/PPM Decks/Centrum Claim PPM Deck - 10 Oct (1).pdf" },
+  { id: "doc-ax", title: "Celebrity Shoot SS'25", client: "Armani Exchange", year: "2025", type: "Document", platform: null, thumbnail: "/PPM Decks/AX.png", video: "", aspect: "4:5", doc: "/PPM Decks/AX Celebrity Shoot SS_25.pdf" },
+  { id: "doc-idee", title: "IDEE Campaign", client: "IDÉE", year: "2025", type: "Document", platform: null, thumbnail: "/PPM Decks/IDEE.png", video: "", aspect: "4:5", doc: "/PPM Decks/IDEE PPM.pdf" },
+  { id: "doc-hdfc", title: "KVS Campaign", client: "HDFC", year: "2024", type: "Document", platform: null, thumbnail: "/PPM Decks/HDFC.png", video: "", aspect: "4:5", doc: "/PPM Decks/HDFC KVS Post PPM Deck.pdf" },
+  { id: "doc-kinder", title: "Print Shoot", client: "Kinder", year: "2025", type: "Document", platform: null, thumbnail: "/PPM Decks/Kinder.png", video: "", aspect: "4:5", doc: "/PPM Decks/Kinder Print Shoot.pdf" },
+  { id: "doc-fossil", title: "SS'25 PPM Deck", client: "Fossil", year: "2024", type: "Document", platform: null, thumbnail: "/Treatment Notes/Fossil.png", video: "", aspect: "4:5", doc: "/Treatment Notes/Fossil - SS_25 - PPM DECK.pdf" },
+  { id: "doc-godrej", title: "Director's Note", client: "Godrej Capital", year: "2025", type: "Document", platform: null, thumbnail: "/Treatment Notes/godrej.png", video: "", aspect: "4:5", doc: "/Treatment Notes/Godrej Capital - Director_s Note.pdf" },
+  { id: "doc-ponds", title: "BB Cream Treatment", client: "Pond's", year: "2025", type: "Document", platform: null, thumbnail: "/Treatment Notes/ponds.png", video: "", aspect: "4:5", doc: "/Treatment Notes/Ponds  BB cream TN.pdf" },
+  { id: "doc-tanishq", title: "Rivaah Casting", client: "Tanishq", year: "2024", type: "Document", platform: null, thumbnail: "/Others/Tanishq.png", video: "", aspect: "4:5", doc: "/Others/Tanishq Casting.pdf" },
+  { id: "doc-lifestyle", title: "SS'24 Casting Bangkok", client: "Lifestyle", year: "2024", type: "Document", platform: null, thumbnail: "/Others/lifestyle.png", video: "", aspect: "4:5", doc: "/Others/Lifestyle SS_24 Cast Batch 5 (Bangkok).pdf" },
+  { id: "doc-murgi-1", title: "Film Pitch", client: "Murgi", year: "2024", type: "Document", platform: null, thumbnail: "/Movie - OTT pitches/Murgi.png", video: "", aspect: "4:5", doc: "/Movie - OTT pitches/Murgi.pdf" },
+  { id: "doc-murgi-2", title: "Film Pitch", client: "Murgi", year: "2024", type: "Document", platform: null, thumbnail: "/Movie - OTT pitches/Murgi 1.png", video: "", aspect: "4:5", doc: "/Movie - OTT pitches/Murgi.pdf" },
+  { id: "doc-pathan-1", title: "Series Pitch", client: "Pathan Brothers", year: "2024", type: "Document", platform: null, thumbnail: "/Movie - OTT pitches/Pathan 1.png", video: "", aspect: "4:5", doc: "/Movie - OTT pitches/Pathan Brothers Series.pdf" },
+  { id: "doc-pathan-2", title: "Series Pitch", client: "Pathan Brothers", year: "2024", type: "Document", platform: null, thumbnail: "/Movie - OTT pitches/Pathan 2.png", video: "", aspect: "4:5", doc: "/Movie - OTT pitches/Pathan Brothers Series.pdf" },
+  { id: "doc-artkalaa-1", title: "Pitch Deck", client: "Artkalaa", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/artkalaa.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Artkalaa Pitch Deck.pdf" },
+  { id: "doc-artkalaa-2", title: "Brand Strategy", client: "Artkalaa", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/artkalaa 2.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Artkalaa Pitch Deck.pdf" },
+  { id: "doc-oool", title: "Digital Strategy", client: "OOOL", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/oool.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/OOOL Digital Strategy.pdf" },
+  { id: "doc-kitser", title: "August Sale", client: "Kitser", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/kister.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Kitser August Sale.pdf" },
+  { id: "doc-deva", title: "Marketing Pitch", client: "Deva's Khayal", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/Deva.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Deva_s Khayal.pdf" },
+  { id: "doc-justbe", title: "Brand Campaign", client: "Just Be", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/Just be.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/Just Be.pdf" },
+  { id: "doc-bubbling", title: "Marketing Plan", client: "The Bubbling Fish & Nirala", year: "2024", type: "Document", platform: null, thumbnail: "/Marketing Pitch/the.png", video: "", aspect: "4:5", doc: "/Marketing Pitch/The Bubbling Fish and Nirala - The Plan.pdf" },
 ];
 
 function buildProjects(): ShowcaseProject[] {
@@ -103,14 +118,14 @@ function buildProjects(): ShowcaseProject[] {
     items.push(f);
   });
 
-  marketingPitches.forEach((p) => {
+  documentProjects.forEach((p) => {
     items.push(p);
   });
 
   galleryCards.forEach((c) => {
     const matched = archive.find((a) => a.brand.toLowerCase() === c.brand.toLowerCase() && a.url);
     if (matched && seen.has(matched.url.toLowerCase())) return;
-    const existingDoc = marketingPitches.find((p) => p.client.toLowerCase() === c.brand.toLowerCase());
+    const existingDoc = documentProjects.find((p) => p.client.toLowerCase() === c.brand.toLowerCase());
     if (existingDoc) return;
     items.push({
       id: `wall-${c.id}`,
@@ -119,7 +134,7 @@ function buildProjects(): ShowcaseProject[] {
       year: c.year,
       type: "Document",
       platform: null,
-      thumbnail: matched ? getYouTubeThumbnail(matched.url) || "" : "",
+      thumbnail: (c as any).thumb || (matched ? getYouTubeThumbnail(matched.url) || "" : ""),
       video: matched?.url || "",
       aspect: "4:5",
       doc: c.doc,
