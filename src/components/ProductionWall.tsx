@@ -31,25 +31,7 @@ const videoCardLabels = new Set([
   "CREW MOMENT", "CAMERA SETUP", "LIGHTING SETUP",
 ]);
 
-const pitchThumbnails: Record<string, string> = {
-  "pitch-artkalaa-1": "/Marketing Pitch/artkalaa.png",
-  "pitch-artkalaa-2": "/Marketing Pitch/artkalaa 2.png",
-  "pitch-oool": "/Marketing Pitch/oool.png",
-  "pitch-kitser": "/Marketing Pitch/kister.png",
-  "pitch-deva": "/Marketing Pitch/Deva.png",
-  "pitch-justbe": "/Marketing Pitch/Just be.png",
-  "pitch-bubbling": "/Marketing Pitch/the.png",
-};
 
-const marketingPitchCards: CardDim[] = [
-  { id: "pitch-artkalaa-1", label: "PITCH DECK", sub: "Artkalaa", doc: "/Marketing Pitch/Artkalaa Pitch Deck.pdf", brand: "Artkalaa", year: "2024", x: 0, y: 0, w: 210, h: 280, rotation: 0, z: 0 },
-  { id: "pitch-artkalaa-2", label: "BRAND STRATEGY", sub: "Artkalaa", doc: "/Marketing Pitch/Artkalaa Pitch Deck.pdf", brand: "Artkalaa", year: "2024", x: 0, y: 0, w: 190, h: 250, rotation: 0, z: 0 },
-  { id: "pitch-oool", label: "DIGITAL STRATEGY", sub: "OOOL", doc: "/Marketing Pitch/OOOL Digital Strategy.pdf", brand: "OOOL", year: "2024", x: 0, y: 0, w: 220, h: 280, rotation: 0, z: 0 },
-  { id: "pitch-kitser", label: "SALE CAMPAIGN", sub: "Kitser August Sale", doc: "/Marketing Pitch/Kitser August Sale.pdf", brand: "Kitser", year: "2024", x: 0, y: 0, w: 200, h: 260, rotation: 0, z: 0 },
-  { id: "pitch-deva", label: "MARKETING PITCH", sub: "Deva's Khayal", doc: "/Marketing Pitch/Deva_s Khayal.pdf", brand: "Deva's Khayal", year: "2024", x: 0, y: 0, w: 230, h: 300, rotation: 0, z: 0 },
-  { id: "pitch-justbe", label: "BRAND CAMPAIGN", sub: "Just Be", doc: "/Marketing Pitch/Just Be.pdf", brand: "Just Be", year: "2024", x: 0, y: 0, w: 180, h: 240, rotation: 0, z: 0 },
-  { id: "pitch-bubbling", label: "MARKETING PLAN", sub: "The Bubbling Fish & Nirala", doc: "/Marketing Pitch/The Bubbling Fish and Nirala - The Plan.pdf", brand: "The Bubbling Fish & Nirala", year: "2024", x: 0, y: 0, w: 240, h: 300, rotation: 0, z: 0 },
-];
 
 const localVideos = [
   { src: "/videos/Skinn_Noura_a_gift_from_you,_to_you_💕_Skinn_Titan_1080p,_h264.mp4", brand: "Skinn Titan", label: "Beauty Campaign" },
@@ -133,22 +115,13 @@ export default function ProductionWall() {
 
   const cards: CardDim[] = useMemo(() => {
     const taken: { x: number; y: number }[] = [];
-    const all: CardDim[] = [];
-    galleryCards.forEach((c, i) => {
+    return galleryCards.map((c, i) => {
       let x: number, y: number, attempts = 0;
       do { x = rand(1, 72); y = rand(2, 62); attempts++; }
       while (attempts < 50 && taken.some((p) => Math.abs(p.x - x) < 9 && Math.abs(p.y - y) < 9));
       taken.push({ x, y });
-      all.push({ id: c.id, label: c.label, sub: c.sub, doc: c.doc, brand: c.brand, year: c.year, x, y, w: c.width, h: c.height, rotation: rand(-3, 3), z: 10 + i });
+      return { id: c.id, label: c.label, sub: c.sub, doc: c.doc, brand: c.brand, year: c.year, x, y, w: c.width, h: c.height, rotation: rand(-3, 3), z: 10 + i };
     });
-    marketingPitchCards.forEach((c, i) => {
-      let x: number, y: number, attempts = 0;
-      do { x = rand(1, 72); y = rand(2, 62); attempts++; }
-      while (attempts < 50 && taken.some((p) => Math.abs(p.x - x) < 9 && Math.abs(p.y - y) < 9));
-      taken.push({ x, y });
-      all.push({ ...c, x, y, rotation: rand(-3, 3), z: 10 + galleryCards.length + i });
-    });
-    return all;
   }, []);
 
   useEffect(() => {
@@ -218,8 +191,6 @@ export default function ProductionWall() {
                       />
                     ) : thumb ? (
                       <img src={thumb} alt={card.brand} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500" loading="lazy" />
-                    ) : pitchThumbnails[card.id] ? (
-                      <img src={pitchThumbnails[card.id]} alt={card.brand} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500" loading="lazy" />
                     ) : null}
 
                     <div className="absolute inset-0 bg-gradient-to-br from-cinema-black/70 via-cinema-black/30 to-cinema-black/70 pointer-events-none" />
