@@ -3,8 +3,6 @@ import FeaturedReel from "@/components/FeaturedReel";
 import ProductionWall from "@/components/ProductionWall";
 import CampaignCarousel from "@/components/CampaignCarousel";
 import FeaturedProductions from "@/components/FeaturedProductions";
-import ReelGallery from "@/components/ReelGallery";
-import BehindCamera from "@/components/BehindCamera";
 import AboutSection from "@/components/AboutSection";
 import Brands from "@/components/Brands";
 import ProductionTimeline from "@/components/ProductionTimeline";
@@ -19,8 +17,6 @@ export default function Home() {
       <ProductionWall />
       <CampaignCarousel />
       <FeaturedProductions />
-      <ReelGallery />
-      <BehindCamera />
       <AboutSection />
       <Brands />
       <ProductionTimeline />

@@ -48,20 +48,6 @@
     "documents": []
   },
   {
-    "id": "archive-4",
-    "title": "Campaign Reel",
-    "brand": "Pink Flower",
-    "year": "2025",
-    "role": "Digital Media & Creative Head",
-    "url": "https://www.instagram.com/reel/DPVoyKujVe4/",
-    "type": "instagram",
-    "category": "Digital & Social Content",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Social media campaign reel for lifestyle brand.",
-    "documents": []
-  },
-  {
     "id": "archive-5",
     "title": "Brand Campaign",
     "brand": "Featured Project",
@@ -73,171 +59,6 @@
     "featured": true,
     "thumbnail": "https://img.youtube.com/vi/F9m4xEH2-dU/hqdefault.jpg",
     "description": "Brand campaign produced end-to-end as Associate Producer.",
-    "documents": []
-  },
-  {
-    "id": "archive-6",
-    "title": "Celebrity Shoot SS'25",
-    "brand": "Armani Exchange",
-    "year": "2025",
-    "role": "Director's Assistant",
-    "url": "https://www.instagram.com/p/Cz-2Mi0C6Bg/",
-    "type": "instagram",
-    "category": "Fashion Campaigns",
-    "featured": true,
-    "thumbnail": "",
-    "description": "Celebrity fashion campaign shoot for Armani Exchange Spring/Summer 2025 featuring Kartik Aaryan.",
-    "documents": [
-      { "label": "PPM Deck", "path": "/assets/docs/AX Celebrity Shoot SS_25.pdf" }
-    ]
-  },
-  {
-    "id": "archive-7",
-    "title": "SS'25 Photoshoot",
-    "brand": "Fossil",
-    "year": "2024",
-    "role": "Director's Assistant",
-    "url": "https://www.instagram.com/reel/C24lSvovffw/",
-    "type": "instagram",
-    "category": "Celebrity Campaigns",
-    "featured": true,
-    "thumbnail": "",
-    "description": "Fossil Spring/Summer 2025 campaign content production.",
-    "documents": [
-      { "label": "PPM Deck", "path": "/assets/docs/Fossil - SS_25 - PPM DECK.pdf" },
-      { "label": "Photoshoot Sheet", "path": "/assets/docs/Fossil SS'26 Photoshoot.xlsx" }
-    ]
-  },
-  {
-    "id": "archive-8",
-    "title": "Skinn Noura",
-    "brand": "Titan",
-    "year": "2024",
-    "role": "Associate Producer",
-    "url": "https://www.instagram.com/reel/C7bjXlbtp4Z/",
-    "type": "instagram",
-    "category": "Celebrity Campaigns",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Titan Skinn Noura fragrance campaign featuring celebrity talent.",
-    "documents": []
-  },
-  {
-    "id": "archive-9",
-    "title": "DIY Campaign",
-    "brand": "Lakmé India",
-    "year": "2023",
-    "role": "Director's Assistant",
-    "url": "https://www.instagram.com/reel/C-MkhP6ykXP/",
-    "type": "instagram",
-    "category": "Fashion Campaigns",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Lakmé DIY beauty tutorial social campaign.",
-    "documents": []
-  },
-  {
-    "id": "archive-10",
-    "title": "Stop Beauty Test",
-    "brand": "Dove",
-    "year": "2024",
-    "role": "Director's Assistant",
-    "url": "https://www.instagram.com/reel/C4h8FkuN7Li/",
-    "type": "instagram",
-    "category": "Digital & Social Content",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Dove's empowering beauty campaign social content.",
-    "documents": []
-  },
-  {
-    "id": "archive-11",
-    "title": "Heat Happens",
-    "brand": "Sprite",
-    "year": "2024",
-    "role": "Director's Assistant",
-    "url": "https://www.instagram.com/reel/C7RB6gGoVDQ/",
-    "type": "instagram",
-    "category": "Commercial Films",
-    "featured": true,
-    "thumbnail": "",
-    "description": "Sprite 'Heat Happens' commercial production.",
-    "documents": [
-      { "label": "PPM Deck", "path": "/assets/docs/Sprite PPM.pdf" }
-    ]
-  },
-  {
-    "id": "archive-12",
-    "title": "Rivaah Collection",
-    "brand": "Tanishq",
-    "year": "2024",
-    "role": "Director's Assistant",
-    "url": "https://www.instagram.com/p/C6BbgzXoyLR/",
-    "type": "instagram",
-    "category": "Celebrity Campaigns",
-    "featured": true,
-    "thumbnail": "",
-    "description": "Tanishq Rivaah bridal jewellery campaign featuring Nayanthara.",
-    "documents": [
-      { "label": "Casting PDF", "path": "/assets/docs/Tanishq Casting.pdf" }
-    ]
-  },
-  {
-    "id": "archive-13",
-    "title": "Fashion Editorial",
-    "brand": "Armani Exchange",
-    "year": "2024",
-    "role": "Director's Assistant",
-    "url": "https://www.instagram.com/p/C2Zu8u2p7di/",
-    "type": "instagram",
-    "category": "Fashion Campaigns",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Armani Exchange fashion editorial campaign stills.",
-    "documents": []
-  },
-  {
-    "id": "archive-14",
-    "title": "Music Video Production",
-    "brand": "Featured Artist",
-    "year": "2024",
-    "role": "Director's Assistant",
-    "url": "https://www.instagram.com/reel/C9Hady1yVDJ/",
-    "type": "instagram",
-    "category": "Music Videos",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Music video production set coordination and assistant direction.",
-    "documents": []
-  },
-  {
-    "id": "archive-15",
-    "title": "KVS Campaign",
-    "brand": "HDFC",
-    "year": "2024",
-    "role": "Project Manager",
-    "url": "https://www.instagram.com/reel/C22aMEvoiJl/",
-    "type": "instagram",
-    "category": "Brand Films",
-    "featured": false,
-    "thumbnail": "",
-    "description": "HDFC KVS (Kisan Vikas Patra) campaign production.",
-    "documents": [
-      { "label": "Post PPM Deck", "path": "/assets/docs/HDFC KVS Post PPM Deck.pdf" }
-    ]
-  },
-  {
-    "id": "archive-16",
-    "title": "Festive Campaign",
-    "brand": "Budweiser",
-    "year": "2023",
-    "role": "Project Manager",
-    "url": "https://www.instagram.com/reel/Cr0W-g_NBpu/",
-    "type": "instagram",
-    "category": "Digital & Social Content",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Budweiser festive season social campaign management.",
     "documents": []
   },
   {
@@ -255,22 +76,6 @@
     "documents": []
   },
   {
-    "id": "archive-18",
-    "title": "Capital Campaign",
-    "brand": "Godrej Capital",
-    "year": "2025",
-    "role": "Director's Assistant",
-    "url": "https://www.instagram.com/p/C2uMuHjJmk_/",
-    "type": "instagram",
-    "category": "Commercial Films",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Godrej Capital brand campaign shoot.",
-    "documents": [
-      { "label": "Director's Note", "path": "/assets/docs/Godrej Capital - Director_s Note.pdf" }
-    ]
-  },
-  {
     "id": "archive-19",
     "title": "Brand Film",
     "brand": "Pink Flower",
@@ -282,34 +87,6 @@
     "featured": false,
     "thumbnail": "https://img.youtube.com/vi/or5XQteDzYU/hqdefault.jpg",
     "description": "Brand film production for lifestyle label.",
-    "documents": []
-  },
-  {
-    "id": "archive-20",
-    "title": "Social Content Series",
-    "brand": "Pink Flower",
-    "year": "2025",
-    "role": "Digital Media & Creative Head",
-    "url": "https://www.instagram.com/reel/CmoS25uhkQG/",
-    "type": "instagram",
-    "category": "Digital & Social Content",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Ongoing social media content series production.",
-    "documents": []
-  },
-  {
-    "id": "archive-21",
-    "title": "Campaign Reel",
-    "brand": "Pink Flower",
-    "year": "2024",
-    "role": "Digital Media & Creative Head",
-    "url": "https://www.instagram.com/reel/ClgcOJiDf2n/",
-    "type": "instagram",
-    "category": "Digital & Social Content",
-    "featured": false,
-    "thumbnail": "",
-    "description": "Seasonal campaign reel for social platforms.",
     "documents": []
   },
   {

@@ -79,14 +79,6 @@ export default function ContactSection() {
               </a>
               <div className="flex gap-4 mt-4">
                 <a
-                  href={siteContent.social.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-body-sm font-sans font-[400] text-cinema-white/40 no-underline uppercase tracking-[0.1em] hover:text-champagne transition-colors"
-                >
-                  Instagram
-                </a>
-                <a
                   href={siteContent.social.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
