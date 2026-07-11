@@ -4,7 +4,7 @@ import { useRef, useEffect, useState, useMemo } from "react";
 import galleryCards from "@/data/gallery-cards.json";
 import archiveData from "@/data/archive.json";
 import VideoModal from "@/components/VideoModal";
-import { getYouTubeThumbnail } from "@/lib/video-utils";
+import { getYouTubeThumbnail, getYouTubeAutoplayUrl } from "@/lib/video-utils";
 
 interface CardDim {
   id: string;
@@ -30,6 +30,72 @@ const videoCardLabels = new Set([
   "CELEBRITY STILL", "FILM STILL", "DIRECTOR'S VIEW",
   "CREW MOMENT", "CAMERA SETUP", "LIGHTING SETUP",
 ]);
+
+const localVideos = [
+  { src: "/videos/Skinn_Noura_a_gift_from_you,_to_you_💕_Skinn_Titan_1080p,_h264.mp4", brand: "Skinn Titan", label: "Beauty Campaign" },
+  { src: "/videos/With_good_always_comes_bad_With_growth_always_comes_pain_You_cannot.mp4", brand: "Motivational", label: "Brand Film" },
+  { src: "/videos/Grade_for_with_@ideeeyewear_with_@quitquick_@sspillai_@jatinkampani.mp4", brand: "IDÉE Eyewear", label: "Fashion Campaign" },
+  { src: "/videos/MADE_FOR_GREEN_LIGHTING_YOUR_PASSIONS_AND_PASSENGERS_#MadeForThis.mp4", brand: "Made For This", label: "Brand Film" },
+  { src: "/videos/The_Night_Manager_Pranks_Guests_Aditya_Roy_Kapoor_Now_Streaming.mp4", brand: "The Night Manager", label: "Promo" },
+  { src: "/videos/Glam_that_has_you_singing_“I_want_it_that_way”😉Slay_your_look_for.mp4", brand: "Fashion Glam", label: "Fashion Campaign" },
+  { src: "/videos/Shake things up with #AXtime#AXSS24 @armaniexchange.mp4", brand: "Armani Exchange", label: "Fashion Campaign" },
+  { src: "/videos/Aapke_har_bade_sapne_ka_bharosemand_saathi!_Aarohi_Loans_for_Women.mp4", brand: "Aarohi Loans", label: "Commercial" },
+];
+
+const youtubeArchive = archiveData.filter((a) => a.url && (a.url.includes("youtube.com") || a.url.includes("youtu.be")));
+
+function VideoReel() {
+  return (
+    <div className="relative z-30 mb-16 md:mb-20 overflow-hidden">
+      <div className="flex gap-4 overflow-x-auto px-8 md:px-10 pb-4 scrollbar-none snap-x snap-mandatory"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {localVideos.map((v, i) => (
+          <div key={i} className="flex-shrink-0 w-[180px] md:w-[220px] snap-start">
+            <div className="relative aspect-[9/16] rounded-xl overflow-hidden bg-smoke border border-cinema-white/5 group">
+              <video
+                src={v.src}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-3 left-3 right-3">
+                  <p className="text-caption font-switzer font-[500] text-cinema-white leading-[1.2] truncate">{v.label}</p>
+                  <p className="text-[10px] font-switzer font-[400] text-cinema-white/50 truncate">{v.brand}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+        {youtubeArchive.map((a, i) => {
+          const embedUrl = getYouTubeAutoplayUrl(a.url);
+          if (!embedUrl) return null;
+          return (
+            <div key={a.id} className="flex-shrink-0 w-[180px] md:w-[220px] snap-start">
+              <div className="relative aspect-[9/16] rounded-xl overflow-hidden bg-smoke border border-cinema-white/5 group">
+                <iframe
+                  src={embedUrl}
+                  className="absolute inset-0 w-full h-full"
+                  allow="autoplay; encrypted-media; picture-in-picture"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <p className="text-caption font-switzer font-[500] text-cinema-white leading-[1.2] truncate">{a.title}</p>
+                    <p className="text-[10px] font-switzer font-[400] text-cinema-white/50 truncate">{a.brand}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default function ProductionWall() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -87,10 +153,13 @@ export default function ProductionWall() {
       >
         <div className="absolute inset-0 paper-bg pointer-events-none" />
 
-        <div className="relative z-30 max-w-[1400px] mx-auto px-8 md:px-10 mb-16 md:mb-20">
+        <div className="relative z-30 max-w-[1400px] mx-auto px-8 md:px-10 mb-12">
           <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">Production Archive</p>
           <h2 className="text-display md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.04em] mt-3">The Wall</h2>
         </div>
+
+        {/* Video reel — 24/7 autoplay */}
+        <VideoReel />
 
         <div className="relative w-full max-w-[1400px] mx-auto px-8 md:px-10" style={{ minHeight: "70vh" }}>
           {cards.map((card) => {
@@ -118,7 +187,18 @@ export default function ProductionWall() {
                   }}
                 >
                   <div className="w-full h-full flex flex-col items-center justify-center p-3 bg-gradient-to-br from-smoke/80 via-[#1A1A1A]/60 to-smoke/70 transition-all duration-500 relative group-hover:from-smoke group-hover:via-[#1A1A1A]">
-                    {thumb && <img src={thumb} alt={card.brand} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500" loading="lazy" />}
+                    {info && (info.url.includes("youtube.com") || info.url.includes("youtu.be")) ? (
+                      <iframe
+                        src={getYouTubeAutoplayUrl(info.url)!}
+                        className="absolute inset-0 w-full h-full"
+                        allow="autoplay; encrypted-media; picture-in-picture"
+                        loading="lazy"
+                      />
+                    ) : thumb ? (
+                      <img src={thumb} alt={card.brand} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500" loading="lazy" />
+                    ) : null}
+
+                    <div className="absolute inset-0 bg-gradient-to-br from-cinema-black/70 via-cinema-black/30 to-cinema-black/70 pointer-events-none" />
 
                     <div className="relative z-10 text-center">
                       <div className="w-8 h-8 mx-auto mb-2 rounded-full border border-cinema-white/8 flex items-center justify-center group-hover:border-cinema-white/30 transition-colors duration-500">

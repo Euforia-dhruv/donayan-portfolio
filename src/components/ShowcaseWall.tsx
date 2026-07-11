@@ -1,175 +1,391 @@
 "use client";
 
-import { useRef, useEffect, useState, useMemo, useCallback } from "react";
+import { useRef, useState, useMemo, useCallback, useEffect } from "react";
+import {
+  getYouTubeAutoplayUrl,
+  getYouTubeThumbnail,
+  getYouTubeId,
+  getPlatformLabel,
+  getDurationLabel,
+  isEmbeddable,
+} from "@/lib/video-utils";
 import archive from "@/data/archive.json";
 import galleryCards from "@/data/gallery-cards.json";
-import { getYouTubeAutoplayUrl, getYouTubeThumbnail, getPlatformLabel, getDurationLabel, isEmbeddable } from "@/lib/video-utils";
 
-interface WallItem {
-  id: string; type: "youtube" | "instagram" | "image" | "document";
-  src: string; thumbnail: string; title: string; brand: string;
-  year: string; category: string; role: string; aspect: string; span: number;
+interface ShowcaseProject {
+  id: string;
+  title: string;
+  client: string;
+  year: string;
+  type: string;
+  platform: string | null;
+  thumbnail: string;
+  video: string;
+  aspect: string;
+  doc?: string;
 }
 
-const localImages = [
-  { src: "/assets/work-images/WhatsApp Image 2026-07-11 at 12.00.50 PM (1).jpeg", brand: "Set Photography", year: "2025", category: "BTS Photography" },
-  { src: "/assets/work-images/WhatsApp Image 2026-07-11 at 12.00.50 PM.jpeg", brand: "Set Photography", year: "2025", category: "BTS Photography" },
-  { src: "/assets/work-images/WhatsApp Image 2026-07-11 at 12.00.51 PM (1).jpeg", brand: "Production Still", year: "2025", category: "Production Stills" },
-  { src: "/assets/work-images/WhatsApp Image 2026-07-11 at 12.00.51 PM.jpeg", brand: "Production Still", year: "2025", category: "Production Stills" },
-  { src: "/assets/work-images/WhatsApp Image 2026-07-11 at 12.00.52 PM (1).jpeg", brand: "Campaign Still", year: "2025", category: "Production Stills" },
-  { src: "/assets/work-images/WhatsApp Image 2026-07-11 at 12.00.52 PM.jpeg", brand: "Campaign Still", year: "2025", category: "Production Stills" },
+function getAspect(url: string, type: string): string {
+  if (url.includes("youtube.com/shorts") || url.includes("youtu.be/shorts")) return "9:16";
+  if (url.includes("youtube.com") || url.includes("youtu.be")) return "16:9";
+  if (url.includes("instagram.com/reel")) return "9:16";
+  if (url.includes("instagram.com/p")) return "4:5";
+  if (type === "document") return "4:5";
+  return "16:9";
+}
+
+function getProjectType(url: string, fallback: string): string {
+  if (!url) return "Document";
+  return getDurationLabel(url) || fallback;
+}
+
+function getProjectPlatform(url: string): string | null {
+  if (!url) return null;
+  return getPlatformLabel(url) || "MP4";
+}
+
+const localVideoFiles: { title: string; client: string; year: string; type: string; file: string; aspect: string }[] = [
+  { title: "Beauty Campaign", client: "Skinn Titan", year: "2024", type: "Campaign", file: "Skinn_Noura_a_gift_from_you,_to_you_💕_Skinn_Titan_1080p,_h264.mp4", aspect: "9:16" },
+  { title: "Brand Film", client: "Motivational", year: "2024", type: "Film", file: "With_good_always_comes_bad_With_growth_always_comes_pain_You_cannot.mp4", aspect: "9:16" },
+  { title: "Fashion Campaign", client: "IDÉE Eyewear", year: "2025", type: "Campaign", file: "Grade_for_with_@ideeeyewear_with_@quitquick_@sspillai_@jatinkampani.mp4", aspect: "9:16" },
+  { title: "Brand Campaign", client: "Made For This", year: "2025", type: "Film", file: "MADE_FOR_GREEN_LIGHTING_YOUR_PASSIONS_AND_PASSENGERS_#MadeForThis.mp4", aspect: "16:9" },
+  { title: "Promo", client: "The Night Manager", year: "2024", type: "Reel", file: "The_Night_Manager_Pranks_Guests_Aditya_Roy_Kapoor_Now_Streaming.mp4", aspect: "16:9" },
+  { title: "Fashion Campaign", client: "Fashion Glam", year: "2024", type: "Campaign", file: 'Glam_that_has_you_singing_\u201CI_want_it_that_way\u201D\ud83d\ude09Slay_your_look_for.mp4', aspect: "9:16" },
+  { title: "Fashion Campaign", client: "Armani Exchange", year: "2024", type: "Campaign", file: "Shake things up with #AXtime#AXSS24 @armaniexchange.mp4", aspect: "9:16" },
+  { title: "Commercial", client: "Aarohi Loans", year: "2025", type: "Film", file: "Aapke_har_bade_sapne_ka_bharosemand_saathi!_Aarohi_Loans_for_Women.mp4", aspect: "9:16" },
 ];
 
-function buildItems(): WallItem[] {
-  const items: WallItem[] = [];
+const localFiles: ShowcaseProject[] = localVideoFiles.map((f, i) => ({
+  id: `local-${i + 1}`,
+  title: f.title,
+  client: f.client,
+  year: f.year,
+  type: f.type,
+  platform: "MP4",
+  thumbnail: "",
+  video: `/videos/${encodeURIComponent(f.file)}`,
+  aspect: f.aspect,
+}));
+
+function buildProjects(): ShowcaseProject[] {
+  const items: ShowcaseProject[] = [];
+  const seen = new Set<string>();
+
   archive.forEach((a) => {
-    const isVideo = a.type === "youtube" || a.type === "instagram";
-    const thumb = a.thumbnail || getYouTubeThumbnail(a.url) || "";
-    const isInsta = a.type === "instagram";
-    items.push({ id: a.id, type: isInsta ? "instagram" : isVideo ? "youtube" : "document", src: a.url, thumbnail: thumb || "", title: a.title, brand: a.brand, year: a.year, category: a.category, role: a.role, aspect: isInsta ? "9/16" : isVideo ? "16/9" : "4/5", span: 0 });
+    if (!a.url) return;
+    const key = a.url.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    items.push({
+      id: a.id,
+      title: a.title,
+      client: a.brand,
+      year: a.year,
+      type: getProjectType(a.url, a.category),
+      platform: getProjectPlatform(a.url),
+      thumbnail: a.thumbnail || getYouTubeThumbnail(a.url) || "",
+      video: a.url,
+      aspect: getAspect(a.url, a.type),
+    });
   });
-  localImages.forEach((img, i) => {
-    items.push({ id: `local-${i}`, type: "image", src: img.src, thumbnail: img.src, title: img.brand, brand: img.brand, year: img.year, category: img.category, role: "Production", aspect: ["4/3", "1/1", "16/9", "3/4", "4/5", "1/1"][i % 6], span: 0 });
+
+  localFiles.forEach((f) => {
+    items.push(f);
   });
+
   galleryCards.forEach((c) => {
     const matched = archive.find((a) => a.brand.toLowerCase() === c.brand.toLowerCase() && a.url);
-    const thumb = matched ? getYouTubeThumbnail(matched.url) : "";
-    items.push({ id: `wall-${c.id}`, type: matched?.url ? "youtube" : "document", src: matched?.url || c.doc || "", thumbnail: thumb || "", title: c.label, brand: c.brand, year: c.year, category: c.sub, role: "Production Document", aspect: `${c.width}/${c.height}`, span: 0 });
+    if (matched && seen.has(matched.url.toLowerCase())) return;
+    items.push({
+      id: `wall-${c.id}`,
+      title: c.label,
+      client: c.brand,
+      year: c.year,
+      type: "Document",
+      platform: null,
+      thumbnail: matched ? getYouTubeThumbnail(matched.url) || "" : "",
+      video: matched?.url || "",
+      aspect: "4:5",
+      doc: c.doc,
+    });
   });
-  items.forEach((item) => {
-    const aspect = item.aspect.split("/").map(Number);
-    const ratio = aspect[1] / aspect[0];
-    if (ratio < 0.6) item.span = 1;
-    else if (ratio < 0.8) item.span = [1, 2][Math.floor(Math.random() * 2)];
-    else if (ratio < 1.1) item.span = [1, 2, 2][Math.floor(Math.random() * 3)];
-    else if (ratio < 1.4) item.span = [1, 2][Math.floor(Math.random() * 2)];
-    else item.span = 2;
-  });
-  for (let i = items.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [items[i], items[j]] = [items[j], items[i]]; }
+
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
   return items;
 }
 
-function ShowcaseItem({ item, index, setVideo }: { item: WallItem; index: number; setVideo: (v: { url: string; title: string } | null) => void }) {
-  const ref = useRef<HTMLDivElement>(null); const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [visible, setVisible] = useState(false); const [imgLoaded, setImgLoaded] = useState(false); const [isHovered, setIsHovered] = useState(false);
+function ShowcaseCard({
+  project,
+  index,
+  onSelect,
+}: {
+  project: ShowcaseProject;
+  index: number;
+  onSelect: (p: ShowcaseProject) => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [visible, setVisible] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const delay = Math.min(index * 0.05, 1.5);
 
   useEffect(() => {
-    const el = ref.current; if (!el) return;
-    const obs = new IntersectionObserver(([entry]) => { setVisible(entry.isIntersecting); if (entry.isIntersecting) el.style.opacity = "1"; }, { rootMargin: "200px", threshold: 0.01 });
-    obs.observe(el); return () => obs.disconnect();
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          el.style.opacity = "1";
+          el.style.transform = "translateY(0)";
+          obs.unobserve(el);
+        }
+      },
+      { rootMargin: "100px", threshold: 0.01 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
   }, []);
 
   useEffect(() => {
-    const ifr = iframeRef.current; if (!ifr || item.type !== "youtube") return;
-    if (visible && isHovered) ifr.src = getYouTubeAutoplayUrl(item.src) || ""; else ifr.src = "";
-  }, [visible, isHovered, item.src, item.type]);
+    if (project.video.includes("youtube.com") || project.video.includes("youtu.be")) {
+      const url = getYouTubeAutoplayUrl(project.video);
+      if (url && iframeRef.current) iframeRef.current.src = url;
+    } else if (project.video.endsWith(".mp4") && videoRef.current) {
+      videoRef.current.play();
+    }
+  }, [project.video]);
 
-  const isVideoCard = item.type === "youtube" || item.type === "instagram";
-  const isYoutube = item.type === "youtube";
-  const embedUrl = isYoutube ? getYouTubeAutoplayUrl(item.src) : null;
-  const delay = Math.min(index * 0.04, 1.2);
+  const isVideo = !project.video.endsWith(".mp4") && (project.video.includes("youtube.com") || project.video.includes("youtu.be") || project.video.includes("instagram.com"));
+  const isMP4 = project.video.endsWith(".mp4");
+  const isYouTube = project.video.includes("youtube.com") || project.video.includes("youtu.be");
+  const hasVideo = isVideo || isMP4;
 
   return (
-    <div ref={ref} className="break-inside-avoid mb-4 md:mb-5 relative group cursor-pointer"
-      style={{ opacity: 0, transform: "translateY(24px)", animation: `heroFade 0.6s cubic-bezier(0.25,0.46,0.45,0.94) ${delay}s forwards` }}
-      onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}
-      onClick={() => { if (item.src && isVideoCard) setVideo({ url: item.src, title: item.title }); }}
+    <div
+      ref={ref}
+      className="break-inside-avoid mb-4 md:mb-5 relative group cursor-pointer"
+      style={{
+        opacity: 0,
+        transform: "translateY(40px)",
+        transition: "opacity 0.7s ease, transform 0.7s ease",
+        transitionDelay: `${delay}s`,
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={() => onSelect(project)}
     >
-      <div className="relative w-full overflow-hidden" style={{ aspectRatio: item.aspect }}>
-        {(item.type === "image" || !isYoutube) && item.thumbnail && (
-          <img src={item.thumbnail} alt={item.title}
-            className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
-            style={{ filter: isHovered ? "brightness(1.02)" : "brightness(0.95)" }}
-            loading="lazy" onLoad={() => setImgLoaded(true)} />
+      <div
+        className="relative w-full overflow-hidden bg-smoke"
+        style={{ aspectRatio: project.aspect }}
+      >
+        {project.thumbnail && (
+          <img
+            src={project.thumbnail}
+            alt={project.title}
+            className={`absolute inset-0 w-full h-full object-cover transition-all duration-[350ms] ease-out ${
+              imgLoaded ? "opacity-100" : "opacity-0"
+            } ${hovered ? "scale-105" : "scale-100"}`}
+            style={{ filter: hovered ? "brightness(0.6)" : "brightness(0.95)" }}
+            loading="lazy"
+            onLoad={() => setImgLoaded(true)}
+          />
         )}
-        {isYoutube && embedUrl && isHovered && visible && (
-          <iframe ref={iframeRef} src={embedUrl} className="absolute inset-0 w-full h-full pointer-events-none" allow="autoplay; muted" title={item.title} />
-        )}
-        {isYoutube && item.thumbnail && !(isHovered && visible) && (
-          <img src={item.thumbnail} alt={item.title}
-            className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
-            style={{ filter: "brightness(0.95)" }} loading="lazy" onLoad={() => setImgLoaded(true)} />
-        )}
-        {item.type === "document" && !item.thumbnail && (
-          <div className="absolute inset-0 flex items-center justify-center bg-cinema-white/8">
-            <div className="text-center">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="mx-auto text-stone mb-2">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">{item.brand}</p>
-            </div>
+
+        {!project.thumbnail && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-smoke to-charcoal">
+            <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] px-4 text-center leading-[1.3]">
+              {project.client}
+            </p>
           </div>
         )}
-        {isVideoCard && !isHovered && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-smoke/80 flex items-center justify-center transition-all duration-300 group-hover:bg-smoke group-hover:scale-110">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="ml-0.5"><path d="M8 5v14l11-7L8 5z" fill="#F5F5F2" /></svg>
-            </div>
+
+        {isYouTube && (
+          <iframe
+            ref={iframeRef}
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            title={project.title}
+            style={{ filter: "brightness(0.85)" }}
+          />
+        )}
+
+        {isMP4 && (
+          <video
+            ref={videoRef}
+            src={project.video}
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            style={{ filter: "brightness(0.85)" }}
+          />
+        )}
+
+        {project.platform && (
+          <div className="absolute top-2 left-2 px-2 py-0.5 text-caption font-switzer font-[400] uppercase tracking-[0.02em] leading-[1.2] bg-cinema-black/70 text-cinema-white/80">
+            {project.platform}
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/80 via-cinema-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex flex-col justify-end p-4 md:p-5"
-          style={{ transitionTimingFunction: "cubic-bezier(0.25,0.46,0.45,0.94)" }}>
-          <div className="transform translate-y-3 group-hover:translate-y-0 transition-transform duration-400" style={{ transitionTimingFunction: "cubic-bezier(0.25,0.46,0.45,0.94)" }}>
-            <div className="flex flex-wrap items-center gap-2 mb-1.5">
-              <span className="text-caption font-switzer font-[400] text-cinema-white/70 uppercase tracking-[0.02em]">{item.category}</span>
-              <span className="text-cinema-white/40">·</span>
-              <span className="text-caption font-switzer font-[400] text-cinema-white/40 uppercase tracking-[0.02em]">{item.year}</span>
-            </div>
-            <p className="text-body font-switzer font-[300] text-cinema-white leading-[1.2]">{item.brand}</p>
-            <p className="text-caption font-switzer font-[400] text-cinema-white/50 mt-0.5 uppercase tracking-[0.02em]">{item.role}</p>
-            <p className="text-caption font-switzer font-[500] text-cinema-white/80 mt-2 uppercase tracking-[0.02em] opacity-0 group-hover:opacity-100 transition-opacity duration-300">View {isVideoCard ? "Project" : "Case Study"} →</p>
+
+        {project.type && (
+          <div className="absolute top-2 right-2 px-2 py-0.5 text-caption font-switzer font-[400] uppercase tracking-[0.02em] leading-[1.2] bg-cinema-black/70 text-cinema-white/80">
+            {project.type}
           </div>
+        )}
+
+        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-cinema-black/80 via-cinema-black/20 to-transparent">
+          <p className="text-caption font-switzer font-[400] text-cinema-white leading-[1.2] truncate">
+            {project.client}
+          </p>
+          <p className="text-[10px] font-switzer font-[400] text-cinema-white/50 truncate">
+            {project.title} · {project.year}
+          </p>
         </div>
-        {isVideoCard && (
-          <div className="absolute top-3 left-3 px-2 py-0.5 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-smoke/80 text-stone">{getPlatformLabel(item.src)}</div>
-        )}
-        {isVideoCard && (
-          <div className="absolute top-3 right-3 px-2 py-0.5 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-smoke/80 text-stone">{getDurationLabel(item.src)}</div>
-        )}
+      </div>
+    </div>
+  );
+}
+
+function VideoModal({
+  project,
+  onClose,
+}: {
+  project: ShowcaseProject;
+  onClose: () => void;
+}) {
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  const handleOverlay = (e: React.MouseEvent) => {
+    if (e.target === overlayRef.current) onClose();
+  };
+
+  const isYouTube = project.video.includes("youtube.com") || project.video.includes("youtu.be");
+  const isMP4 = project.video.endsWith(".mp4");
+
+  return (
+    <div
+      ref={overlayRef}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-cinema-black/95 backdrop-blur-xl animate-in fade-in duration-300"
+      onClick={handleOverlay}
+    >
+      <div
+        className="relative w-full max-w-5xl mx-4 animate-in zoom-in-95 duration-300"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute -top-12 right-0 text-cinema-white/60 hover:text-cinema-white text-caption font-switzer uppercase tracking-[0.02em] bg-transparent border-none cursor-pointer transition-colors z-10"
+        >
+          Close [ESC]
+        </button>
+        <p className="text-body-sm font-switzer font-[400] text-cinema-white/50 mb-3 truncate pr-20">
+          {project.client} — {project.title}
+        </p>
+        <div className="relative bg-smoke overflow-hidden" style={{ aspectRatio: project.aspect }}>
+          {isYouTube ? (
+            <iframe
+              src={`https://www.youtube.com/embed/${getYouTubeId(project.video)}?rel=0&modestbranding=1&autoplay=1`}
+              title={project.title}
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          ) : isMP4 ? (
+            <video
+              src={project.video}
+              className="w-full h-full object-contain"
+              autoPlay
+              controls
+              playsInline
+            />
+          ) : project.video.includes("instagram.com") ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="text-center">
+                <p className="text-body-sm font-switzer font-[400] text-stone mb-4">
+                  Open on Instagram to view
+                </p>
+                <a
+                  href={project.video}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-gold text-cinema-black text-caption font-switzer font-[400] uppercase tracking-[0.02em] no-underline"
+                  style={{ borderRadius: "1440px" }}
+                >
+                  Open on Instagram
+                </a>
+              </div>
+            </div>
+          ) : project.doc ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <a
+                href={project.doc}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gold text-cinema-black text-caption font-switzer font-[400] uppercase tracking-[0.02em] no-underline"
+                style={{ borderRadius: "1440px" }}
+              >
+                Open Document
+              </a>
+            </div>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <p className="text-stone text-caption font-switzer">No preview available</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
 export default function ShowcaseWall() {
-  const [video, setVideo] = useState<{ url: string; title: string } | null>(null);
-  const items = useMemo(() => buildItems(), []);
-  const handleClose = useCallback(() => setVideo(null), []);
+  const [selected, setSelected] = useState<ShowcaseProject | null>(null);
+  const projects = useMemo(() => buildProjects(), []);
+  const handleClose = useCallback(() => setSelected(null), []);
 
   return (
     <>
       <section className="py-20 md:py-28 bg-cinema-black border-t border-cinema-white/8">
         <div className="max-w-[1440px] mx-auto px-5 md:px-8">
           <div className="mb-12 md:mb-16">
-            <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">The Archive</p>
-            <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] mt-2">Showcase</h2>
+            <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">
+              The Archive
+            </p>
+            <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] mt-2">
+              Showcase
+            </h2>
           </div>
-          <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 md:gap-5" style={{ columnFill: "balance" }}>
-            {items.map((item, i) => <ShowcaseItem key={item.id} item={item} index={i} setVideo={setVideo} />)}
+
+          <div
+            className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 md:gap-5"
+            style={{ columnFill: "balance" }}
+          >
+            {projects.map((p, i) => (
+              <ShowcaseCard key={p.id} project={p} index={i} onSelect={setSelected} />
+            ))}
           </div>
         </div>
       </section>
 
-      {video && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-cinema-black/95 backdrop-blur-xl" onClick={handleClose}>
-          <div className="relative w-full max-w-5xl mx-4" onClick={(e) => e.stopPropagation()}>
-            <button onClick={handleClose} className="absolute -top-12 right-0 text-cinema-white/60 hover:text-cinema-white text-caption font-switzer uppercase tracking-[0.02em] bg-transparent border-none cursor-pointer transition-colors z-10">Close [ESC]</button>
-            <p className="text-body-sm font-switzer font-[400] text-cinema-white/50 mb-3 truncate pr-20">{video.title}</p>
-            <div className="relative aspect-video bg-smoke overflow-hidden">
-              {isEmbeddable(video.url) ? (
-                <iframe src={`https://www.youtube.com/embed/${video.url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/)?.[1] || ""}?rel=0&modestbranding=1&autoplay=1`} title={video.title} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-body-sm font-switzer font-[400] text-stone mb-4">Open on Instagram to view</p>
-                    <a href={video.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-2.5 bg-gold text-cinema-black text-caption font-switzer font-[400] uppercase tracking-[0.02em] no-underline" style={{ borderRadius: "1440px" }}>Open on Instagram</a>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {selected && <VideoModal project={selected} onClose={handleClose} />}
     </>
   );
 }
