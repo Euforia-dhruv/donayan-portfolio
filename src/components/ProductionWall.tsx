@@ -75,28 +75,33 @@ function ImageCard({ img, index, onSelect }: { img: WallImage; index: number; on
       }}
       onClick={() => onSelect(img.src)}
     >
-      <div className="relative w-full overflow-hidden bg-smoke" style={{ aspectRatio: img.aspect }}>
+      <div className="relative w-full overflow-hidden bg-smoke" style={{ aspectRatio: img.aspect, borderRadius: "10px" }}>
         <img
           src={img.src}
           alt=""
           className="absolute inset-0 w-full h-full object-cover transition-all duration-300 ease-out group-hover:scale-[1.03]"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-cinema-black/0 group-hover:bg-cinema-black/30 transition-all duration-300" />
+        <div className="absolute inset-0 bg-cinema-black/0 group-hover:bg-cinema-black/30 transition-all duration-300" style={{ borderRadius: "10px" }} />
       </div>
     </div>
   );
 }
 
-function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
+function Lightbox({ images, currentIndex, onClose, onNavigate }: { images: WallImage[]; currentIndex: number; onClose: () => void; onNavigate: (i: number) => void }) {
   const ref = useRef<HTMLDivElement>(null);
+  const img = images[currentIndex];
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight" && currentIndex < images.length - 1) onNavigate(currentIndex + 1);
+      if (e.key === "ArrowLeft" && currentIndex > 0) onNavigate(currentIndex - 1);
+    };
     document.addEventListener("keydown", handler);
     document.body.style.overflow = "hidden";
     return () => { document.removeEventListener("keydown", handler); document.body.style.overflow = ""; };
-  }, [onClose]);
+  }, [onClose, currentIndex, onNavigate, images.length]);
 
   const handleClick = (e: React.MouseEvent) => {
     if (e.target === ref.current) onClose();
@@ -110,42 +115,76 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
     >
       <button
         onClick={onClose}
-        className="absolute top-6 right-6 text-cinema-white/50 hover:text-cinema-white text-xl bg-transparent border-none cursor-pointer z-10 transition-colors"
+        className="absolute top-6 right-6 text-cinema-white/50 hover:text-cinema-white bg-transparent border-none cursor-pointer z-10 transition-colors"
       >
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
           <path d="M18 6L6 18M6 6l12 12" />
         </svg>
       </button>
+
+      {currentIndex > 0 && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onNavigate(currentIndex - 1); }}
+          className="absolute left-6 top-1/2 -translate-y-1/2 text-cinema-white/50 hover:text-cinema-white bg-transparent border-none cursor-pointer z-10 transition-colors p-2"
+        >
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+      )}
+
+      {currentIndex < images.length - 1 && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onNavigate(currentIndex + 1); }}
+          className="absolute right-6 top-1/2 -translate-y-1/2 text-cinema-white/50 hover:text-cinema-white bg-transparent border-none cursor-pointer z-10 transition-colors p-2"
+        >
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
+      )}
+
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-caption font-switzer font-[400] text-cinema-white/40 z-10">
+        {currentIndex + 1} / {images.length}
+      </div>
+
       <div className="max-w-[90vw] max-h-[90vh] flex items-center justify-center p-4" onClick={(e) => e.stopPropagation()}>
-        <img src={src} alt="" className="max-w-full max-h-[90vh] object-contain" />
+        <img src={img.src} alt="" className="max-w-full max-h-[90vh] object-contain" />
       </div>
     </div>
   );
 }
 
 export default function ProductionWall() {
-  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [items] = useState(() => shuffle(images));
-  const handleClose = useCallback(() => setLightboxSrc(null), []);
+  const handleClose = useCallback(() => setLightboxIndex(null), []);
 
   return (
     <>
       <section className="py-24 md:py-32 bg-cinema-black">
         <div className="max-w-[1440px] mx-auto px-8 md:px-10">
-          <div className="mb-14 md:mb-18">
+          <div className="mb-14">
             <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">Production Archive</p>
             <h2 className="text-display md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.04em] mt-3">The Wall</h2>
           </div>
 
-          <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6" style={{ columnFill: "balance" }}>
+          <div className="columns-2 md:columns-3 xl:columns-5 gap-6" style={{ columnFill: "auto" }}>
             {items.map((img, i) => (
-              <ImageCard key={img.id} img={img} index={i} onSelect={setLightboxSrc} />
+              <ImageCard key={img.id} img={img} index={i} onSelect={() => setLightboxIndex(i)} />
             ))}
           </div>
         </div>
       </section>
 
-      {lightboxSrc && <Lightbox src={lightboxSrc} onClose={handleClose} />}
+      {lightboxIndex !== null && (
+        <Lightbox
+          images={items}
+          currentIndex={lightboxIndex}
+          onClose={handleClose}
+          onNavigate={setLightboxIndex}
+        />
+      )}
     </>
   );
 }
