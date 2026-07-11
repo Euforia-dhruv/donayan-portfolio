@@ -37,4 +37,9 @@ public/assets/docs/*.pdf
 public/assets/docs/*.pptx
 public/assets/docs/*.docx
 public/assets/docs/*.xlsx
+public/assets/work-images/*.png
+
+# root-level stray images
+*.jpeg
+*.png
 .env*
