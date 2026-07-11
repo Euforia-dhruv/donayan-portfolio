@@ -1,90 +1,44 @@
 "use client";
 
-import { useRef, useEffect, useState, useMemo } from "react";
-import galleryCards from "@/data/gallery-cards.json";
+import { useRef, useEffect, useMemo } from "react";
 import archiveData from "@/data/archive.json";
-import VideoModal from "@/components/VideoModal";
-import { getYouTubeThumbnail, getYouTubeAutoplayUrl } from "@/lib/video-utils";
+import { getYouTubeAutoplayUrl } from "@/lib/video-utils";
 
-interface CardDim {
+interface WallProject {
   id: string;
-  label: string;
-  sub: string;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  rotation: number;
-  z: number;
-  doc?: string;
-  brand: string;
+  title: string;
+  client: string;
   year: string;
+  category: string;
+  image: string;
+  aspect: string;
 }
 
-function rand(min: number, max: number) {
-  return Math.random() * (max - min) + min;
-}
-
-const videoCardLabels = new Set([
-  "FINAL CAMPAIGN", "DIRECTOR MONITOR", "BTS PHOTOGRAPHY",
-  "CELEBRITY STILL", "FILM STILL", "DIRECTOR'S VIEW",
-  "CREW MOMENT", "CAMERA SETUP", "LIGHTING SETUP",
-]);
-
-const cardThumbnails: Record<string, string> = {};
-galleryCards.forEach((c) => {
-  if ((c as any).thumb) cardThumbnails[c.id] = (c as any).thumb;
-});
-
-const documentWallCards: CardDim[] = [
-  { id: "doc-sprite", label: "PPM DECK", sub: "Sprite · Heat Happens", doc: "/PPM Decks/Sprite PPM.pdf", brand: "Sprite", year: "2024", x: 0, y: 0, w: 200, h: 250, rotation: 0, z: 0 },
-  { id: "doc-centrum", label: "PPM DECK", sub: "Centrum Claims", doc: "/PPM Decks/Centrum Claim PPM Deck - 10 Oct (1).pdf", brand: "Centrum", year: "2025", x: 0, y: 0, w: 220, h: 180, rotation: 0, z: 0 },
-  { id: "doc-ax", label: "PPM DECK", sub: "Armani Exchange SS'25", doc: "/PPM Decks/AX Celebrity Shoot SS_25.pdf", brand: "Armani Exchange", year: "2025", x: 0, y: 0, w: 170, h: 220, rotation: 0, z: 0 },
-  { id: "doc-idee", label: "PPM DECK", sub: "IDÉE Campaign", doc: "/PPM Decks/IDEE PPM.pdf", brand: "IDÉE", year: "2025", x: 0, y: 0, w: 190, h: 260, rotation: 0, z: 0 },
-  { id: "doc-hdfc", label: "POST PPM DECK", sub: "HDFC KVS", doc: "/PPM Decks/HDFC KVS Post PPM Deck.pdf", brand: "HDFC", year: "2024", x: 0, y: 0, w: 210, h: 280, rotation: 0, z: 0 },
-  { id: "doc-kinder", label: "PPM DECK", sub: "Kinder Print Shoot", doc: "/PPM Decks/Kinder Print Shoot.pdf", brand: "Kinder", year: "2025", x: 0, y: 0, w: 230, h: 190, rotation: 0, z: 0 },
-  { id: "doc-fossil", label: "PPM DECK", sub: "Fossil SS'25", doc: "/Treatment Notes/Fossil - SS_25 - PPM DECK.pdf", brand: "Fossil", year: "2024", x: 0, y: 0, w: 200, h: 260, rotation: 0, z: 0 },
-  { id: "doc-godrej", label: "DIRECTOR'S NOTE", sub: "Godrej Capital", doc: "/Treatment Notes/Godrej Capital - Director_s Note.pdf", brand: "Godrej Capital", year: "2025", x: 0, y: 0, w: 180, h: 240, rotation: 0, z: 0 },
-  { id: "doc-ponds", label: "TREATMENT NOTES", sub: "Pond's BB Cream", doc: "/Treatment Notes/Ponds  BB cream TN.pdf", brand: "Pond's", year: "2025", x: 0, y: 0, w: 170, h: 230, rotation: 0, z: 0 },
-  { id: "doc-tanishq", label: "CASTING PDF", sub: "Tanishq Rivaah", doc: "/Others/Tanishq Casting.pdf", brand: "Tanishq", year: "2024", x: 0, y: 0, w: 240, h: 190, rotation: 0, z: 0 },
-  { id: "doc-lifestyle", label: "CASTING PDF", sub: "Lifestyle SS'24 Bangkok", doc: "/Others/Lifestyle SS_24 Cast Batch 5 (Bangkok).pdf", brand: "Lifestyle", year: "2024", x: 0, y: 0, w: 160, h: 200, rotation: 0, z: 0 },
-  { id: "doc-murgi-1", label: "FILM PITCH", sub: "Murgi", doc: "/Movie - OTT pitches/Murgi.pdf", brand: "Murgi", year: "2024", x: 0, y: 0, w: 210, h: 190, rotation: 0, z: 0 },
-  { id: "doc-murgi-2", label: "FILM PITCH", sub: "Murgi", doc: "/Movie - OTT pitches/Murgi.pdf", brand: "Murgi", year: "2024", x: 0, y: 0, w: 190, h: 240, rotation: 0, z: 0 },
-  { id: "doc-pathan-1", label: "SERIES PITCH", sub: "Pathan Brothers", doc: "/Movie - OTT pitches/Pathan Brothers Series.pdf", brand: "Pathan Brothers", year: "2024", x: 0, y: 0, w: 180, h: 250, rotation: 0, z: 0 },
-  { id: "doc-pathan-2", label: "SERIES PITCH", sub: "Pathan Brothers", doc: "/Movie - OTT pitches/Pathan Brothers Series.pdf", brand: "Pathan Brothers", year: "2024", x: 0, y: 0, w: 200, h: 260, rotation: 0, z: 0 },
-  { id: "doc-artkalaa-1", label: "PITCH DECK", sub: "Artkalaa", doc: "/Marketing Pitch/Artkalaa Pitch Deck.pdf", brand: "Artkalaa", year: "2024", x: 0, y: 0, w: 210, h: 180, rotation: 0, z: 0 },
-  { id: "doc-artkalaa-2", label: "BRAND STRATEGY", sub: "Artkalaa", doc: "/Marketing Pitch/Artkalaa Pitch Deck.pdf", brand: "Artkalaa", year: "2024", x: 0, y: 0, w: 190, h: 230, rotation: 0, z: 0 },
-  { id: "doc-oool", label: "DIGITAL STRATEGY", sub: "OOOL", doc: "/Marketing Pitch/OOOL Digital Strategy.pdf", brand: "OOOL", year: "2024", x: 0, y: 0, w: 220, h: 180, rotation: 0, z: 0 },
-  { id: "doc-kitser", label: "SALE CAMPAIGN", sub: "Kitser August Sale", doc: "/Marketing Pitch/Kitser August Sale.pdf", brand: "Kitser", year: "2024", x: 0, y: 0, w: 200, h: 250, rotation: 0, z: 0 },
-  { id: "doc-deva", label: "MARKETING PITCH", sub: "Deva's Khayal", doc: "/Marketing Pitch/Deva_s Khayal.pdf", brand: "Deva's Khayal", year: "2024", x: 0, y: 0, w: 230, h: 200, rotation: 0, z: 0 },
-  { id: "doc-justbe", label: "BRAND CAMPAIGN", sub: "Just Be", doc: "/Marketing Pitch/Just Be.pdf", brand: "Just Be", year: "2024", x: 0, y: 0, w: 180, h: 170, rotation: 0, z: 0 },
-  { id: "doc-bubbling", label: "MARKETING PLAN", sub: "The Bubbling Fish & Nirala", doc: "/Marketing Pitch/The Bubbling Fish and Nirala - The Plan.pdf", brand: "The Bubbling Fish & Nirala", year: "2024", x: 0, y: 0, w: 210, h: 270, rotation: 0, z: 0 },
+const projects: WallProject[] = [
+  { id: "p-sprite", title: "Heat Happens", client: "Sprite", year: "2024", category: "Commercial Film", image: "/PPM Decks/Sprite.png", aspect: "4:3" },
+  { id: "p-centrum", title: "Claims Campaign", client: "Centrum", year: "2025", category: "Commercial Film", image: "/PPM Decks/Centrum.png", aspect: "16:9" },
+  { id: "p-ax", title: "Celebrity Shoot SS'25", client: "Armani Exchange", year: "2025", category: "Fashion Campaign", image: "/PPM Decks/AX.png", aspect: "4:5" },
+  { id: "p-idee", title: "Brand Campaign", client: "IDÉE Eyewear", year: "2025", category: "Fashion Campaign", image: "/PPM Decks/IDEE.png", aspect: "4:3" },
+  { id: "p-hdfc", title: "KVS Campaign", client: "HDFC", year: "2024", category: "Brand Film", image: "/PPM Decks/HDFC.png", aspect: "16:9" },
+  { id: "p-kinder", title: "Print Shoot", client: "Kinder", year: "2025", category: "Commercial Film", image: "/PPM Decks/Kinder.png", aspect: "4:3" },
+  { id: "p-fossil", title: "SS'25 Campaign", client: "Fossil", year: "2024", category: "Fashion Campaign", image: "/Treatment Notes/Fossil.png", aspect: "4:5" },
+  { id: "p-godrej", title: "Capital Campaign", client: "Godrej Capital", year: "2025", category: "Brand Film", image: "/Treatment Notes/godrej.png", aspect: "4:3" },
+  { id: "p-ponds", title: "BB Cream Campaign", client: "Pond's", year: "2025", category: "Commercial Film", image: "/Treatment Notes/ponds.png", aspect: "16:9" },
+  { id: "p-tanishq", title: "Rivaah Collection", client: "Tanishq", year: "2024", category: "Celebrity Campaign", image: "/Others/Tanishq.png", aspect: "3:4" },
+  { id: "p-lifestyle", title: "SS'24 Bangkok Casting", client: "Lifestyle", year: "2024", category: "Fashion Campaign", image: "/Others/lifestyle.png", aspect: "4:3" },
+  { id: "p-artkalaa", title: "Brand Pitch", client: "Artkalaa", year: "2024", category: "Brand Film", image: "/Marketing Pitch/artkalaa.png", aspect: "4:5" },
+  { id: "p-artkalaa-2", title: "Brand Strategy", client: "Artkalaa", year: "2024", category: "Brand Film", image: "/Marketing Pitch/artkalaa 2.png", aspect: "1:1" },
+  { id: "p-oool", title: "Digital Strategy", client: "OOOL", year: "2024", category: "Digital Campaign", image: "/Marketing Pitch/oool.png", aspect: "4:3" },
+  { id: "p-kitser", title: "August Sale", client: "Kitser", year: "2024", category: "Digital Campaign", image: "/Marketing Pitch/kister.png", aspect: "3:4" },
+  { id: "p-deva", title: "Marketing Pitch", client: "Deva's Khayal", year: "2024", category: "Music Video", image: "/Marketing Pitch/Deva.png", aspect: "4:5" },
+  { id: "p-justbe", title: "Brand Campaign", client: "Just Be", year: "2024", category: "Brand Film", image: "/Marketing Pitch/Just be.png", aspect: "16:9" },
+  { id: "p-bubbling", title: "Marketing Plan", client: "The Bubbling Fish & Nirala", year: "2024", category: "Brand Film", image: "/Marketing Pitch/the.png", aspect: "4:5" },
+  { id: "p-murgi-1", title: "Film Pitch", client: "Murgi", year: "2024", category: "Film", image: "/Movie - OTT pitches/Murgi.png", aspect: "4:5" },
+  { id: "p-murgi-2", title: "Film Treatment", client: "Murgi", year: "2024", category: "Film", image: "/Movie - OTT pitches/Murgi 1.png", aspect: "9:16" },
+  { id: "p-pathan-1", title: "Series Pitch", client: "Pathan Brothers", year: "2024", category: "Series", image: "/Movie - OTT pitches/Pathan 1.png", aspect: "4:5" },
+  { id: "p-pathan-2", title: "Series Treatment", client: "Pathan Brothers", year: "2024", category: "Series", image: "/Movie - OTT pitches/Pathan 2.png", aspect: "3:4" },
 ];
 
-const docThumbnails: Record<string, string> = {
-  "doc-sprite": "/PPM Decks/Sprite.png",
-  "doc-centrum": "/PPM Decks/Centrum.png",
-  "doc-ax": "/PPM Decks/AX.png",
-  "doc-idee": "/PPM Decks/IDEE.png",
-  "doc-hdfc": "/PPM Decks/HDFC.png",
-  "doc-kinder": "/PPM Decks/Kinder.png",
-  "doc-fossil": "/Treatment Notes/Fossil.png",
-  "doc-godrej": "/Treatment Notes/godrej.png",
-  "doc-ponds": "/Treatment Notes/ponds.png",
-  "doc-tanishq": "/Others/Tanishq.png",
-  "doc-lifestyle": "/Others/lifestyle.png",
-  "doc-murgi-1": "/Movie - OTT pitches/Murgi.png",
-  "doc-murgi-2": "/Movie - OTT pitches/Murgi 1.png",
-  "doc-pathan-1": "/Movie - OTT pitches/Pathan 1.png",
-  "doc-pathan-2": "/Movie - OTT pitches/Pathan 2.png",
-  "doc-artkalaa-1": "/Marketing Pitch/artkalaa.png",
-  "doc-artkalaa-2": "/Marketing Pitch/artkalaa 2.png",
-  "doc-oool": "/Marketing Pitch/oool.png",
-  "doc-kitser": "/Marketing Pitch/kister.png",
-  "doc-deva": "/Marketing Pitch/Deva.png",
-  "doc-justbe": "/Marketing Pitch/Just be.png",
-  "doc-bubbling": "/Marketing Pitch/the.png",
-};
 const localVideos = [
   { src: "/videos/Skinn_Noura_a_gift_from_you,_to_you_💕_Skinn_Titan_1080p,_h264.mp4", brand: "Skinn Titan", label: "Beauty Campaign" },
   { src: "/videos/With_good_always_comes_bad_With_growth_always_comes_pain_You_cannot.mp4", brand: "Motivational", label: "Brand Film" },
@@ -100,48 +54,24 @@ const youtubeArchive = archiveData.filter((a) => a.url && (a.url.includes("youtu
 
 function VideoReel() {
   return (
-    <div className="relative z-30 mb-16 md:mb-20 overflow-hidden">
-      <div className="flex gap-4 overflow-x-auto px-8 md:px-10 pb-4 scrollbar-none snap-x snap-mandatory"
+    <div className="relative z-10 mb-20 md:mb-28 overflow-hidden">
+      <div className="flex gap-4 overflow-x-auto px-8 md:px-10 pb-4 snap-x snap-mandatory"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {localVideos.map((v, i) => (
           <div key={i} className="flex-shrink-0 w-[180px] md:w-[220px] snap-start">
-            <div className="relative aspect-[9/16] rounded-xl overflow-hidden bg-smoke border border-cinema-white/5 group">
-              <video
-                src={v.src}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-3 left-3 right-3">
-                  <p className="text-caption font-switzer font-[500] text-cinema-white leading-[1.2] truncate">{v.label}</p>
-                  <p className="text-[10px] font-switzer font-[400] text-cinema-white/50 truncate">{v.brand}</p>
-                </div>
-              </div>
+            <div className="relative aspect-[9/16] rounded-xl overflow-hidden bg-smoke border border-cinema-white/5">
+              <video src={v.src} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" />
             </div>
           </div>
         ))}
-        {youtubeArchive.map((a, i) => {
+        {youtubeArchive.map((a) => {
           const embedUrl = getYouTubeAutoplayUrl(a.url);
           if (!embedUrl) return null;
           return (
             <div key={a.id} className="flex-shrink-0 w-[180px] md:w-[220px] snap-start">
-              <div className="relative aspect-[9/16] rounded-xl overflow-hidden bg-smoke border border-cinema-white/5 group">
-                <iframe
-                  src={embedUrl}
-                  className="absolute inset-0 w-full h-full"
-                  allow="autoplay; encrypted-media; picture-in-picture"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                  <div className="absolute bottom-3 left-3 right-3">
-                    <p className="text-caption font-switzer font-[500] text-cinema-white leading-[1.2] truncate">{a.title}</p>
-                    <p className="text-[10px] font-switzer font-[400] text-cinema-white/50 truncate">{a.brand}</p>
-                  </div>
-                </div>
+              <div className="relative aspect-[9/16] rounded-xl overflow-hidden bg-smoke border border-cinema-white/5">
+                <iframe src={embedUrl} className="absolute inset-0 w-full h-full" allow="autoplay; encrypted-media; picture-in-picture" loading="lazy" />
               </div>
             </div>
           );
@@ -151,156 +81,101 @@ function VideoReel() {
   );
 }
 
-export default function ProductionWall() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [video, setVideo] = useState<{ url: string; title: string } | null>(null);
-
-  const brandVideoMap = useMemo(() => {
-    const m = new Map<string, { url: string; title: string }>();
-    archiveData.forEach((a) => {
-      if (a.url) {
-        m.set(a.brand.toLowerCase(), { url: a.url, title: a.title });
-      }
-    });
-    return m;
-  }, []);
-
-  const cards: CardDim[] = useMemo(() => {
-    const taken: { x: number; y: number }[] = [];
-    const all: CardDim[] = [];
-    galleryCards.forEach((c, i) => {
-      let x: number, y: number, attempts = 0;
-      do { x = rand(1, 72); y = rand(2, 62); attempts++; }
-      while (attempts < 50 && taken.some((p) => Math.abs(p.x - x) < 9 && Math.abs(p.y - y) < 9));
-      taken.push({ x, y });
-      all.push({ id: c.id, label: c.label, sub: c.sub, doc: c.doc, brand: c.brand, year: c.year, x, y, w: c.width, h: c.height, rotation: rand(-3, 3), z: 10 + i });
-    });
-    documentWallCards.forEach((c, i) => {
-      let x: number, y: number, attempts = 0;
-      do { x = rand(1, 72); y = rand(2, 62); attempts++; }
-      while (attempts < 50 && taken.some((p) => Math.abs(p.x - x) < 9 && Math.abs(p.y - y) < 9));
-      taken.push({ x, y });
-      all.push({ ...c, x, y, rotation: rand(-3, 3), z: 10 + galleryCards.length + i });
-    });
-    return all;
-  }, []);
+function WallCard({ project, index }: { project: WallProject; index: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const delay = Math.min(index * 0.06, 1.5);
 
   useEffect(() => {
-    const el = sectionRef.current;
+    const el = ref.current;
     if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { el.classList.add("visible"); observer.unobserve(el); } },
-      { threshold: 0.05 }
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.style.opacity = "1";
+          el.style.transform = "translateY(0)";
+          obs.unobserve(el);
+        }
+      },
+      { rootMargin: "80px", threshold: 0.01 }
     );
-    observer.observe(el);
-    return () => observer.disconnect();
+    obs.observe(el);
+    return () => obs.disconnect();
   }, []);
 
-  const handleCardClick = (card: CardDim) => {
-    if (card.doc) { window.open(card.doc, "_blank", "noopener,noreferrer"); return; }
-    const info = brandVideoMap.get(card.brand.toLowerCase());
-    if (info) setVideo(info);
-  };
+  return (
+    <div
+      ref={ref}
+      className="break-inside-avoid mb-5 md:mb-6 group cursor-pointer"
+      style={{
+        opacity: 0,
+        transform: "translateY(40px)",
+        transition: `opacity 0.7s ease, transform 0.7s ease`,
+        transitionDelay: `${delay}s`,
+      }}
+    >
+      <div
+        className="relative w-full overflow-hidden bg-smoke"
+        style={{
+          aspectRatio: project.aspect,
+          borderRadius: "11px",
+          boxShadow: "0 0 0 1px rgba(255,255,255,0.06)",
+        }}
+      >
+        <img
+          src={project.image}
+          alt={`${project.client} — ${project.title}`}
+          className="absolute inset-0 w-full h-full object-cover transition-all duration-300 ease-out group-hover:scale-[1.03]"
+          loading="lazy"
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/80 via-cinema-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+            <p className="text-caption font-switzer font-[400] text-cinema-white/70 uppercase tracking-[0.02em] mb-0.5">
+              {project.category}
+            </p>
+            <p className="text-body-sm font-switzer font-[400] text-cinema-white leading-[1.2]">
+              {project.client} <span className="text-cinema-white/50">· {project.year}</span>
+            </p>
+            <p className="text-caption font-switzer font-[300] text-cinema-white/50 mt-0.5">
+              {project.title}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function ProductionWall() {
+  const shuffled = useMemo(() => {
+    const arr = [...projects];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, []);
 
   return (
-    <>
-      <section id="wall" ref={sectionRef} className="relative min-h-screen py-24 md:py-32 overflow-hidden reveal"
-        style={{ background: "linear-gradient(160deg, #0A0A0A 0%, #141414 40%, #1A1A1A 70%, #0A0A0A 100%)" }}
-      >
-        <div className="absolute inset-0 paper-bg pointer-events-none" />
+    <section id="wall" className="relative py-24 md:py-32 overflow-hidden"
+      style={{ background: "linear-gradient(160deg, #0A0A0A 0%, #141414 40%, #1A1A1A 70%, #0A0A0A 100%)" }}
+    >
+      <div className="absolute inset-0 paper-bg pointer-events-none" />
 
-        <div className="relative z-30 max-w-[1400px] mx-auto px-8 md:px-10 mb-12">
-          <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">Production Archive</p>
-          <h2 className="text-display md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.04em] mt-3">The Wall</h2>
+      <div className="relative z-10 max-w-[1440px] mx-auto px-8 md:px-10 mb-14 md:mb-18">
+        <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">Production Archive</p>
+        <h2 className="text-display md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.04em] mt-3">The Wall</h2>
+      </div>
+
+      <VideoReel />
+
+      <div className="relative z-10 max-w-[1440px] mx-auto px-8 md:px-10">
+        <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-5 md:gap-6" style={{ columnFill: "balance" }}>
+          {shuffled.map((p, i) => (
+            <WallCard key={p.id} project={p} index={i} />
+          ))}
         </div>
-
-        {/* Video reel — 24/7 autoplay */}
-        <VideoReel />
-
-        <div className="relative w-full max-w-[1400px] mx-auto px-8 md:px-10" style={{ minHeight: "70vh" }}>
-          {cards.map((card) => {
-            const info = brandVideoMap.get(card.brand.toLowerCase());
-            const thumb = info ? getYouTubeThumbnail(info.url) : null;
-            const isVideo = videoCardLabels.has(card.label) && !!info;
-
-            return (
-              <div key={card.id} onClick={() => handleCardClick(card)}
-                className="absolute group cursor-pointer"
-                style={{
-                  width: `${card.w}px`, height: `${card.h}px`, zIndex: card.z,
-                  left: `${card.x}%`, top: `${card.y}%`,
-                  transform: `rotate(${card.rotation}deg)`,
-                  transition: "transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease, z-index 0s",
-                  animation: `float 8s ease-in-out ${Math.random() * 4}s infinite`,
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = `rotate(${card.rotation}deg) translateY(-8px) scale(1.02)`; e.currentTarget.style.zIndex = "50"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = `rotate(${card.rotation}deg)`; e.currentTarget.style.zIndex = `${card.z}`; }}
-              >
-                <div className="w-full h-full overflow-hidden"
-                  style={{
-                    background: `linear-gradient(135deg, #1E1E1E 0%, #141414 100%)`,
-                    boxShadow: `0 2px 12px rgba(0,0,0,0.4), 0 8px 40px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(255,255,255,0.05)`,
-                  }}
-                >
-                  <div className="w-full h-full flex flex-col items-center justify-center p-3 bg-gradient-to-br from-smoke/80 via-[#1A1A1A]/60 to-smoke/70 transition-all duration-500 relative group-hover:from-smoke group-hover:via-[#1A1A1A]">
-                    {info && (info.url.includes("youtube.com") || info.url.includes("youtu.be")) ? (
-                      <iframe
-                        src={getYouTubeAutoplayUrl(info.url)!}
-                        className="absolute inset-0 w-full h-full"
-                        allow="autoplay; encrypted-media; picture-in-picture"
-                        loading="lazy"
-                      />
-                    ) : thumb ? (
-                      <img src={thumb} alt={card.brand} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500" loading="lazy" />
-                    ) : cardThumbnails[card.id] ? (
-                      <img src={cardThumbnails[card.id]} alt={card.brand} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500" loading="lazy" />
-                    ) : docThumbnails[card.id] ? (
-                      <img src={docThumbnails[card.id]} alt={card.brand} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500" loading="lazy" />
-                    ) : null}
-
-                    <div className="absolute inset-0 bg-gradient-to-br from-cinema-black/70 via-cinema-black/30 to-cinema-black/70 pointer-events-none" />
-
-                    <div className="relative z-10 text-center">
-                      <div className="w-8 h-8 mx-auto mb-2 rounded-full border border-cinema-white/8 flex items-center justify-center group-hover:border-cinema-white/30 transition-colors duration-500">
-                        {isVideo ? (
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-stone group-hover:text-cinema-white transition-colors duration-500 ml-0.5">
-                            <path d="M8 5v14l11-7L8 5z" fill="currentColor" />
-                          </svg>
-                        ) : (
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-stone group-hover:text-cinema-white transition-colors duration-500">
-                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        )}
-                      </div>
-                      <p className="text-caption font-switzer font-[500] text-stone uppercase tracking-[0.02em] leading-[1.2] group-hover:text-cinema-white transition-colors duration-500">{card.label}</p>
-                      <p className="mt-1 text-[10px] font-switzer font-[400] text-cinema-white/25 uppercase tracking-[0.02em]">{card.sub}</p>
-                      <p className="mt-1 text-[9px] font-switzer font-[400] text-cinema-white/25 uppercase tracking-[0.02em]">{card.brand} · {card.year}</p>
-                      <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                        <span className="text-caption font-switzer font-[500] text-cinema-white uppercase tracking-[0.02em] text-[10px]">
-                          {isVideo ? "Watch Campaign →" : card.doc ? "Open Document →" : "View Campaign →"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="relative z-30 flex justify-center mt-20 md:mt-24">
-          <a href="#featured" className="inline-flex items-center gap-2 px-6 py-3 bg-gold text-cinema-black text-caption font-switzer font-[400] uppercase tracking-[0.02em] no-underline transition-opacity hover:opacity-85"
-            style={{ borderRadius: "1440px" }}>
-            Explore All Productions
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-cinema-black">
-              <path d="M3 7h8M11 7L7 3M11 7L7 11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </a>
-        </div>
-      </section>
-
-      {video && <VideoModal url={video.url} title={video.title} onClose={() => setVideo(null)} />}
-    </>
+      </div>
+    </section>
   );
 }
