@@ -19,7 +19,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center bg-[#F7F4EE] overflow-hidden">
+    <section className="relative min-h-screen flex items-center bg-cinema-black overflow-hidden">
       {/* Background image with parallax + overlays */}
       <div
         ref={bgRef}

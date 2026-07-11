@@ -26,16 +26,16 @@ export default function FeaturedProductions() {
 
   return (
     <>
-      <section id="featured" ref={sectionRef} className="relative py-24 md:py-32 overflow-hidden reveal bg-bone-white">
+      <section id="featured" ref={sectionRef} className="relative py-24 md:py-32 overflow-hidden reveal bg-cinema-black">
         <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-10">
-          <p className="text-caption font-switzer font-[400] text-graphite uppercase tracking-[0.02em] mb-3 reveal reveal-delay-1">Production Archive</p>
-          <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-ink-black leading-[1] tracking-[-0.03em] max-w-2xl mb-10 reveal reveal-delay-2">All Productions</h2>
+          <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-3 reveal reveal-delay-1">Production Archive</p>
+          <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] max-w-2xl mb-10 reveal reveal-delay-2">All Productions</h2>
 
           <div className="flex flex-wrap gap-2 mb-12 reveal reveal-delay-3">
             {categories.map((cat) => (
               <button key={cat} onClick={() => setActiveCat(cat)}
                 className={`text-caption font-switzer font-[400] uppercase tracking-[0.02em] px-4 py-2 transition-all duration-300 cursor-pointer border ${
-                  activeCat === cat ? "bg-ink-black text-bone-white border-ink-black" : "bg-transparent text-graphite border-ash hover:border-graphite"
+                  activeCat === cat ? "bg-gold text-cinema-black border-gold" : "bg-transparent text-stone border-cinema-white/10 hover:border-cinema-white/30"
                 }`}>
                 {cat}
               </button>
@@ -48,33 +48,33 @@ export default function FeaturedProductions() {
               const hasVideo = !!p.url; const hasDoc = !!p.documents?.[0]?.path;
               return (
                 <div key={p.id} onClick={() => handleClick(p)} className={`group cursor-pointer reveal reveal-delay-${Math.min(i + 1, 5)}`}>
-                  <div className="relative aspect-[4/3] overflow-hidden bg-ash/10">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-cinema-white/8">
                     {thumb ? <img src={thumb} alt={p.title} className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105" loading="lazy" />
-                      : <div className="w-full h-full flex items-center justify-center"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="mx-auto text-graphite mb-2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg><p className="text-caption text-graphite font-switzer uppercase tracking-[0.02em]">{p.brand}</p></div>}
-                    <div className="absolute inset-0 bg-gradient-to-t from-ink-black/80 via-ink-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-5">
+                      : <div className="w-full h-full flex items-center justify-center"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="mx-auto text-stone mb-2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg><p className="text-caption text-stone font-switzer uppercase tracking-[0.02em]">{p.brand}</p></div>}
+                    <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/90 via-cinema-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-5">
                       <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                         <div className="flex flex-wrap items-center gap-2 mb-2">
-                          <span className="text-caption font-switzer font-[400] text-bone-white uppercase tracking-[0.02em]">{p.category}</span>
-                          {p.year && <span className="text-caption font-switzer font-[400] text-bone-white/50 uppercase tracking-[0.02em]">{p.year}</span>}
+                          <span className="text-caption font-switzer font-[400] text-cinema-white uppercase tracking-[0.02em]">{p.category}</span>
+                          {p.year && <span className="text-caption font-switzer font-[400] text-cinema-white/50 uppercase tracking-[0.02em]">{p.year}</span>}
                         </div>
-                        <h3 className="text-body-sm md:text-body font-switzer font-[300] text-bone-white leading-[1.1]">{p.brand}</h3>
-                        <p className="text-caption font-switzer font-[400] text-bone-white/50 mt-1">{p.role}</p>
-                        {p.description && <p className="text-caption font-switzer font-[300] text-bone-white/40 mt-1 line-clamp-2">{p.description}</p>}
+                        <h3 className="text-body-sm md:text-body font-switzer font-[300] text-cinema-white leading-[1.1]">{p.brand}</h3>
+                        <p className="text-caption font-switzer font-[400] text-cinema-white/50 mt-1">{p.role}</p>
+                        {p.description && <p className="text-caption font-switzer font-[300] text-cinema-white/40 mt-1 line-clamp-2">{p.description}</p>}
                         <div className="flex gap-3 mt-3">
-                          {hasVideo && <span className="text-caption font-switzer font-[500] text-bone-white uppercase tracking-[0.02em] inline-flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7L8 5z" fill="currentColor" /></svg>Watch Campaign</span>}
-                          {hasDoc && <span className="text-caption font-switzer font-[400] text-bone-white/50 uppercase tracking-[0.02em] inline-flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" strokeWidth="1.2"/></svg>View Case Study</span>}
+                          {hasVideo && <span className="text-caption font-switzer font-[500] text-cinema-white uppercase tracking-[0.02em] inline-flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7L8 5z" fill="currentColor" /></svg>Watch Campaign</span>}
+                          {hasDoc && <span className="text-caption font-switzer font-[400] text-cinema-white/50 uppercase tracking-[0.02em] inline-flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" strokeWidth="1.2"/></svg>View Case Study</span>}
                         </div>
                       </div>
                     </div>
                     <div className="absolute top-3 right-3 flex gap-1.5">
-                      {p.featured && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-bone-white/80 text-ink-black">Featured</span>}
-                      {p.url && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-bone-white/80 text-graphite">{getPlatformLabel(p.url)}</span>}
-                      {!p.url && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-bone-white/80 text-graphite">Document</span>}
+                      {p.featured && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-smoke/80 text-cinema-white">Featured</span>}
+                      {p.url && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-smoke/80 text-stone">{getPlatformLabel(p.url)}</span>}
+                      {!p.url && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-smoke/80 text-stone">Document</span>}
                     </div>
                   </div>
                   <div className="mt-4">
-                    <h3 className="text-body-sm md:text-body font-switzer font-[300] text-ink-black leading-[1.2] group-hover:text-graphite transition-colors duration-500">{p.brand}</h3>
-                    <p className="text-caption font-switzer font-[400] text-graphite mt-0.5">{p.role} · {p.year}</p>
+                    <h3 className="text-body-sm md:text-body font-switzer font-[300] text-cinema-white leading-[1.2] group-hover:text-stone transition-colors duration-500">{p.brand}</h3>
+                    <p className="text-caption font-switzer font-[400] text-stone mt-0.5">{p.role} · {p.year}</p>
                   </div>
                 </div>
               );

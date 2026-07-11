@@ -83,13 +83,13 @@ export default function ProductionWall() {
   return (
     <>
       <section id="wall" ref={sectionRef} className="relative min-h-screen py-24 md:py-32 overflow-hidden reveal"
-        style={{ background: "linear-gradient(160deg, #F5F0E8 0%, #EDE8DF 40%, #F2EDE5 70%, #F8F4EE 100%)" }}
+        style={{ background: "linear-gradient(160deg, #0A0A0A 0%, #141414 40%, #1A1A1A 70%, #0A0A0A 100%)" }}
       >
         <div className="absolute inset-0 paper-bg pointer-events-none" />
 
         <div className="relative z-30 max-w-[1400px] mx-auto px-8 md:px-10 mb-16 md:mb-20">
-          <p className="text-caption font-switzer font-[400] text-graphite uppercase tracking-[0.02em]">Production Archive</p>
-          <h2 className="text-display md:text-heading-lg font-switzer font-[300] text-ink-black leading-[1] tracking-[-0.04em] mt-3">The Wall</h2>
+          <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">Production Archive</p>
+          <h2 className="text-display md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.04em] mt-3">The Wall</h2>
         </div>
 
         <div className="relative w-full max-w-[1400px] mx-auto px-8 md:px-10" style={{ minHeight: "70vh" }}>
@@ -113,31 +113,31 @@ export default function ProductionWall() {
               >
                 <div className="w-full h-full overflow-hidden"
                   style={{
-                    background: `linear-gradient(135deg, #FAFAF8 0%, #F0EFEA 100%)`,
-                    boxShadow: `0 2px 12px rgba(0,0,0,0.08), 0 8px 40px rgba(0,0,0,0.04), inset 0 0 0 1px rgba(255,255,255,0.8)`,
+                    background: `linear-gradient(135deg, #1E1E1E 0%, #141414 100%)`,
+                    boxShadow: `0 2px 12px rgba(0,0,0,0.4), 0 8px 40px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(255,255,255,0.05)`,
                   }}
                 >
-                  <div className="w-full h-full flex flex-col items-center justify-center p-3 bg-gradient-to-br from-bone-white/80 via-[#f0eee8]/60 to-bone-white/70 transition-all duration-500 relative group-hover:from-bone-white group-hover:via-[#f0eee8]">
+                  <div className="w-full h-full flex flex-col items-center justify-center p-3 bg-gradient-to-br from-smoke/80 via-[#1A1A1A]/60 to-smoke/70 transition-all duration-500 relative group-hover:from-smoke group-hover:via-[#1A1A1A]">
                     {thumb && <img src={thumb} alt={card.brand} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500" loading="lazy" />}
 
                     <div className="relative z-10 text-center">
-                      <div className="w-8 h-8 mx-auto mb-2 rounded-full border border-ash/50 flex items-center justify-center group-hover:border-ink-black/30 transition-colors duration-500">
+                      <div className="w-8 h-8 mx-auto mb-2 rounded-full border border-cinema-white/8 flex items-center justify-center group-hover:border-cinema-white/30 transition-colors duration-500">
                         {isVideo ? (
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-graphite group-hover:text-ink-black transition-colors duration-500 ml-0.5">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-stone group-hover:text-cinema-white transition-colors duration-500 ml-0.5">
                             <path d="M8 5v14l11-7L8 5z" fill="currentColor" />
                           </svg>
                         ) : (
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-graphite group-hover:text-ink-black transition-colors duration-500">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-stone group-hover:text-cinema-white transition-colors duration-500">
                             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                             <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                         )}
                       </div>
-                      <p className="text-caption font-switzer font-[500] text-graphite uppercase tracking-[0.02em] leading-[1.2] group-hover:text-ink-black transition-colors duration-500">{card.label}</p>
-                      <p className="mt-1 text-[10px] font-switzer font-[400] text-ash uppercase tracking-[0.02em]">{card.sub}</p>
-                      <p className="mt-1 text-[9px] font-switzer font-[400] text-ash uppercase tracking-[0.02em]">{card.brand} · {card.year}</p>
+                      <p className="text-caption font-switzer font-[500] text-stone uppercase tracking-[0.02em] leading-[1.2] group-hover:text-cinema-white transition-colors duration-500">{card.label}</p>
+                      <p className="mt-1 text-[10px] font-switzer font-[400] text-cinema-white/25 uppercase tracking-[0.02em]">{card.sub}</p>
+                      <p className="mt-1 text-[9px] font-switzer font-[400] text-cinema-white/25 uppercase tracking-[0.02em]">{card.brand} · {card.year}</p>
                       <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                        <span className="text-caption font-switzer font-[500] text-ink-black uppercase tracking-[0.02em] text-[10px]">
+                        <span className="text-caption font-switzer font-[500] text-cinema-white uppercase tracking-[0.02em] text-[10px]">
                           {isVideo ? "Watch Campaign →" : card.doc ? "Open Document →" : "View Campaign →"}
                         </span>
                       </div>
@@ -150,10 +150,10 @@ export default function ProductionWall() {
         </div>
 
         <div className="relative z-30 flex justify-center mt-20 md:mt-24">
-          <a href="#featured" className="inline-flex items-center gap-2 px-6 py-3 bg-ink-black text-bone-white text-caption font-switzer font-[400] uppercase tracking-[0.02em] no-underline transition-opacity hover:opacity-85"
+          <a href="#featured" className="inline-flex items-center gap-2 px-6 py-3 bg-gold text-cinema-black text-caption font-switzer font-[400] uppercase tracking-[0.02em] no-underline transition-opacity hover:opacity-85"
             style={{ borderRadius: "1440px" }}>
             Explore All Productions
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-bone-white">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-cinema-black">
               <path d="M3 7h8M11 7L7 3M11 7L7 11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </a>

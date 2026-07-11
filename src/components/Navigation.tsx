@@ -24,41 +24,34 @@ export default function Navigation() {
     <>
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled ? "bg-bone-white/80 backdrop-blur-[9px] border-b border-ash/30" : "bg-transparent"
+          scrolled ? "bg-cinema-black/80 backdrop-blur-xl border-b border-cinema-white/5" : "bg-transparent"
         }`}
       >
         <div className="max-w-[1400px] mx-auto px-8 md:px-10 flex items-center justify-between h-20 md:h-24">
-          {/* Logo mark — 32px circle */}
           <a href="#" className="no-underline">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="text-ink-black">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="text-cinema-white">
               <circle cx="16" cy="16" r="15" stroke="currentColor" strokeWidth="1.5" />
               <path d="M10 16h12M16 10v12" stroke="currentColor" strokeWidth="1.5" />
               <circle cx="16" cy="16" r="5" fill="currentColor" />
             </svg>
           </a>
 
-          {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
               <a
                 key={item.label}
                 href={item.href}
-                className="text-body-sm font-switzer font-[400] text-ink-black no-underline hover:text-graphite transition-colors"
+                className="text-body-sm font-switzer font-[400] text-cinema-white/60 no-underline hover:text-cinema-white transition-colors"
               >
                 {item.label}
               </a>
             ))}
           </div>
 
-          {/* Menu pill button — black fill, bone-white text, 1440px */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="bg-ink-black text-bone-white font-switzer font-[400] no-underline border-none cursor-pointer transition-opacity hover:opacity-85"
-            style={{
-              fontSize: "16px",
-              padding: "12px 24px",
-              borderRadius: "1440px",
-            }}
+            className="bg-gold text-cinema-black font-switzer font-[400] no-underline border-none cursor-pointer transition-opacity hover:opacity-85"
+            style={{ fontSize: "16px", padding: "12px 24px", borderRadius: "1440px" }}
           >
             {menuOpen ? "Close" : "Menu"}
           </button>
@@ -66,13 +59,13 @@ export default function Navigation() {
       </nav>
 
       {menuOpen && (
-        <div className="fixed inset-0 z-40 bg-bone-white flex items-center justify-center">
+        <div className="fixed inset-0 z-40 bg-cinema-black flex items-center justify-center">
           <div className="flex flex-col items-center gap-10">
             {navItems.map((item) => (
               <a
                 key={item.label}
                 href={item.href}
-                className="text-heading font-switzer font-[300] text-ink-black no-underline tracking-[-0.02em]"
+                className="text-heading font-switzer font-[300] text-cinema-white no-underline tracking-[-0.02em]"
                 onClick={() => setMenuOpen(false)}
               >
                 {item.label}

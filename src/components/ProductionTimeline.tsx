@@ -26,7 +26,7 @@ function ThumbnailRow({ brands }: { brands: string[] }) {
   return (
     <div className="flex flex-wrap gap-2 mt-4">
       {thumbs.slice(0, 5).map((t, i) => (
-        <div key={i} className="w-14 h-14 md:w-16 md:h-16 overflow-hidden border border-ash/30"><img src={t.thumb} alt={t.brand} className="w-full h-full object-cover" loading="lazy" /></div>
+        <div key={i} className="w-14 h-14 md:w-16 md:h-16 overflow-hidden border border-cinema-white/6"><img src={t.thumb} alt={t.brand} className="w-full h-full object-cover" loading="lazy" /></div>
       ))}
     </div>
   );
@@ -44,38 +44,38 @@ export default function ProductionTimeline() {
   const sorted = [...experience].sort((a, b) => (b.displayOrder || 0) - (a.displayOrder || 0));
 
   return (
-    <section id="process" ref={sectionRef} className="py-20 md:py-32 bg-bone-white reveal">
+    <section id="process" ref={sectionRef} className="py-20 md:py-32 bg-cinema-black reveal">
       <div className="max-w-[1400px] mx-auto px-8 md:px-10">
-        <p className="text-caption font-switzer font-[400] text-graphite uppercase tracking-[0.02em] mb-4">Career</p>
-        <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-ink-black leading-[1] tracking-[-0.03em] mb-16 md:mb-20">Production Timeline</h2>
+        <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-4">Career</p>
+        <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] mb-16 md:mb-20">Production Timeline</h2>
 
         <div className="relative max-w-4xl">
-          <div className="absolute left-[7px] md:left-[11px] top-0 bottom-0 w-px bg-ash/50" />
+          <div className="absolute left-[7px] md:left-[11px] top-0 bottom-0 w-px bg-cinema-white/8" />
 
           {sorted.map((entry, i) => {
             const brands = houseBrandMap[entry.productionHouseId] || [];
             return (
               <div key={entry.id} className="relative pl-8 md:pl-12 pb-12 md:pb-16 last:pb-0"
                 style={{ opacity: 0, animation: `heroFade 0.6s ease ${i * 0.15}s forwards` }}>
-                <div className="absolute left-0 top-1 w-[15px] h-[15px] md:w-[23px] md:h-[23px] rounded-full bg-bone-white border-2 border-ink-black z-10" />
+                <div className="absolute left-0 top-1 w-[15px] h-[15px] md:w-[23px] md:h-[23px] rounded-full bg-gold border-2 border-gold z-10" />
 
-                <div className="border border-ash/30 px-6 py-5 md:px-8 md:py-6">
+                <div className="border border-cinema-white/6 px-6 py-5 md:px-8 md:py-6">
                   <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 mb-2">
-                    <span className="text-caption font-switzer font-[500] text-graphite uppercase tracking-[0.02em]">{formatDate(entry.startDate)} – {entry.endDate ? formatDate(entry.endDate) : "Present"}</span>
-                    <span className="hidden md:block text-ash">/</span>
-                    <span className="text-caption font-switzer font-[400] text-graphite uppercase tracking-[0.02em]">{phMap.get(entry.productionHouseId) || entry.productionHouseId}</span>
+                    <span className="text-caption font-switzer font-[500] text-stone uppercase tracking-[0.02em]">{formatDate(entry.startDate)} – {entry.endDate ? formatDate(entry.endDate) : "Present"}</span>
+                    <span className="hidden md:block text-cinema-white/25">/</span>
+                    <span className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">{phMap.get(entry.productionHouseId) || entry.productionHouseId}</span>
                   </div>
 
-                  <h3 className="text-heading-sm md:text-heading font-switzer font-[300] text-ink-black leading-[1] tracking-[-0.02em]">{entry.roleTitle}</h3>
+                  <h3 className="text-heading-sm md:text-heading font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.02em]">{entry.roleTitle}</h3>
 
-                  {entry.description && <p className="mt-2 text-body-sm font-switzer font-[300] text-graphite leading-[1.5] max-w-xl">{entry.description}</p>}
+                  {entry.description && <p className="mt-2 text-body-sm font-switzer font-[300] text-stone leading-[1.5] max-w-xl">{entry.description}</p>}
 
                   <ThumbnailRow brands={brands} />
 
                   {brands.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-3">
                       {brands.map((b) => (
-                        <span key={b} className="text-caption font-switzer font-[400] text-graphite uppercase tracking-[0.02em] border border-ash/50 px-2 py-0.5">{b}</span>
+                        <span key={b} className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] border border-cinema-white/8 px-2 py-0.5">{b}</span>
                       ))}
                     </div>
                   )}

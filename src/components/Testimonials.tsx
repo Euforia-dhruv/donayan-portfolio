@@ -18,16 +18,16 @@ export default function Testimonials() {
   if (!siteContent.testimonials || siteContent.testimonials.length === 0) return null;
 
   return (
-    <section ref={sectionRef} className="py-20 md:py-32 bg-bone-white border-t border-ash/50 reveal">
+    <section ref={sectionRef} className="py-20 md:py-32 bg-cinema-black border-t border-cinema-white/8 reveal">
       <div className="max-w-[1400px] mx-auto px-8 md:px-10">
-        <p className="text-caption font-switzer font-[400] text-graphite uppercase tracking-[0.02em] mb-4">Testimonials</p>
+        <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-4">Testimonials</p>
 
         <div className="max-w-4xl">
           {siteContent.testimonials.map((t, i) => (
             <div key={i} className={`transition-all duration-700 ${i === active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 absolute"}`}
               style={i === active ? { position: "relative" } : {}}>
-              <p className="text-heading-lg md:text-display font-switzer font-[300] text-ink-black leading-[1] tracking-[-0.03em] text-balance">&ldquo;{t.quote}&rdquo;</p>
-              <p className="mt-6 text-body-sm font-switzer font-[400] text-graphite uppercase tracking-[0.02em]">— {t.attribution}</p>
+              <p className="text-heading-lg md:text-display font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] text-balance">&ldquo;{t.quote}&rdquo;</p>
+              <p className="mt-6 text-body-sm font-switzer font-[400] text-stone uppercase tracking-[0.02em]">— {t.attribution}</p>
             </div>
           ))}
         </div>
@@ -35,7 +35,7 @@ export default function Testimonials() {
         <div className="flex gap-2 mt-10">
           {siteContent.testimonials.map((_, i) => (
             <button key={i} onClick={() => setActive(i)}
-              className={`transition-all duration-300 cursor-pointer border-none rounded-full ${i === active ? "bg-ink-black" : "bg-ash"}`}
+              className={`transition-all duration-300 cursor-pointer border-none rounded-full ${i === active ? "bg-gold" : "bg-cinema-white/25"}`}
               style={{ width: i === active ? "24px" : "8px", height: "8px" }} />
           ))}
         </div>

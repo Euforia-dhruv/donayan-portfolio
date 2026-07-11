@@ -2,11 +2,13 @@
 
 @theme {
   /* Colors */
-  --color-bone-white: #fffef7;
-  --color-ink-black: #000000;
-  --color-graphite: #666666;
-  --color-ash: #aaaaaa;
-  --color-charcoal-scale: #4d4c4a;
+  --color-cinema-black: #0A0A0A;
+  --color-cinema-white: #F5F5F2;
+  --color-gold: #C8A24D;
+  --color-smoke: #141414;
+  --color-charcoal: #1E1E1E;
+  --color-stone: rgba(245,245,242,0.55);
+
   --color-magenta-bloom: #8a0467;
   --color-forest-teal: #03624c;
   --color-powder-blue: #a5c8eb;
@@ -64,8 +66,8 @@ html {
 }
 
 body {
-  background-color: var(--color-bone-white);
-  color: var(--color-ink-black);
+  background-color: var(--color-cinema-black);
+  color: var(--color-cinema-white);
   font-family: var(--font-switzer);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -73,8 +75,8 @@ body {
 }
 
 ::selection {
-  background-color: var(--color-ink-black);
-  color: var(--color-bone-white);
+  background-color: var(--color-gold);
+  color: var(--color-cinema-black);
 }
 
 @keyframes marquee {
