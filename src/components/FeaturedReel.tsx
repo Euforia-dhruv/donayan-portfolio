@@ -18,17 +18,16 @@ export default function FeaturedReel() {
 
   return (
     <>
-      <section className="relative py-20 md:py-28 bg-cream-paper border-t border-charcoal/10">
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8">
-          <p className="font-geist font-[500] text-charcoal/50 uppercase mb-3" style={{ fontSize: "11px", letterSpacing: "0.2em" }}>
+      <section className="relative py-20 md:py-28 bg-bone-white border-t border-ash/50">
+        <div className="max-w-[1400px] mx-auto px-8 md:px-10">
+          <p className="text-caption font-switzer font-[400] text-graphite uppercase tracking-[0.02em] mb-3">
             Featured Campaign
           </p>
-          <h2 className="font-gelica font-[500] text-cocoa-ink leading-[1.08] mb-8 max-w-3xl lowercase"
-            style={{ fontSize: "clamp(36px, 4vw, 56px)" }}>
+          <h2 className="text-heading md:text-display font-switzer font-[300] text-ink-black leading-[1] tracking-[-0.04em] mb-8 max-w-3xl">
             {firstFeature.brand}
           </h2>
 
-          <div className="relative aspect-video rounded-xl overflow-hidden bg-dew-drop group">
+          <div className="relative aspect-video overflow-hidden bg-bone-white group border border-ash/30">
             {!playing && firstFeature.thumbnail && (
               <img
                 src={firstFeature.thumbnail}
@@ -40,26 +39,26 @@ export default function FeaturedReel() {
             )}
 
             {!playing && (
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 via-charcoal/10 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink-black/40 to-transparent" />
             )}
 
             {!playing && (
               <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-10">
                 <div className="flex flex-wrap items-center gap-3 mb-3">
-                  <span className="font-geist font-[500] text-cream-paper uppercase px-2 py-1 rounded bg-cream-paper/20 backdrop-blur-sm" style={{ fontSize: "10px", letterSpacing: "0.15em" }}>
+                  <span className="text-caption font-switzer font-[400] text-graphite uppercase tracking-[0.02em] px-2 py-1 bg-bone-white/80">
                     {getPlatformLabel(firstFeature.url)}
                   </span>
-                  <span className="font-geist font-[400] text-cream-paper/50 uppercase" style={{ fontSize: "10px", letterSpacing: "0.1em" }}>
+                  <span className="text-caption font-switzer font-[400] text-bone-white/70 uppercase tracking-[0.02em]">
                     {firstFeature.category}
                   </span>
-                  <span className="font-geist font-[400] text-cream-paper/50 uppercase" style={{ fontSize: "10px", letterSpacing: "0.1em" }}>
+                  <span className="text-caption font-switzer font-[400] text-bone-white/70 uppercase tracking-[0.02em]">
                     {firstFeature.year}
                   </span>
                 </div>
-                <h3 className="font-gelica font-[400] text-cream-paper leading-[1.1]" style={{ fontSize: "clamp(20px, 2.2vw, 28px)" }}>
+                <h3 className="text-heading-sm font-switzer font-[300] text-bone-white leading-[1] tracking-[-0.02em]">
                   {firstFeature.title}
                 </h3>
-                <p className="font-geist font-[400] text-cream-paper/50 mt-1" style={{ fontSize: "13px" }}>
+                <p className="text-body-sm font-switzer font-[400] text-bone-white/60 mt-1">
                   {firstFeature.role}
                 </p>
               </div>
@@ -68,10 +67,10 @@ export default function FeaturedReel() {
             {!playing && (
               <button
                 onClick={() => setPlaying(true)}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-16 h-16 md:w-20 md:h-20 rounded-full bg-cream-paper/90 hover:bg-cream-paper transition-all duration-300 flex items-center justify-center cursor-pointer border border-charcoal/20 group/btn"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-16 h-16 md:w-20 md:h-20 rounded-full bg-bone-white/90 hover:bg-bone-white transition-all duration-300 flex items-center justify-center cursor-pointer border-none"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="ml-1">
-                  <path d="M8 5v14l11-7L8 5z" fill="#171717" />
+                  <path d="M8 5v14l11-7L8 5z" fill="#000000" />
                 </svg>
               </button>
             )}
@@ -89,8 +88,8 @@ export default function FeaturedReel() {
             {!playing && (
               <button
                 onClick={() => setPlaying(true)}
-                className="absolute bottom-6 right-6 md:bottom-10 md:right-10 z-10 inline-flex items-center gap-2 px-5 py-2.5 bg-cream-paper/80 backdrop-blur-sm text-charcoal font-geist font-[500] uppercase rounded-xl border border-charcoal/10 hover:bg-cream-paper transition-all duration-300 cursor-pointer"
-                style={{ fontSize: "10px", letterSpacing: "0.15em" }}
+                className="absolute bottom-6 right-6 md:bottom-10 md:right-10 z-10 inline-flex items-center gap-2 px-5 py-2.5 bg-ink-black/80 text-bone-white text-caption font-switzer font-[400] uppercase tracking-[0.02em] hover:bg-ink-black transition-all duration-300 cursor-pointer border-none"
+                style={{ borderRadius: "1440px" }}
               >
                 Watch Full Campaign
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
