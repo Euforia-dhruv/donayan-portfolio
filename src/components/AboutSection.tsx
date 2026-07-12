@@ -15,7 +15,7 @@ export default function AboutSection() {
   return (
     <section id="about" ref={sectionRef} className="relative py-12 md:py-16 overflow-hidden reveal bg-cinema-black border-t border-cinema-white/8">
       <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-10">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-20">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-16">
           <div className="lg:col-span-3">
             <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-4 reveal reveal-delay-1">About</p>
             <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] max-w-2xl mb-8 reveal reveal-delay-2">{siteContent.about.title}</h2>

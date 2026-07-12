@@ -46,7 +46,7 @@ export default function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-8 md:px-10 pt-36 pb-16">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-8 md:px-10 pt-20 pb-16">
         <div className="flex flex-col md:flex-row md:items-center gap-16 md:gap-20">
           {/* Left text */}
           <div className="flex-1" style={{ maxWidth: "500px" }}>

@@ -91,7 +91,7 @@ export default function ProductionWall() {
   return (
     <section
       className="w-full relative"
-      style={{ backgroundColor: "#0b0b0b", minHeight: sectionH || "100vh" }}
+      style={{ backgroundColor: "#0b0b0b" }}
     >
       <div className="absolute inset-0 pointer-events-none" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E")`,
@@ -100,14 +100,14 @@ export default function ProductionWall() {
         opacity: 0.035,
       }} />
 
-      <div className="relative z-10 text-center pt-12 pb-6 pointer-events-none">
+      <div className="relative z-10 text-center pt-10 pb-4 pointer-events-none">
         <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">Production Archive</p>
         <h2 className="text-display md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.04em] mt-3">The Wall</h2>
       </div>
 
       <div
         className="relative mx-auto"
-        style={{ width: CANVAS_W, maxWidth: "100%", minHeight: sectionH ? sectionH - 120 : "calc(100vh - 120px)" }}
+        style={{ width: CANVAS_W, maxWidth: "100%" }}
       >
         {allCards.map((card, i) => {
           const delay = Math.min(i * 0.1, 1.0);

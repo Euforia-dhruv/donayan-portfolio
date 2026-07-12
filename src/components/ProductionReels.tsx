@@ -316,8 +316,8 @@ export default function ProductionReels() {
       ref={sectionRef}
       style={{
         backgroundColor: "#0A0A0A",
-        paddingTop: "120px",
-        paddingBottom: "60px",
+        paddingTop: "80px",
+        paddingBottom: "40px",
       }}
     >
       <div
@@ -342,7 +342,7 @@ export default function ProductionReels() {
             Production Archive
           </p>
           <h2
-            className="font-switzer font-[300] leading-[1] tracking-[-0.03em] mb-12 md:mb-16"
+            className="font-switzer font-[300] leading-[1] tracking-[-0.03em] mb-8 md:mb-10"
             style={{ fontSize: "clamp(32px, 4vw, 54px)", color: "#F5F5F2" }}
           >
             Production Reels

@@ -28,7 +28,7 @@ export default function ContactSection() {
     <section
       id="contact"
       ref={ref}
-      className="relative min-h-[85vh] md:min-h-[90vh] flex items-center bg-cinema-black overflow-hidden"
+      className="relative flex items-center bg-cinema-black overflow-hidden"
     >
       {/* Background image – z-index 0 */}
       <div
@@ -54,7 +54,7 @@ export default function ContactSection() {
 
       {/* Content – z-index 2 */}
       <div
-        className="relative w-full max-w-[1400px] mx-auto px-8 md:px-10 py-16 md:py-20"
+        className="relative w-full max-w-[1400px] mx-auto px-8 md:px-10 py-20 md:py-20"
         style={{
           zIndex: 2,
           opacity: visible ? 1 : 0,
