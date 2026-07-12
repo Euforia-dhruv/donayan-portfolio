@@ -177,8 +177,6 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right — empty (image is behind) */}
-          <div className="flex-1" />
         </div>
       </div>
 
