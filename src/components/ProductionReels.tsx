@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getYouTubeThumbnail, getYouTubeId } from "@/lib/video-utils";
+import videoEntries from "@/data/video-entries.json";
 import archiveData from "@/data/archive.json";
 
 interface VideoEntry {
@@ -11,6 +12,9 @@ interface VideoEntry {
   brand: string;
   year: string;
   role: string;
+  hasMp4: boolean;
+  images: string[] | null;
+  videoUrl: string | null;
 }
 
 interface ArchiveItem {
@@ -20,31 +24,6 @@ interface ArchiveItem {
   year: string;
   role: string;
 }
-
-const TXT_RAW = `1https://www.youtube.com/watch?v=1wqdb9s3kfo
-2https://www.youtube.com/watch?v=zlQc2GHojL8
-3https://www.youtube.com/watch?v=E924AYIaCRw
-4https://www.instagram.com/reel/DPVoyKujVe4/
-5https://youtu.be/F9m4xEH2-dU
-6https://www.instagram.com/p/Cz-2Mi0C6Bg/
-9https://www.instagram.com/pocketfm.stories/reel/C24lSvovffw/
-10https://www.instagram.com/p/C7bjXlbtp4Z/
-11https://www.instagram.com/p/C-MkhP6ykXP/
-12https://www.instagram.com/p/C4h8FkuN7Li/
-13https://www.instagram.com/p/C7RB6gGoVDQ/
-14https://www.instagram.com/p/C6BbgzXoyLR/
-15https://www.instagram.com/p/C2Zu8u2p7di/
-16https://www.instagram.com/p/C9Hady1yVDJ/
-17https://www.instagram.com/reel/C22aMEvoiJl/?utm_source=ig_web_copy_link
-18https://www.instagram.com/reel/Cr0W-g_NBpu/?utm_source=ig_web_copy_link
-19https://youtube.com/shorts/kVqN7LIbLUM?si=oTajKf2mpI3djwMy
-22https://www.instagram.com/p/C2uMuHjJmk_/
-23https://www.youtube.com/watch?app=desktop&v=or5XQteDzYU
-24https://www.instagram.com/p/CmoS25uhkQG/
-25https://www.instagram.com/p/ClgcOJiDf2n/
-26https://www.youtube.com/watch?v=W2KMt80-Kg0
-27https://www.youtube.com/watch?feature=shared&fbclid=PAZXh0bgNhZW0CMTEAAadpVEpFYvty656IN9z_noVfym2_c5Bs8TR4Og10GSvEkgiJ0uM1E29xRg22Cw_aem_8GNvfG_hk81mjmB0XyyD0A&v=OjwGqh_jB6Y
-28https://www.youtube.com/watch?v=RKjF5jTDbC8&t=1s`;
 
 function isYoutubeUrl(url: string): boolean {
   return url.includes("youtube.com") || url.includes("youtu.be");
@@ -61,35 +40,23 @@ function extractVideoId(url: string): string | null {
   return getInstagramCode(url);
 }
 
-function parseEntries(): VideoEntry[] {
-  const archiveLookup = new Map<string, ArchiveItem>();
-  for (const item of archiveData as ArchiveItem[]) {
-    const id = extractVideoId(item.url);
-    if (id) archiveLookup.set(id, item);
-  }
-
-  const entries: VideoEntry[] = [];
-  for (const line of TXT_RAW.trim().split("\n")) {
-    const m = line.match(/^(\d+)/);
-    if (!m) continue;
-    const id = parseInt(m[0], 10);
-    const url = line.slice(m[0].length).trim();
-    if (!url) continue;
-    const vidId = extractVideoId(url);
-    const arch = vidId ? archiveLookup.get(vidId) : undefined;
-    entries.push({
-      id,
-      url,
-      title: arch?.title || `Video ${id}`,
-      brand: arch?.brand || "",
-      year: arch?.year || "",
-      role: arch?.role || "",
-    });
-  }
-  return entries;
+const archiveLookup = new Map<string, ArchiveItem>();
+for (const item of archiveData as ArchiveItem[]) {
+  const id = extractVideoId(item.url);
+  if (id) archiveLookup.set(id, item);
 }
 
-const ENTRIES = parseEntries();
+const ENTRIES: VideoEntry[] = videoEntries.map((e: { id: number; url: string; hasMp4: boolean; images: string[] | null; videoUrl: string | null }) => {
+  const vidId = extractVideoId(e.url);
+  const arch = vidId ? archiveLookup.get(vidId) : undefined;
+  return {
+    ...e,
+    title: arch?.title || `Video ${e.id}`,
+    brand: arch?.brand || "",
+    year: arch?.year || "",
+    role: arch?.role || "",
+  };
+});
 
 const SPANS = [
   { col: 2 }, { col: 1 }, { col: 1 }, { col: 2 },
@@ -104,28 +71,29 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
-  const [hasMp4, setHasMp4] = useState(true);
   const [poster, setPoster] = useState<string | undefined>();
+  const [posterLoaded, setPosterLoaded] = useState(false);
+
+  const isImageOnly = !entry.hasMp4;
 
   useEffect(() => {
+    if (!isImageOnly) return;
+    const src = entry.images
+      ? `/assets/videos/${entry.images[0]}`
+      : `/assets/videos/${entry.id}.jpg`;
     const img = new Image();
-    const jpgUrl = `/assets/videos/${entry.id}.jpg`;
-    img.onload = () => setPoster(jpgUrl);
+    img.onload = () => { setPoster(src); setPosterLoaded(true); };
     img.onerror = () => {
       if (isYoutubeUrl(entry.url)) {
-        setPoster(getYouTubeThumbnail(entry.url) ?? undefined);
+        const yt = getYouTubeThumbnail(entry.url);
+        if (yt) { setPoster(yt); setPosterLoaded(true); }
       }
     };
-    img.src = jpgUrl;
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("HEAD", `/assets/videos/${entry.id}.mp4`, true);
-    xhr.onload = () => setHasMp4(xhr.status === 200);
-    xhr.onerror = () => setHasMp4(false);
-    xhr.send();
-  }, [entry.id, entry.url]);
+    img.src = src;
+  }, [entry.id, entry.url, isImageOnly, entry.images]);
 
   useEffect(() => {
+    if (!entry.hasMp4) return;
     const el = containerRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(
@@ -139,7 +107,9 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
+  }, [entry.hasMp4]);
+
+  const imageSrc = (name: string) => `/assets/videos/${name}`;
 
   return (
     <div
@@ -157,40 +127,40 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {hasMp4 ? (
+      {entry.hasMp4 && entry.videoUrl ? (
         <video
           ref={videoRef}
-          src={`/assets/videos/${entry.id}.mp4`}
-          poster={poster}
+          src={entry.videoUrl}
           muted
           loop
           playsInline
           preload="none"
           className="w-full h-full object-cover"
         />
+      ) : entry.images && entry.images.length > 1 ? (
+        <div className="w-full h-full grid" style={{ gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr 1fr", gap: "2px" }}>
+          <img src={imageSrc(entry.images[0])} alt="" className="w-full h-full object-cover" style={{ gridColumn: "1 / 3", gridRow: "1 / 3" }} onError={(e) => { e.currentTarget.style.display = "none"; }} />
+          {entry.images.slice(1, 5).map((img, j) => (
+            <img key={j} src={imageSrc(img)} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+          ))}
+        </div>
       ) : (
-        <img
-          src={poster || ""}
-          alt=""
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            const t = e.currentTarget;
-            if (t.dataset.fb) return;
-            t.dataset.fb = "1";
-            t.style.display = "none";
-            const fb = t.parentElement?.querySelector<HTMLElement>(".rf-fb");
-            if (fb) fb.style.display = "flex";
-          }}
-        />
+        <>
+          {poster ? (
+            <img src={poster} alt="" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: "#141414" }}>
+              {!posterLoaded && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: "rgba(245,245,242,0.15)" }}>
+                  <rect x="2" y="2" width="20" height="20" rx="4" stroke="currentColor" strokeWidth="1.2" />
+                  <circle cx="10" cy="10" r="2" stroke="currentColor" strokeWidth="1.2" />
+                  <path d="M2 17l5-5 3 3 4-4 6 6" stroke="currentColor" strokeWidth="1.2" />
+                </svg>
+              )}
+            </div>
+          )}
+        </>
       )}
-
-      <div className="rf-fb absolute inset-0 items-center justify-center" style={{ display: "none", backgroundColor: "#1E1E1E", borderRadius: "12px" }}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: "rgba(245,245,242,0.2)" }}>
-          <rect x="2" y="2" width="20" height="20" rx="4" stroke="currentColor" strokeWidth="1.2" />
-          <circle cx="10" cy="10" r="2" stroke="currentColor" strokeWidth="1.2" />
-          <path d="M2 17l5-5 3 3 4-4 6 6" stroke="currentColor" strokeWidth="1.2" />
-        </svg>
-      </div>
 
       {/* Hover overlay */}
       <div
@@ -224,24 +194,26 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
         )}
       </div>
 
-      {/* Play button */}
-      <div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
-        style={{ opacity: hovered ? 1 : 0.7, transition: "opacity 0.5s ease" }}
-      >
+      {/* Play button — only for video entries */}
+      {entry.hasMp4 && (
         <div
-          className="w-12 h-12 rounded-full flex items-center justify-center"
-          style={{
-            backgroundColor: hovered ? "rgba(200,162,77,0.9)" : "rgba(20,20,20,0.8)",
-            transform: hovered ? "scale(1)" : "scale(0.85)",
-            transition: "all 0.5s ease",
-          }}
+          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          style={{ opacity: hovered ? 1 : 0.7, transition: "opacity 0.5s ease" }}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ color: hovered ? "#0A0A0A" : "#F5F5F2", marginLeft: "2px" }}>
-            <path d="M8 5v14l11-7L8 5z" fill="currentColor" />
-          </svg>
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center"
+            style={{
+              backgroundColor: hovered ? "rgba(200,162,77,0.9)" : "rgba(20,20,20,0.8)",
+              transform: hovered ? "scale(1)" : "scale(0.85)",
+              transition: "all 0.5s ease",
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ color: hovered ? "#0A0A0A" : "#F5F5F2", marginLeft: "2px" }}>
+              <path d="M8 5v14l11-7L8 5z" fill="currentColor" />
+            </svg>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

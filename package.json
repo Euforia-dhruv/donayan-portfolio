@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "prebuild": "node scripts/generate-video-entries.mjs",
+"build": "next build",
     "start": "next start"
   },
   "dependencies": {
