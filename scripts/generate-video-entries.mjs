@@ -96,7 +96,7 @@ function classifyVideo(url) {
   if (u.includes("youtube.com") || u.includes("youtu.be"))
     return { w: 1920, h: 1080 };
   if (u.includes("instagram.com/p/"))
-    return { w: 1080, h: 1080 };
+    return { w: 1080, h: 1350 };
   return { w: 1920, h: 1080 };
 }
 
