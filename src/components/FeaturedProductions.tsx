@@ -26,7 +26,7 @@ export default function FeaturedProductions() {
 
   return (
     <>
-      <section id="featured" ref={sectionRef} className="relative py-24 md:py-32 overflow-hidden reveal bg-cinema-black">
+      <section id="featured" ref={sectionRef} className="relative py-12 md:py-16 overflow-hidden reveal bg-cinema-black">
         <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-10">
           <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-3 reveal reveal-delay-1">Production Archive</p>
           <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] max-w-2xl mb-10 reveal reveal-delay-2">All Productions</h2>

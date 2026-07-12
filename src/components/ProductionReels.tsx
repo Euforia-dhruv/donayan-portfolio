@@ -316,8 +316,8 @@ export default function ProductionReels() {
       ref={sectionRef}
       style={{
         backgroundColor: "#0A0A0A",
-        paddingTop: "180px",
-        paddingBottom: "120px",
+        paddingTop: "120px",
+        paddingBottom: "60px",
       }}
     >
       <div

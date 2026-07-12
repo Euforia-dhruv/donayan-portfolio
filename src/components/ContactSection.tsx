@@ -14,8 +14,20 @@ export default function ContactSection() {
   }
 
   return (
-    <section id="contact" className="py-24 md:py-36 bg-cinema-black border-t border-cinema-white/8">
-      <div className="max-w-[1400px] mx-auto px-8 md:px-10">
+    <section id="contact" className="relative py-16 md:py-24 bg-cinema-black border-t border-cinema-white/8 overflow-hidden">
+      {/* Thank You background */}
+      <div
+        className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
+        style={{ opacity: 0.08, zIndex: 0 }}
+      >
+        <img
+          src="/assets/images/thank-you.png"
+          alt=""
+          style={{ width: "70%", maxWidth: "800px", height: "auto", objectFit: "contain", filter: "blur(2px)" }}
+        />
+      </div>
+
+      <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-10">
         <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-4">Contact</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">

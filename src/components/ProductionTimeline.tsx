@@ -44,7 +44,7 @@ export default function ProductionTimeline() {
   const sorted = [...experience].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
 
   return (
-    <section id="process" ref={sectionRef} className="py-20 md:py-32 bg-cinema-black reveal">
+    <section id="process" ref={sectionRef} className="py-12 md:py-16 bg-cinema-black reveal">
       <div className="max-w-[1400px] mx-auto px-8 md:px-10">
         <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-4">Career</p>
         <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] mb-16 md:mb-20">Production Timeline</h2>
