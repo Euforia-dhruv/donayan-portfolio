@@ -38,7 +38,8 @@ public/assets/docs/*.pptx
 public/assets/docs/*.docx
 public/assets/docs/*.xlsx
 public/assets/work-images/*.png
-public/assets/videos/*
+public/assets/videos/*.mp4
+public/assets/videos/*.jpg
 
 # root-level stray images
 *.jpeg
