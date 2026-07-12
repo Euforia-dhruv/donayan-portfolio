@@ -60,7 +60,7 @@ const allCards: WallImage[] = [
   // ── Row 3: bottom cluster ──────────────────────────────
   { id: "w-fossil",   src: "/Treatment Notes/fossil.png",          aspect: "4:5",  title: "Fossil",         pdf: "/Treatment Notes/Fossil - SS_25 - PPM DECK.pdf",
     x: 60,  y: 590, w: 235, h: 294, rot: -1.5, z: 38 },
-  { id: "w-lifestyle", src: "/Others/life.png",                   aspect: "4:3",  title: "Lifestyle",      pdf: null,
+  { id: "w-lifestyle", src: "/Others/life.png",                   aspect: "4:3",  title: "Lifestyle",      pdf: "/Others/Lifestyle SS_24 Cast Batch 5 (Bangkok).pdf",
     x: 320, y: 595, w: 320, h: 240, rot: 0.5,  z: 44 },
   { id: "w-bubbling", src: "/Marketing Pitch/the.png",            aspect: "4:5",  title: "The Bubbling Fish", pdf: "/Marketing Pitch/The Bubbling Fish and Nirala - The Plan.pdf",
     x: 670, y: 580, w: 235, h: 294, rot: 1,    z: 39 },
