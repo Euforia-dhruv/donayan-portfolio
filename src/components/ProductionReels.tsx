@@ -15,6 +15,7 @@ interface VideoEntry {
   hasMp4: boolean;
   images: string[] | null;
   hasImage: boolean;
+  videoUrl: string | null;
 }
 
 interface ArchiveItem {
@@ -47,7 +48,7 @@ for (const item of archiveData as ArchiveItem[]) {
 }
 
 const ENTRIES: VideoEntry[] = videoEntries.map(
-  (e: { id: number; url: string; hasMp4: boolean; images: string[] | null; hasImage: boolean }) => {
+  (e: { id: number; url: string; hasMp4: boolean; images: string[] | null; hasImage: boolean; videoUrl: string | null }) => {
     const vidId = extractVideoId(e.url);
     const arch = vidId ? archiveLookup.get(vidId) : undefined;
     return {
@@ -107,7 +108,7 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
       return (
         <video
           ref={videoRef}
-          src={`/assets/archive/${entry.id}.mp4`}
+          src={entry.videoUrl || `/assets/archive/${entry.id}.mp4`}
           muted
           loop
           playsInline

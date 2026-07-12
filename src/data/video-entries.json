@@ -3,6 +3,7 @@
     "id": 1,
     "url": "https://www.youtube.com/watch?v=1wqdb9s3kfo",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/e4d7gzfy",
     "images": null,
     "hasImage": false
   },
@@ -10,6 +11,7 @@
     "id": 2,
     "url": "https://www.youtube.com/watch?v=zlQc2GHojL8",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/6ytu2vbc",
     "images": null,
     "hasImage": false
   },
@@ -17,6 +19,7 @@
     "id": 3,
     "url": "https://www.youtube.com/watch?v=E924AYIaCRw",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/xqjk8x6h",
     "images": null,
     "hasImage": false
   },
@@ -24,6 +27,7 @@
     "id": 4,
     "url": "https://www.instagram.com/reel/DPVoyKujVe4/",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/7b9phbj8",
     "images": null,
     "hasImage": false
   },
@@ -31,6 +35,7 @@
     "id": 5,
     "url": "https://youtu.be/F9m4xEH2-dU",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/ekyurq4f",
     "images": null,
     "hasImage": false
   },
@@ -38,6 +43,7 @@
     "id": 6,
     "url": "https://www.instagram.com/p/Cz-2Mi0C6Bg/",
     "hasMp4": false,
+    "videoUrl": null,
     "images": [
       "6.1.jpg",
       "6.2.jpg",
@@ -51,6 +57,7 @@
     "id": 9,
     "url": "https://www.instagram.com/pocketfm.stories/reel/C24lSvovffw/",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/mppg2us8",
     "images": null,
     "hasImage": false
   },
@@ -58,6 +65,7 @@
     "id": 10,
     "url": "https://www.instagram.com/p/C7bjXlbtp4Z/",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/avjkj6yp",
     "images": null,
     "hasImage": false
   },
@@ -65,6 +73,7 @@
     "id": 11,
     "url": "https://www.instagram.com/p/C-MkhP6ykXP/",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/c8cyhdgt",
     "images": null,
     "hasImage": false
   },
@@ -72,6 +81,7 @@
     "id": 12,
     "url": "https://www.instagram.com/p/C4h8FkuN7Li/",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/nzz4q3jv",
     "images": null,
     "hasImage": false
   },
@@ -79,6 +89,7 @@
     "id": 13,
     "url": "https://www.instagram.com/p/C7RB6gGoVDQ/",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/n32xw4uy",
     "images": null,
     "hasImage": false
   },
@@ -86,6 +97,7 @@
     "id": 14,
     "url": "https://www.instagram.com/p/C6BbgzXoyLR/",
     "hasMp4": false,
+    "videoUrl": null,
     "images": null,
     "hasImage": true
   },
@@ -93,6 +105,7 @@
     "id": 15,
     "url": "https://www.instagram.com/p/C2Zu8u2p7di/",
     "hasMp4": false,
+    "videoUrl": null,
     "images": null,
     "hasImage": true
   },
@@ -100,6 +113,7 @@
     "id": 16,
     "url": "https://www.instagram.com/p/C9Hady1yVDJ/",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/grr6rqrj",
     "images": null,
     "hasImage": false
   },
@@ -107,6 +121,7 @@
     "id": 17,
     "url": "https://www.instagram.com/reel/C22aMEvoiJl/?utm_source=ig_web_copy_link",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/ctv8mvnq",
     "images": null,
     "hasImage": false
   },
@@ -114,6 +129,7 @@
     "id": 18,
     "url": "https://www.instagram.com/reel/Cr0W-g_NBpu/?utm_source=ig_web_copy_link",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/72r24bhx",
     "images": null,
     "hasImage": false
   },
@@ -121,6 +137,7 @@
     "id": 19,
     "url": "https://youtube.com/shorts/kVqN7LIbLUM?si=oTajKf2mpI3djwMy",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/btnbpg4s",
     "images": null,
     "hasImage": false
   },
@@ -128,6 +145,7 @@
     "id": 22,
     "url": "https://www.instagram.com/p/C2uMuHjJmk_/",
     "hasMp4": false,
+    "videoUrl": null,
     "images": null,
     "hasImage": true
   },
@@ -135,6 +153,7 @@
     "id": 23,
     "url": "https://www.youtube.com/watch?app=desktop&v=or5XQteDzYU",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/ax82rtvt",
     "images": null,
     "hasImage": false
   },
@@ -142,6 +161,7 @@
     "id": 24,
     "url": "https://www.instagram.com/p/CmoS25uhkQG/",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/btyxtmd9",
     "images": null,
     "hasImage": false
   },
@@ -149,6 +169,7 @@
     "id": 25,
     "url": "https://www.instagram.com/p/ClgcOJiDf2n/",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/7932dbz3",
     "images": null,
     "hasImage": false
   },
@@ -156,6 +177,7 @@
     "id": 26,
     "url": "https://www.youtube.com/watch?v=W2KMt80-Kg0",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/f429ctnm",
     "images": null,
     "hasImage": false
   },
@@ -163,6 +185,7 @@
     "id": 27,
     "url": "https://www.youtube.com/watch?feature=shared&fbclid=PAZXh0bgNhZW0CMTEAAadpVEpFYvty656IN9z_noVfym2_c5Bs8TR4Og10GSvEkgiJ0uM1E29xRg22Cw_aem_8GNvfG_hk81mjmB0XyyD0A&v=OjwGqh_jB6Y",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/mjjwcrkn",
     "images": null,
     "hasImage": false
   },
@@ -170,6 +193,7 @@
     "id": 28,
     "url": "https://www.youtube.com/watch?v=RKjF5jTDbC8&t=1s",
     "hasMp4": true,
+    "videoUrl": "https://cdn.savedly.net/q58xsp88",
     "images": null,
     "hasImage": false
   }
