@@ -2,10 +2,8 @@ import { readdirSync, readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
 
 const ARCHIVE_DIR = resolve("public/assets/archive");
-const TXT_PATH = resolve("public/assets/archive/TXT.txt");
 const OUTPUT_PATH = resolve("src/data/video-entries.json");
 
-// Savedly CDN URLs keyed by MP4 ID (files are too large for git, served via CDN)
 const SAVEDLY_CDN = {
   1: "https://cdn.savedly.net/e4d7gzfy",
   2: "https://cdn.savedly.net/6ytu2vbc",
@@ -62,9 +60,43 @@ for (const line of TXT_URLS.trim().split("\n")) {
   if (m) urlMap[parseInt(m[0], 10)] = line.slice(m[0].length).trim();
 }
 
+/* --- Orientation classification --- */
+
+function classifyVideo(url) {
+  const u = url.toLowerCase();
+  if (u.includes("youtube.com/shorts") || u.includes("youtu.be/shorts"))
+    return { w: 1080, h: 1920 };
+  if (u.includes("instagram.com/reel"))
+    return { w: 1080, h: 1920 };
+  if (u.includes("youtube.com") || u.includes("youtu.be"))
+    return { w: 1920, h: 1080 };
+  // instagram feed post — common sizes are square or 4:5
+  if (u.includes("instagram.com/p/"))
+    return { w: 1080, h: 1080 };
+  return { w: 1920, h: 1080 };
+}
+
+function parseJpegDimensions(filePath) {
+  const buf = readFileSync(filePath);
+  let i = 2;
+  while (i < buf.length - 1) {
+    if (buf[i] !== 0xff) break;
+    const marker = buf[i + 1];
+    if (marker === 0xc0 || marker === 0xc1 || marker === 0xc2) {
+      const h = buf.readUInt16BE(i + 5);
+      const w = buf.readUInt16BE(i + 7);
+      return { w, h };
+    }
+    const len = buf.readUInt16BE(i + 2);
+    i += 2 + len;
+  }
+  return null;
+}
+
+/* --- Gather entries --- */
+
 const files = readdirSync(ARCHIVE_DIR);
 
-// Multi-image groups (e.g. 6.1.jpg, 6.2.jpg → tracked in git)
 const multiImages = {};
 for (const f of files) {
   const m = f.match(/^(\d+)\.(\d+)\.jpg$/);
@@ -74,21 +106,50 @@ for (const f of files) {
   }
 }
 
-// Single-image set (e.g. 14.jpg → tracked in git)
 const singleImages = new Set();
 for (const f of files) {
   const m = f.match(/^(\d+)\.jpg$/);
   if (m) singleImages.add(parseInt(m[1], 10));
 }
 
-const allIds = [...new Set([...Object.keys(SAVEDLY_CDN).map(Number), ...Object.keys(urlMap).map(Number)])].sort((a, b) => a - b);
+function getDimensions(id, images) {
+  // Multi-image — use first image's dimensions
+  if (images && images.length > 0) {
+    const p = resolve(ARCHIVE_DIR, images[0]);
+    const dims = parseJpegDimensions(p);
+    if (dims) return dims;
+  }
+  // Single image
+  if (singleImages.has(id)) {
+    const p = resolve(ARCHIVE_DIR, `${id}.jpg`);
+    const dims = parseJpegDimensions(p);
+    if (dims) return dims;
+  }
+  // Video — classify by URL
+  const url = urlMap[id];
+  if (url) return classifyVideo(url);
+  return { w: 1920, h: 1080 };
+}
+
+function calcColSpan(w, h) {
+  const a = w / h;
+  if (a > 1.3) return 2; // landscape
+  if (a < 0.8) return 1; // portrait
+  return 1; // square / near-square
+}
+
+const allIds = [
+  ...new Set([...Object.keys(SAVEDLY_CDN).map(Number), ...Object.keys(urlMap).map(Number)]),
+].sort((a, b) => a - b);
+
 const entries = [];
 
 for (const id of allIds) {
   const url = urlMap[id];
   if (!url) continue;
-  const videoUrl = SAVEDLY_CDN[id] || null;
   const images = multiImages[id] || null;
+  const dims = getDimensions(id, images);
+  const videoUrl = SAVEDLY_CDN[id] || null;
   entries.push({
     id,
     url,
@@ -96,8 +157,11 @@ for (const id of allIds) {
     videoUrl,
     images,
     hasImage: singleImages.has(id),
+    w: dims.w,
+    h: dims.h,
+    colSpan: calcColSpan(dims.w, dims.h),
   });
 }
 
 writeFileSync(OUTPUT_PATH, JSON.stringify(entries, null, 2));
-console.log(`→ Generated ${entries.length} video entries → ${OUTPUT_PATH}`);
+console.log(`→ Generated ${entries.length} entries → ${OUTPUT_PATH}`);

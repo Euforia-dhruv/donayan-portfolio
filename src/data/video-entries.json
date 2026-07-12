@@ -5,7 +5,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/e4d7gzfy",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1920,
+    "h": 1080,
+    "colSpan": 2
   },
   {
     "id": 2,
@@ -13,7 +16,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/6ytu2vbc",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1920,
+    "h": 1080,
+    "colSpan": 2
   },
   {
     "id": 3,
@@ -21,7 +27,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/xqjk8x6h",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1920,
+    "h": 1080,
+    "colSpan": 2
   },
   {
     "id": 4,
@@ -29,7 +38,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/7b9phbj8",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1080,
+    "h": 1920,
+    "colSpan": 1
   },
   {
     "id": 5,
@@ -37,7 +49,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/ekyurq4f",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1920,
+    "h": 1080,
+    "colSpan": 2
   },
   {
     "id": 6,
@@ -51,7 +66,10 @@
       "6.4.jpg",
       "6.5.jpg"
     ],
-    "hasImage": false
+    "hasImage": false,
+    "w": 1440,
+    "h": 923,
+    "colSpan": 2
   },
   {
     "id": 9,
@@ -59,7 +77,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/mppg2us8",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1920,
+    "h": 1080,
+    "colSpan": 2
   },
   {
     "id": 10,
@@ -67,7 +88,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/avjkj6yp",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1080,
+    "h": 1080,
+    "colSpan": 1
   },
   {
     "id": 11,
@@ -75,7 +99,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/c8cyhdgt",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1080,
+    "h": 1080,
+    "colSpan": 1
   },
   {
     "id": 12,
@@ -83,7 +110,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/nzz4q3jv",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1080,
+    "h": 1080,
+    "colSpan": 1
   },
   {
     "id": 13,
@@ -91,7 +121,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/n32xw4uy",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1080,
+    "h": 1080,
+    "colSpan": 1
   },
   {
     "id": 14,
@@ -99,7 +132,10 @@
     "hasMp4": false,
     "videoUrl": null,
     "images": null,
-    "hasImage": true
+    "hasImage": true,
+    "w": 2048,
+    "h": 2048,
+    "colSpan": 1
   },
   {
     "id": 15,
@@ -107,7 +143,10 @@
     "hasMp4": false,
     "videoUrl": null,
     "images": null,
-    "hasImage": true
+    "hasImage": true,
+    "w": 1440,
+    "h": 1799,
+    "colSpan": 1
   },
   {
     "id": 16,
@@ -115,7 +154,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/grr6rqrj",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1080,
+    "h": 1080,
+    "colSpan": 1
   },
   {
     "id": 17,
@@ -123,7 +165,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/ctv8mvnq",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1080,
+    "h": 1920,
+    "colSpan": 1
   },
   {
     "id": 18,
@@ -131,7 +176,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/72r24bhx",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1080,
+    "h": 1920,
+    "colSpan": 1
   },
   {
     "id": 19,
@@ -139,7 +187,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/btnbpg4s",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1080,
+    "h": 1920,
+    "colSpan": 1
   },
   {
     "id": 22,
@@ -147,7 +198,10 @@
     "hasMp4": false,
     "videoUrl": null,
     "images": null,
-    "hasImage": true
+    "hasImage": true,
+    "w": 1440,
+    "h": 1440,
+    "colSpan": 1
   },
   {
     "id": 23,
@@ -155,7 +209,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/ax82rtvt",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1920,
+    "h": 1080,
+    "colSpan": 2
   },
   {
     "id": 24,
@@ -163,7 +220,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/btyxtmd9",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1080,
+    "h": 1080,
+    "colSpan": 1
   },
   {
     "id": 25,
@@ -171,7 +231,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/7932dbz3",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1080,
+    "h": 1080,
+    "colSpan": 1
   },
   {
     "id": 26,
@@ -179,7 +242,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/f429ctnm",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1920,
+    "h": 1080,
+    "colSpan": 2
   },
   {
     "id": 27,
@@ -187,7 +253,10 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/mjjwcrkn",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1920,
+    "h": 1080,
+    "colSpan": 2
   },
   {
     "id": 28,
@@ -195,6 +264,9 @@
     "hasMp4": true,
     "videoUrl": "https://cdn.savedly.net/q58xsp88",
     "images": null,
-    "hasImage": false
+    "hasImage": false,
+    "w": 1920,
+    "h": 1080,
+    "colSpan": 2
   }
 ]

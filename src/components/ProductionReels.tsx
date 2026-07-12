@@ -16,6 +16,9 @@ interface VideoEntry {
   images: string[] | null;
   hasImage: boolean;
   videoUrl: string | null;
+  w: number;
+  h: number;
+  colSpan: number;
 }
 
 interface ArchiveItem {
@@ -48,7 +51,7 @@ for (const item of archiveData as ArchiveItem[]) {
 }
 
 const ENTRIES: VideoEntry[] = videoEntries.map(
-  (e: { id: number; url: string; hasMp4: boolean; images: string[] | null; hasImage: boolean; videoUrl: string | null }) => {
+  (e: { id: number; url: string; hasMp4: boolean; images: string[] | null; hasImage: boolean; videoUrl: string | null; w: number; h: number; colSpan: number }) => {
     const vidId = extractVideoId(e.url);
     const arch = vidId ? archiveLookup.get(vidId) : undefined;
     return {
@@ -60,15 +63,6 @@ const ENTRIES: VideoEntry[] = videoEntries.map(
     };
   }
 );
-
-const SPANS = [
-  { col: 2 }, { col: 1 }, { col: 1 }, { col: 2 },
-  { col: 1 }, { col: 1 }, { col: 2 }, { col: 1 },
-  { col: 2 }, { col: 1 }, { col: 1 }, { col: 2 },
-  { col: 1 }, { col: 2 }, { col: 1 }, { col: 1 },
-  { col: 2 }, { col: 1 }, { col: 1 }, { col: 2 },
-  { col: 1 }, { col: 2 }, { col: 1 }, { col: 1 },
-];
 
 function ReelCard({ entry }: { entry: VideoEntry }) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -101,9 +95,7 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
     return () => obs.disconnect();
   }, [entry.hasMp4]);
 
-  // Determine what to render
   const renderContent = () => {
-    // Video entry
     if (entry.hasMp4 && !videoFailed) {
       return (
         <video
@@ -113,70 +105,53 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
           loop
           playsInline
           autoPlay
-          className="w-full h-full object-contain"
+          className="w-full h-full object-cover"
           onError={() => setVideoFailed(true)}
         />
       );
     }
 
-    // Multi-image collage (ID 6)
     if (isMultiImage && entry.images) {
       const validImages = entry.images.filter((img) => !imgErrors.has(img));
-      if (validImages.length === 0) {
-        return <MediaUnavailable />;
-      }
+      if (validImages.length === 0) return <MediaUnavailable />;
       if (validImages.length === 1) {
         return (
-          <img
-            src={`/assets/archive/${validImages[0]}`}
-            alt=""
-            className="w-full h-full object-contain"
-            onError={() => setImgErrors((prev) => new Set(prev).add(validImages[0]))}
-          />
+          <img src={`/assets/archive/${validImages[0]}`} alt="" className="w-full h-full object-cover"
+            onError={() => setImgErrors((prev) => new Set(prev).add(validImages[0]))} />
         );
       }
       return (
         <div className="w-full h-full grid gap-[2px]" style={{ gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr 1fr" }}>
           <div style={{ gridColumn: "1 / 3", gridRow: "1 / 2" }} className="w-full h-full">
-            <img src={`/assets/archive/${validImages[0]}`} alt="" className="w-full h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[0]))} />
+            <img src={`/assets/archive/${validImages[0]}`} alt="" className="w-full h-full object-cover" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[0]))} />
           </div>
           <div className="w-full h-full">
-            <img src={`/assets/archive/${validImages[1]}`} alt="" className="w-full h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[1]))} />
+            <img src={`/assets/archive/${validImages[1]}`} alt="" className="w-full h-full object-cover" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[1]))} />
           </div>
           <div className="w-full h-full">
-            <img src={`/assets/archive/${validImages[2]}`} alt="" className="w-full h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[2]))} />
+            <img src={`/assets/archive/${validImages[2]}`} alt="" className="w-full h-full object-cover" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[2]))} />
           </div>
           <div className="w-full h-full">
-            <img src={`/assets/archive/${validImages[3]}`} alt="" className="w-full h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[3]))} />
+            <img src={`/assets/archive/${validImages[3]}`} alt="" className="w-full h-full object-cover" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[3]))} />
           </div>
           <div style={{ gridColumn: "1 / 3", gridRow: "3 / 4" }} className="w-full h-full flex justify-center">
-            <img src={`/assets/archive/${validImages[4]}`} alt="" className="h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[4]))} />
+            <img src={`/assets/archive/${validImages[4]}`} alt="" className="h-full object-cover" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[4]))} />
           </div>
         </div>
       );
     }
 
-    // Single image entry
     if (isSingleImage) {
       return (
-          <img
-            src={`/assets/archive/${entry.id}.jpg`}
-            alt=""
-            className="w-full h-full object-contain"
-            onError={() => setVideoFailed(true)}
-          />
+        <img src={`/assets/archive/${entry.id}.jpg`} alt="" className="w-full h-full object-cover"
+          onError={() => setVideoFailed(true)} />
       );
     }
 
-    // Fallback: try YouTube thumbnail
     if (isYoutubeUrl(entry.url)) {
       return (
-        <img
-          src={getYouTubeThumbnail(entry.url) || ""}
-          alt=""
-          className="w-full h-full object-contain"
-          onError={() => setVideoFailed(true)}
-        />
+        <img src={getYouTubeThumbnail(entry.url) || ""} alt="" className="w-full h-full object-cover"
+          onError={() => setVideoFailed(true)} />
       );
     }
 
@@ -194,7 +169,7 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
       style={{
         borderRadius: "12px",
         backgroundColor: "#141414",
-        aspectRatio: "16 / 9",
+        aspectRatio: `${entry.w} / ${entry.h}`,
         transition: "transform 0.5s cubic-bezier(0.25,0.1,0.25,1), box-shadow 0.5s ease, filter 0.5s ease",
         transform: hovered ? "scale(1.02)" : "scale(1)",
         boxShadow: hovered ? "0 20px 60px rgba(0,0,0,0.6)" : "0 4px 12px rgba(0,0,0,0.3)",
@@ -206,7 +181,6 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
     >
       {renderContent()}
 
-      {/* Hover overlay */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -217,7 +191,6 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
         }}
       />
 
-      {/* Metadata */}
       <div
         className="absolute bottom-0 left-0 right-0 pointer-events-none px-4 pb-4"
         style={{
@@ -238,7 +211,6 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
         )}
       </div>
 
-      {/* Play button — only for video entries */}
       {entry.hasMp4 && !videoFailed && (
         <div
           className="absolute inset-0 flex items-center justify-center pointer-events-none"
@@ -307,7 +279,6 @@ export default function ProductionReels() {
           paddingRight: "clamp(32px, 5vw, 40px)",
         }}
       >
-        {/* Header */}
         <div
           style={{
             opacity: show ? 1 : 0,
@@ -329,25 +300,27 @@ export default function ProductionReels() {
           </h2>
         </div>
 
-        {/* Grid */}
-        <div className="grid gap-5 md:gap-6" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
-          {ENTRIES.map((entry, i) => {
-            const span = SPANS[i % SPANS.length];
-            return (
-              <div
-                key={entry.id}
-                style={{
-                  gridColumn: `span ${span.col}`,
-                  opacity: 0,
-                  animation: show
-                    ? `cardEntrance 0.7s ease-out ${0.05 + i * 0.06}s forwards`
-                    : "none",
-                }}
-              >
-                <ReelCard entry={entry} />
-              </div>
-            );
-          })}
+        <div
+          className="grid gap-5 md:gap-6"
+          style={{
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gridAutoFlow: "dense",
+          }}
+        >
+          {ENTRIES.map((entry, i) => (
+            <div
+              key={entry.id}
+              style={{
+                gridColumn: `span ${entry.colSpan}`,
+                opacity: 0,
+                animation: show
+                  ? `cardEntrance 0.7s ease-out ${0.05 + i * 0.06}s forwards`
+                  : "none",
+              }}
+            >
+              <ReelCard entry={entry} />
+            </div>
+          ))}
         </div>
       </div>
     </section>
