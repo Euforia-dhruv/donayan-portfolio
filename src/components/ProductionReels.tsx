@@ -19,6 +19,7 @@ interface VideoEntry {
   w: number;
   h: number;
   colSpan: number;
+  src: string | null;
 }
 
 interface ArchiveItem {
@@ -51,12 +52,12 @@ for (const item of archiveData as ArchiveItem[]) {
 }
 
 const ENTRIES: VideoEntry[] = videoEntries.map(
-  (e: { id: number; url: string; hasMp4: boolean; images: string[] | null; hasImage: boolean; videoUrl: string | null; w: number; h: number; colSpan: number }) => {
+  (e: { id: number; url: string; hasMp4: boolean; images: string[] | null; hasImage: boolean; videoUrl: string | null; w: number; h: number; colSpan: number; src: string | null; title?: string }) => {
     const vidId = extractVideoId(e.url);
     const arch = vidId ? archiveLookup.get(vidId) : undefined;
     return {
       ...e,
-      title: arch?.title || `Video ${e.id}`,
+      title: e.title || arch?.title || `Video ${e.id}`,
       brand: arch?.brand || "",
       year: arch?.year || "",
       role: arch?.role || "",
@@ -138,6 +139,14 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
             <img src={`/assets/archive/${validImages[4]}`} alt="" className="h-full object-cover" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[4]))} />
           </div>
         </div>
+      );
+    }
+
+    // Wall card (src-based image)
+    if (entry.src) {
+      return (
+        <img src={entry.src} alt="" className="w-full h-full object-cover"
+          onError={() => setVideoFailed(true)} />
       );
     }
 
