@@ -17,24 +17,59 @@ interface WallImage {
 }
 
 const allCards: WallImage[] = [
-  { id: "w-centrum", src: "/PPM Decks/Centrum.png",     aspect: "16:9", title: "Centrum",        pdf: null,
-    x: 80,  y: 145, w: 450, h: 253, rot: -1,   z: 100 },
-  { id: "w-hdfc",    src: "/PPM Decks/HDFC.png",        aspect: "16:9", title: "HDFC KVS",       pdf: "/PPM Decks/HDFC KVS Post PPM Deck.pdf",
-    x: 460, y: 135, w: 480, h: 270, rot: 0.5,  z: 110 },
-  { id: "w-ponds",   src: "/Treatment Notes/ponds.png", aspect: "16:9", title: "Ponds BB Cream", pdf: "/Treatment Notes/Ponds  BB cream TN.pdf",
-    x: 870, y: 140, w: 460, h: 259, rot: -0.5, z: 105 },
-  { id: "w-justbe",  src: "/Marketing Pitch/Just be.png", aspect: "16:9", title: "Just Be",      pdf: "/Marketing Pitch/Just Be.pdf",
-    x: 1280, y: 155, w: 440, h: 248, rot: 1,    z: 95 },
-  { id: "w-sprite",  src: "/PPM Decks/Sprite.png",      aspect: "4:3",  title: "Sprite",         pdf: null,
-    x: 100, y: 345, w: 420, h: 315, rot: -1.5, z: 90 },
-  { id: "w-idee",    src: "/PPM Decks/IDEE.png",        aspect: "4:3",  title: "IDEE",           pdf: "/PPM Decks/IDEE PPM.pdf",
-    x: 580, y: 335, w: 440, h: 330, rot: 1,    z: 85 },
-  { id: "w-godrej",  src: "/Treatment Notes/godrej.png", aspect: "4:3", title: "Godrej Capital", pdf: "/Treatment Notes/Godrej Capital - Director_s Note.pdf",
-    x: 1080, y: 340, w: 420, h: 315, rot: -0.5, z: 80 },
-  { id: "w-oool",    src: "/Marketing Pitch/oool.png",  aspect: "4:3",  title: "OOOL Digital",   pdf: "/Marketing Pitch/OOOL Digital Strategy.pdf",
-    x: 1430, y: 355, w: 340, h: 255, rot: 1.5,  z: 75 },
-  { id: "w-lifestyle", src: "/Others/life.png",         aspect: "4:3",  title: "Lifestyle",      pdf: null,
-    x: 380, y: 600, w: 440, h: 330, rot: -1,   z: 70 },
+  // ── Row 1: hero landscapes + tall accent ──────────────────
+  { id: "w-centrum",  src: "/PPM Decks/Centrum.png",              aspect: "16:9", title: "Centrum",        pdf: null,
+    x: 30,  y: 150, w: 400, h: 225, rot: -1,   z: 50 },
+  { id: "w-hdfc",     src: "/PPM Decks/HDFC.png",                 aspect: "16:9", title: "HDFC KVS",       pdf: "/PPM Decks/HDFC KVS Post PPM Deck.pdf",
+    x: 370, y: 140, w: 440, h: 248, rot: 0.5,  z: 55 },
+  { id: "w-murgi-2",  src: "/Movie - OTT pitches/Murgi 1.png",    aspect: "9:16", title: "Murgi",          pdf: "/Movie - OTT pitches/Murgi.pdf",
+    x: 750, y: 128, w: 185, h: 329, rot: 1.5,  z: 60 },
+  { id: "w-ponds",    src: "/Treatment Notes/ponds.png",          aspect: "16:9", title: "Ponds BB Cream", pdf: "/Treatment Notes/Ponds  BB cream TN.pdf",
+    x: 880, y: 135, w: 420, h: 236, rot: -1,   z: 45 },
+  { id: "w-justbe",   src: "/Marketing Pitch/Just be.png",        aspect: "16:9", title: "Just Be",        pdf: "/Marketing Pitch/Just Be.pdf",
+    x: 1260, y: 155, w: 360, h: 203, rot: 1,   z: 52 },
+
+  // ── Row 1.5: accent portrait between rows 1 and 2 ───────
+  { id: "w-tanishq",  src: "/Others/Tanishq.png",                 aspect: "3:4",  title: "Tanishq",        pdf: "/Others/Tanishq Casting.pdf",
+    x: 60,  y: 285, w: 220, h: 293, rot: 0.5,  z: 42 },
+
+  // ── Row 2: landscape cards ──────────────────────────────
+  { id: "w-sprite",   src: "/PPM Decks/Sprite.png",               aspect: "4:3",  title: "Sprite",         pdf: null,
+    x: 210, y: 325, w: 340, h: 255, rot: -1,   z: 48 },
+  { id: "w-idee",     src: "/PPM Decks/IDEE.png",                 aspect: "4:3",  title: "IDEE",           pdf: "/PPM Decks/IDEE PPM.pdf",
+    x: 580, y: 315, w: 360, h: 270, rot: 0.5,  z: 53 },
+  { id: "w-godrej",   src: "/Treatment Notes/godrej.png",          aspect: "4:3",  title: "Godrej Capital", pdf: "/Treatment Notes/Godrej Capital - Director_s Note.pdf",
+    x: 980, y: 325, w: 340, h: 255, rot: -0.5, z: 44 },
+  { id: "w-oool",     src: "/Marketing Pitch/oool.png",           aspect: "4:3",  title: "OOOL Digital",   pdf: "/Marketing Pitch/OOOL Digital Strategy.pdf",
+    x: 1370, y: 310, w: 340, h: 255, rot: 1.5,  z: 50 },
+
+  // ── Row 2.5: portrait accent cards ──────────────────────
+  { id: "w-ax",       src: "/PPM Decks/AX.png",                   aspect: "4:5",  title: "AX",             pdf: "/PPM Decks/AX Celebrity Shoot SS_25.pdf",
+    x: 120, y: 445, w: 230, h: 288, rot: 1,    z: 46 },
+  { id: "w-artkalaa", src: "/Marketing Pitch/artkalaa.png",       aspect: "4:5",  title: "Artkalaa",       pdf: "/Marketing Pitch/Artkalaa Pitch Deck.pdf",
+    x: 380, y: 450, w: 235, h: 294, rot: -1.5, z: 43 },
+  { id: "w-kinder",   src: "/PPM Decks/Kinder.png",               aspect: "3:4",  title: "Kinder",         pdf: "/PPM Decks/Kinder Print Shoot.pdf",
+    x: 640, y: 440, w: 220, h: 293, rot: 0.5,  z: 49 },
+  { id: "w-kitser",   src: "/Marketing Pitch/kister.png",         aspect: "3:4",  title: "Kitser",         pdf: "/Marketing Pitch/Kitser August Sale.pdf",
+    x: 880, y: 435, w: 225, h: 300, rot: -1,   z: 41 },
+  { id: "w-pathan-2", src: "/Movie - OTT pitches/Pathan 2.png",   aspect: "3:4",  title: "Pathan Bros",    pdf: "/Movie - OTT pitches/Pathan Brothers Series.pdf",
+    x: 1130, y: 445, w: 225, h: 300, rot: 0.5,  z: 47 },
+  { id: "w-deva",     src: "/Marketing Pitch/Deva.png",           aspect: "4:5",  title: "Deva",           pdf: "/Marketing Pitch/Deva_s Khayal.pdf",
+    x: 1380, y: 440, w: 225, h: 281, rot: -0.5, z: 40 },
+
+  // ── Row 3: bottom cluster ──────────────────────────────
+  { id: "w-fossil",   src: "/Treatment Notes/fossil.png",          aspect: "4:5",  title: "Fossil",         pdf: "/Treatment Notes/Fossil - SS_25 - PPM DECK.pdf",
+    x: 60,  y: 590, w: 235, h: 294, rot: -1.5, z: 38 },
+  { id: "w-lifestyle", src: "/Others/life.png",                   aspect: "4:3",  title: "Lifestyle",      pdf: null,
+    x: 320, y: 595, w: 320, h: 240, rot: 0.5,  z: 44 },
+  { id: "w-bubbling", src: "/Marketing Pitch/the.png",            aspect: "4:5",  title: "The Bubbling Fish", pdf: "/Marketing Pitch/The Bubbling Fish and Nirala - The Plan.pdf",
+    x: 670, y: 580, w: 235, h: 294, rot: 1,    z: 39 },
+  { id: "w-murgi-1",  src: "/Movie - OTT pitches/Murgi.png",      aspect: "4:5",  title: "Murgi",          pdf: "/Movie - OTT pitches/Murgi.pdf",
+    x: 930, y: 590, w: 230, h: 288, rot: -0.5, z: 42 },
+  { id: "w-pathan-1", src: "/Movie - OTT pitches/Pathan 1.png",   aspect: "4:5",  title: "Pathan Bros",    pdf: "/Movie - OTT pitches/Pathan Brothers Series.pdf",
+    x: 1190, y: 585, w: 240, h: 300, rot: 1.5,  z: 46 },
+  { id: "w-artkalaa-2", src: "/Marketing Pitch/artkalaa 2.png",   aspect: "1:1",  title: "Artkalaa",       pdf: "/Marketing Pitch/Artkalaa Pitch Deck.pdf",
+    x: 1460, y: 600, w: 200, h: 200, rot: -1,   z: 37 },
 ];
 
 const CANVAS_W = 1800;
