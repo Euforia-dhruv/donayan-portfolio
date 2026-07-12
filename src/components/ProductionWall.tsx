@@ -34,12 +34,7 @@ const allImages: WallImage[] = [
   { id: "w-pathan-2", src: "/Movie - OTT pitches/Pathan 2.png", aspect: "3:4", pdf: "/Movie - OTT pitches/Pathan Brothers Series.pdf" },
 ];
 
-const isLandscape = (a: string) => {
-  const [w, h] = a.split(":").map(Number);
-  return w / h >= 1.2;
-};
-
-const images = allImages.filter((img) => isLandscape(img.aspect));
+const images = allImages;
 
 interface CardLayout {
   id: string;
@@ -64,29 +59,28 @@ function seededRand(seed: number) {
 
 function genLayout(imgs: WallImage[], containerW: number, containerH: number): CardLayout[] {
   const rand = seededRand(42);
-  const pad = 80;
+  const pad = 60;
   const useW = containerW - pad * 2;
   const useH = containerH - 200;
 
-  const cols = Math.min(imgs.length, Math.max(2, Math.floor(useW / 340)));
+  const cols = Math.min(imgs.length, Math.max(3, Math.floor(useW / 260)));
   const rows = Math.ceil(imgs.length / cols);
   const cellW = useW / cols;
-  const cellH = useH / rows;
-
-  const base = Math.min(cellW * 0.65, 280);
+  const cellH = Math.max(useH / rows, 180);
+  const base = Math.min(cellW * 0.55, 200);
 
   return imgs.map((img, i) => {
     const col = i % cols;
     const row = Math.floor(i / cols);
-    const sizeMul = 0.85 + rand() * 0.3;
+    const sizeMul = 0.8 + rand() * 0.4;
     const [aw, ah] = img.aspect.split(":").map(Number);
     const ratio = aw / ah;
     const w = Math.round(base * ratio * sizeMul);
     const h = Math.round(base * sizeMul);
-    const maxOx = Math.max(0, cellW - w - 20);
-    const maxOy = Math.max(0, cellH - h - 20);
-    const ox = rand() * maxOx;
-    const oy = rand() * maxOy;
+    const maxOx = Math.max(0, cellW - w - 10);
+    const maxOy = Math.max(0, cellH - h - 10);
+    const ox = maxOx > 0 ? rand() * maxOx : 0;
+    const oy = maxOy > 0 ? rand() * maxOy : 0;
     const rot = (rand() - 0.5) * 6;
     const z = Math.floor(rand() * imgs.length);
 
