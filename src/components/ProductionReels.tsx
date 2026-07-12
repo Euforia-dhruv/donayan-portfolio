@@ -183,7 +183,7 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
         aspectRatio: `${entry.w} / ${entry.h}`,
         transition: "transform 0.5s cubic-bezier(0.25,0.1,0.25,1), box-shadow 0.5s ease, filter 0.5s ease",
         transform: hovered ? "scale(1.02)" : "scale(1)",
-        boxShadow: hovered ? "0 20px 60px rgba(0,0,0,0.6)" : "0 4px 12px rgba(0,0,0,0.3)",
+        boxShadow: hovered ? "0 8px 30px rgba(0,0,0,0.4)" : "0 2px 8px rgba(0,0,0,0.2)",
         filter: hovered ? "brightness(1.08)" : "brightness(1)",
       }}
       onMouseEnter={() => setHovered(true)}
