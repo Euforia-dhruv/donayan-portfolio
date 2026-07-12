@@ -31,7 +31,7 @@ export default function Hero() {
           alt=""
           className="w-full h-full object-cover object-[center_40%]"
           style={{
-            filter: "brightness(0.68) contrast(1.15) saturate(1.05)",
+            filter: "brightness(0.78) contrast(1.3) saturate(1.05)",
           }}
           loading="lazy"
         />
