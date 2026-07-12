@@ -30,22 +30,33 @@ export default function ContactSection() {
       ref={ref}
       className="relative min-h-[85vh] md:min-h-[90vh] flex items-center bg-cinema-black overflow-hidden"
     >
-      {/* Full background image with gradient overlay */}
+      {/* Background image – z-index 0 */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage:
-            "linear-gradient(to right, rgba(0,0,0,.88), rgba(0,0,0,.72)), url('/assets/images/thank-you.png')",
-          backgroundPosition: "70% center, 70% center",
-          backgroundSize: "cover, cover",
-          backgroundRepeat: "no-repeat, no-repeat",
-          opacity: 1,
+          zIndex: 0,
+          backgroundImage: "url('/assets/images/thank-you.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          opacity: 0.6,
         }}
       />
 
+      {/* Dark overlay – z-index 1 */}
       <div
-        className="relative z-10 w-full max-w-[1400px] mx-auto px-8 md:px-10 py-16 md:py-20"
+        className="absolute inset-0"
         style={{
+          zIndex: 1,
+          background: "rgba(0,0,0,0.4)",
+        }}
+      />
+
+      {/* Content – z-index 2 */}
+      <div
+        className="relative w-full max-w-[1400px] mx-auto px-8 md:px-10 py-16 md:py-20"
+        style={{
+          zIndex: 2,
           opacity: visible ? 1 : 0,
           transform: visible ? "translateY(0)" : "translateY(24px)",
           transition: "opacity 0.8s ease, transform 0.8s ease",
@@ -85,35 +96,40 @@ export default function ContactSection() {
             </div>
           </div>
 
-          {/* Right – Premium Form */}
+          {/* Right – Premium Form Container */}
           <div id="contact-form" className="w-full max-w-[480px] justify-self-end">
             {submitted ? (
-              <div className="rounded-xl bg-[#141414]/80 backdrop-blur-sm border border-cinema-white/8 p-10">
+              <div className="rounded-xl p-10 backdrop-blur-[6px] bg-[rgba(10,10,10,0.35)] border border-cinema-white/8">
                 <p className="text-subheading font-switzer font-[300] text-cinema-white leading-[1.4]">{siteContent.contact.confirmation}</p>
               </div>
             ) : (
-              <form action="https://formspree.io/f/your-form-id" method="POST" onSubmit={handleSubmit} className="space-y-6">
+              <form
+                action="https://formspree.io/f/your-form-id"
+                method="POST"
+                onSubmit={handleSubmit}
+                className="space-y-6 p-8 md:p-10 rounded-xl backdrop-blur-[6px] bg-[rgba(10,10,10,0.35)] border border-cinema-white/8"
+              >
                 <div>
                   <label htmlFor="name" className="block text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-2.5">Name</label>
                   <input type="text" id="name" name="name" required
-                    className="w-full px-5 py-4 bg-[#141414]/60 backdrop-blur-sm border border-cinema-white/12 text-cinema-white text-body-sm font-switzer font-[300] rounded-[10px] placeholder:text-cinema-white/25 focus:outline-none focus:border-gold/50 focus:bg-[#141414]/80 transition-all duration-300"
+                    className="w-full px-5 py-4 bg-[rgba(10,10,10,0.25)] border border-cinema-white/12 text-cinema-white text-body-sm font-switzer font-[300] rounded-[10px] placeholder:text-cinema-white/25 focus:outline-none focus:border-gold/50 focus:bg-[rgba(10,10,10,0.45)] transition-all duration-300"
                     placeholder="Your name" />
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-2.5">Email</label>
                   <input type="email" id="email" name="email" required
-                    className="w-full px-5 py-4 bg-[#141414]/60 backdrop-blur-sm border border-cinema-white/12 text-cinema-white text-body-sm font-switzer font-[300] rounded-[10px] placeholder:text-cinema-white/25 focus:outline-none focus:border-gold/50 focus:bg-[#141414]/80 transition-all duration-300"
+                    className="w-full px-5 py-4 bg-[rgba(10,10,10,0.25)] border border-cinema-white/12 text-cinema-white text-body-sm font-switzer font-[300] rounded-[10px] placeholder:text-cinema-white/25 focus:outline-none focus:border-gold/50 focus:bg-[rgba(10,10,10,0.45)] transition-all duration-300"
                     placeholder="your@email.com" />
                 </div>
                 <div>
                   <label htmlFor="message" className="block text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-2.5">Message</label>
                   <textarea id="message" name="message" required rows={4}
-                    className="w-full px-5 py-4 bg-[#141414]/60 backdrop-blur-sm border border-cinema-white/12 text-cinema-white text-body-sm font-switzer font-[300] rounded-[10px] placeholder:text-cinema-white/25 focus:outline-none focus:border-gold/50 focus:bg-[#141414]/80 transition-all duration-300 resize-none"
+                    className="w-full px-5 py-4 bg-[rgba(10,10,10,0.25)] border border-cinema-white/12 text-cinema-white text-body-sm font-switzer font-[300] rounded-[10px] placeholder:text-cinema-white/25 focus:outline-none focus:border-gold/50 focus:bg-[rgba(10,10,10,0.45)] transition-all duration-300 resize-none"
                     placeholder="Tell me about your project..." />
                 </div>
                 {error && <p className="text-body-sm font-switzer text-stone">{siteContent.contact.error}</p>}
                 <button type="submit"
-                  className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-gold text-cinema-black text-body-sm font-switzer font-[400] uppercase tracking-[0.02em] hover:opacity-85 transition-all duration-300 cursor-pointer border-none rounded-[10px]"
+                  className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-gold text-cinema-black text-body-sm font-switzer font-[400] uppercase tracking-[0.02em] hover:opacity-85 transition-all duration-300 cursor-pointer border-none"
                   style={{ borderRadius: "1440px" }}>
                   {siteContent.contact.submitLabel}
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M11 7L7 3M11 7L7 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
