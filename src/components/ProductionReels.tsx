@@ -14,7 +14,7 @@ interface VideoEntry {
   role: string;
   hasMp4: boolean;
   images: string[] | null;
-  videoUrl: string | null;
+  hasImage: boolean;
 }
 
 interface ArchiveItem {
@@ -46,17 +46,19 @@ for (const item of archiveData as ArchiveItem[]) {
   if (id) archiveLookup.set(id, item);
 }
 
-const ENTRIES: VideoEntry[] = videoEntries.map((e: { id: number; url: string; hasMp4: boolean; images: string[] | null; videoUrl: string | null }) => {
-  const vidId = extractVideoId(e.url);
-  const arch = vidId ? archiveLookup.get(vidId) : undefined;
-  return {
-    ...e,
-    title: arch?.title || `Video ${e.id}`,
-    brand: arch?.brand || "",
-    year: arch?.year || "",
-    role: arch?.role || "",
-  };
-});
+const ENTRIES: VideoEntry[] = videoEntries.map(
+  (e: { id: number; url: string; hasMp4: boolean; images: string[] | null; hasImage: boolean }) => {
+    const vidId = extractVideoId(e.url);
+    const arch = vidId ? archiveLookup.get(vidId) : undefined;
+    return {
+      ...e,
+      title: arch?.title || `Video ${e.id}`,
+      brand: arch?.brand || "",
+      year: arch?.year || "",
+      role: arch?.role || "",
+    };
+  }
+);
 
 const SPANS = [
   { col: 2 }, { col: 1 }, { col: 1 }, { col: 2 },
@@ -71,37 +73,26 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
-  const [poster, setPoster] = useState<string | undefined>();
-  const [posterLoaded, setPosterLoaded] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+  const [imgErrors, setImgErrors] = useState<Set<string>>(new Set());
 
-  const isImageOnly = !entry.hasMp4;
-
-  useEffect(() => {
-    if (!isImageOnly) return;
-    const src = entry.images
-      ? `/assets/videos/${entry.images[0]}`
-      : `/assets/videos/${entry.id}.jpg`;
-    const img = new Image();
-    img.onload = () => { setPoster(src); setPosterLoaded(true); };
-    img.onerror = () => {
-      if (isYoutubeUrl(entry.url)) {
-        const yt = getYouTubeThumbnail(entry.url);
-        if (yt) { setPoster(yt); setPosterLoaded(true); }
-      }
-    };
-    img.src = src;
-  }, [entry.id, entry.url, isImageOnly, entry.images]);
+  const isMultiImage = entry.images && entry.images.length > 1;
+  const isSingleImage = !entry.hasMp4 && entry.hasImage && !isMultiImage;
 
   useEffect(() => {
     if (!entry.hasMp4) return;
     const el = containerRef.current;
-    if (!el) return;
+    const vid = videoRef.current;
+    if (!el || !vid) return;
+    vid.load();
     const obs = new IntersectionObserver(
       ([e]) => {
-        const vid = videoRef.current;
         if (!vid) return;
-        if (e.isIntersecting) vid.play().catch(() => {});
-        else vid.pause();
+        if (e.isIntersecting) {
+          vid.play().catch(() => {});
+        } else {
+          vid.pause();
+        }
       },
       { threshold: 0.3 }
     );
@@ -109,7 +100,92 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
     return () => obs.disconnect();
   }, [entry.hasMp4]);
 
-  const imageSrc = (name: string) => `/assets/videos/${name}`;
+  // Determine what to render
+  const renderContent = () => {
+    // Video entry
+    if (entry.hasMp4 && !videoFailed) {
+      return (
+        <video
+          ref={videoRef}
+          src={`/assets/archive/${entry.id}.mp4`}
+          muted
+          loop
+          playsInline
+          autoPlay
+          className="w-full h-full object-cover"
+          onError={() => setVideoFailed(true)}
+        />
+      );
+    }
+
+    // Multi-image collage (ID 6)
+    if (isMultiImage && entry.images) {
+      const validImages = entry.images.filter((img) => !imgErrors.has(img));
+      if (validImages.length === 0) {
+        return <MediaUnavailable />;
+      }
+      if (validImages.length === 1) {
+        return (
+          <img
+            src={`/assets/archive/${validImages[0]}`}
+            alt=""
+            className="w-full h-full object-cover"
+            onError={() => setImgErrors((prev) => new Set(prev).add(validImages[0]))}
+          />
+        );
+      }
+      return (
+        <div className="w-full h-full grid" style={{ gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr 1fr", gap: "2px" }}>
+          <img
+            src={`/assets/archive/${validImages[0]}`}
+            alt=""
+            className="w-full h-full object-cover"
+            style={{ gridColumn: "1 / 3", gridRow: "1 / 3" }}
+            onError={() => setImgErrors((prev) => new Set(prev).add(validImages[0]))}
+          />
+          {validImages.slice(1, 5).map((img, j) => (
+            <img
+              key={j}
+              src={`/assets/archive/${img}`}
+              alt=""
+              className="w-full h-full object-cover"
+              onError={() => setImgErrors((prev) => new Set(prev).add(img))}
+            />
+          ))}
+        </div>
+      );
+    }
+
+    // Single image entry
+    if (isSingleImage) {
+      return (
+        <img
+          src={`/assets/archive/${entry.id}.jpg`}
+          alt=""
+          className="w-full h-full object-cover"
+          onError={() => setVideoFailed(true)}
+        />
+      );
+    }
+
+    // Fallback: try YouTube thumbnail
+    if (isYoutubeUrl(entry.url)) {
+      return (
+        <img
+          src={getYouTubeThumbnail(entry.url) || ""}
+          alt=""
+          className="w-full h-full object-cover"
+          onError={() => setVideoFailed(true)}
+        />
+      );
+    }
+
+    return <MediaUnavailable />;
+  };
+
+  if (!entry.hasMp4 && !entry.hasImage && !entry.images && !isYoutubeUrl(entry.url)) {
+    console.warn("Missing media:", entry.id);
+  }
 
   return (
     <div
@@ -126,41 +202,9 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={() => entry.url && window.open(entry.url, "_blank")}
     >
-      {entry.hasMp4 && entry.videoUrl ? (
-        <video
-          ref={videoRef}
-          src={entry.videoUrl}
-          muted
-          loop
-          playsInline
-          preload="none"
-          className="w-full h-full object-cover"
-        />
-      ) : entry.images && entry.images.length > 1 ? (
-        <div className="w-full h-full grid" style={{ gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr 1fr", gap: "2px" }}>
-          <img src={imageSrc(entry.images[0])} alt="" className="w-full h-full object-cover" style={{ gridColumn: "1 / 3", gridRow: "1 / 3" }} onError={(e) => { e.currentTarget.style.display = "none"; }} />
-          {entry.images.slice(1, 5).map((img, j) => (
-            <img key={j} src={imageSrc(img)} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
-          ))}
-        </div>
-      ) : (
-        <>
-          {poster ? (
-            <img src={poster} alt="" className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: "#141414" }}>
-              {!posterLoaded && (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: "rgba(245,245,242,0.15)" }}>
-                  <rect x="2" y="2" width="20" height="20" rx="4" stroke="currentColor" strokeWidth="1.2" />
-                  <circle cx="10" cy="10" r="2" stroke="currentColor" strokeWidth="1.2" />
-                  <path d="M2 17l5-5 3 3 4-4 6 6" stroke="currentColor" strokeWidth="1.2" />
-                </svg>
-              )}
-            </div>
-          )}
-        </>
-      )}
+      {renderContent()}
 
       {/* Hover overlay */}
       <div
@@ -195,7 +239,7 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
       </div>
 
       {/* Play button — only for video entries */}
-      {entry.hasMp4 && (
+      {entry.hasMp4 && !videoFailed && (
         <div
           className="absolute inset-0 flex items-center justify-center pointer-events-none"
           style={{ opacity: hovered ? 1 : 0.7, transition: "opacity 0.5s ease" }}
@@ -214,6 +258,19 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function MediaUnavailable() {
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center gap-2" style={{ backgroundColor: "#1E1E1E", color: "rgba(245,245,242,0.3)" }}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+        <rect x="2" y="2" width="20" height="20" rx="4" />
+        <circle cx="10" cy="10" r="2" />
+        <path d="M2 17l5-5 3 3 4-4 6 6" />
+      </svg>
+      <span className="text-xs font-switzer font-[400]">Media unavailable</span>
     </div>
   );
 }
@@ -286,7 +343,6 @@ export default function ProductionReels() {
                     ? `cardEntrance 0.7s ease-out ${0.05 + i * 0.06}s forwards`
                     : "none",
                 }}
-                onClick={() => window.open(entry.url, "_blank")}
               >
                 <ReelCard entry={entry} />
               </div>
