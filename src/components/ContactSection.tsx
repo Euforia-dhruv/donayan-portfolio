@@ -28,7 +28,7 @@ export default function ContactSection() {
     <section
       id="contact"
       ref={ref}
-      className="relative flex items-center bg-cinema-black overflow-hidden"
+      className="relative bg-cinema-black overflow-hidden"
     >
       {/* Background image – z-index 0 */}
       <div
