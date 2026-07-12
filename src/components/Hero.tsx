@@ -35,40 +35,41 @@ export default function Hero() {
           }}
           loading="lazy"
         />
-        {/* Cinematic overlay: darker left → lighter right + vignette */}
+        {/* Stronger left gradient overlay */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(90deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.35) 30%, rgba(0,0,0,.12) 60%, rgba(0,0,0,.04) 100%), radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.25) 100%)",
+              "linear-gradient(90deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.45) 35%, rgba(0,0,0,.12) 65%, transparent 100%)",
           }}
         />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-8 md:px-10 pt-28 pb-16">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-8 md:px-10 pt-36 pb-16">
         <div className="flex flex-col md:flex-row md:items-center gap-16 md:gap-20">
           {/* Left text */}
-          <div className="flex-1 max-w-2xl">
-            {/* Label */}
+          <div className="flex-1" style={{ maxWidth: "500px" }}>
+            {/* Eyebrow */}
             <p
               className="font-switzer font-[400] uppercase tracking-[0.12em]"
               style={{
-                fontSize: "11px",
-                color: "rgba(200,162,77,0.8)",
+                fontSize: "10px",
+                color: "rgba(200,162,77,0.6)",
                 opacity: 0,
                 animation: "heroFade 0.8s cubic-bezier(0.25,0.1,0.25,1) 0.08s forwards",
                 transform: "translateY(16px)",
               }}
             >
-              Director&apos;s Assistant & Associate Producer
+              Director&apos;s Assistant · Associate Producer
             </p>
 
             {/* Name */}
             <h1
-              className="font-switzer font-[500] leading-[0.95] tracking-[-0.03em]"
+              className="font-switzer font-[500] tracking-[-0.03em]"
               style={{
-                fontSize: "clamp(56px, 7vw, 100px)",
+                fontSize: "clamp(60px, 8vw, 110px)",
+                lineHeight: "0.92",
                 color: "#F5F5F2",
                 marginTop: "36px",
                 opacity: 0,
@@ -83,11 +84,11 @@ export default function Hero() {
 
             {/* Subtitle */}
             <p
-              className="font-switzer font-[300] leading-[1.5] max-w-lg"
+              className="font-switzer font-[300] leading-[1.5]"
               style={{
                 fontSize: "clamp(15px, 1.15vw, 18px)",
-                color: "rgba(245,245,242,0.65)",
-                marginTop: "32px",
+                color: "rgba(245,245,242,0.88)",
+                marginTop: "56px",
                 opacity: 0,
                 animation: "heroFade 0.8s cubic-bezier(0.25,0.1,0.25,1) 0.24s forwards",
                 transform: "translateY(16px)",
@@ -98,23 +99,25 @@ export default function Hero() {
 
             {/* Description */}
             <p
-              className="font-switzer font-[300] leading-[1.7] max-w-[480px]"
+              className="font-switzer font-[300] leading-[1.7]"
               style={{
-                fontSize: "clamp(13px, 0.95vw, 15px)",
+                fontSize: "clamp(15px, 1vw, 16px)",
                 color: "rgba(245,245,242,0.5)",
-                marginTop: "20px",
+                marginTop: "28px",
                 opacity: 0,
                 animation: "heroFade 0.8s cubic-bezier(0.25,0.1,0.25,1) 0.32s forwards",
                 transform: "translateY(16px)",
               }}
             >
-              Helping directors transform creative vision into flawlessly executed productions across India&apos;s biggest brands and agencies.
+              Helping directors bring creative ideas to life through
+              seamless production, coordination, and execution for
+              India&apos;s leading brands, agencies, and artists.
             </p>
 
             {/* CTA — gold button */}
             <div
               style={{
-                marginTop: "44px",
+                marginTop: "74px",
                 opacity: 0,
                 animation: "heroFade 0.8s cubic-bezier(0.25,0.1,0.25,1) 0.4s forwards",
                 transform: "translateY(16px)",
@@ -151,7 +154,7 @@ export default function Hero() {
 
             {/* Stats */}
             <div
-              className="flex gap-10 md:gap-14"
+              className="flex gap-12 md:gap-16"
               style={{
                 marginTop: "56px",
                 opacity: 0,
@@ -177,6 +180,34 @@ export default function Hero() {
           {/* Right — empty (image is behind) */}
           <div className="flex-1" />
         </div>
+      </div>
+
+      {/* Available For */}
+      <div
+        className="absolute z-10"
+        style={{
+          bottom: "70px",
+          right: "clamp(32px, 5vw, 40px)",
+          opacity: 0,
+          animation: "heroFade 0.8s cubic-bezier(0.25,0.1,0.25,1) 0.56s forwards",
+          transform: "translateY(16px)",
+        }}
+      >
+        <p
+          className="font-switzer font-[400] uppercase tracking-[0.12em]"
+          style={{ fontSize: "10px", color: "rgba(245,245,242,0.4)" }}
+        >
+          Available For
+        </p>
+        <p
+          className="font-switzer font-[500]"
+          style={{ fontSize: "clamp(18px, 1.4vw, 20px)", lineHeight: "1.4", color: "rgba(245,245,242,0.85)", marginTop: "8px" }}
+        >
+          Brand Films<br />
+          Commercials<br />
+          Music Videos<br />
+          Fashion
+        </p>
       </div>
 
       {/* Scroll */}
