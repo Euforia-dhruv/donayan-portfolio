@@ -6,6 +6,7 @@ interface WallImage {
   id: string;
   src: string;
   aspect: string;
+  title: string;
   pdf: string | null;
   x: number;
   y: number;
@@ -15,80 +16,45 @@ interface WallImage {
   z: number;
 }
 
-const cards: WallImage[] = [
-  // ── LEFT CLUSTER ──────────────────────────────────────
-  { id: "w-centrum",  src: "/PPM Decks/Centrum.png",             aspect: "16:9", pdf: null,
-    x: 40,   y: 150,  w: 400,  h: 225,  rot: -1,   z: 100 },
-  { id: "w-murgi-2",  src: "/Movie - OTT pitches/Murgi 1.png",   aspect: "9:16", pdf: "/Movie - OTT pitches/Murgi.pdf",
-    x: 390,  y: 130,  w: 190,  h: 338,  rot: 1.5,  z: 80 },
-  { id: "w-sprite",   src: "/PPM Decks/Sprite.png",              aspect: "4:3",  pdf: null,
-    x: 40,   y: 335,  w: 320,  h: 240,  rot: 0.5,  z: 90 },
-  { id: "w-fossil",   src: "/Treatment Notes/fossil.png",         aspect: "4:5",  pdf: "/Treatment Notes/Fossil - SS_25 - PPM DECK.pdf",
-    x: 300,  y: 315,  w: 240,  h: 300,  rot: -1.5, z: 70 },
-  { id: "w-ax",       src: "/PPM Decks/AX.png",                  aspect: "4:5",  pdf: "/PPM Decks/AX Celebrity Shoot SS_25.pdf",
-    x: 30,   y: 540,  w: 240,  h: 300,  rot: 1,    z: 60 },
-  { id: "w-lifestyle",src: "/Others/life.png",                    aspect: "4:3",  pdf: null,
-    x: 275,  y: 555,  w: 270,  h: 203,  rot: -0.5, z: 85 },
-
-  // ── CENTER CLUSTER ────────────────────────────────────
-  { id: "w-hdfc",     src: "/PPM Decks/HDFC.png",                aspect: "16:9", pdf: "/PPM Decks/HDFC KVS Post PPM Deck.pdf",
-    x: 510,  y: 140,  w: 420,  h: 236,  rot: 0.5,  z: 110 },
-  { id: "w-tanishq",  src: "/Others/Tanishq.png",                aspect: "3:4",  pdf: "/Others/Tanishq Casting.pdf",
-    x: 870,  y: 115,  w: 230,  h: 307,  rot: -1.5, z: 75 },
-  { id: "w-idee",     src: "/PPM Decks/IDEE.png",                aspect: "4:3",  pdf: "/PPM Decks/IDEE PPM.pdf",
-    x: 520,  y: 330,  w: 350,  h: 263,  rot: -0.5, z: 95 },
-  { id: "w-artkalaa", src: "/Marketing Pitch/artkalaa.png",      aspect: "4:5",  pdf: "/Marketing Pitch/Artkalaa Pitch Deck.pdf",
-    x: 400,  y: 300,  w: 245,  h: 306,  rot: 2,    z: 65 },
-  { id: "w-kinder",   src: "/PPM Decks/Kinder.png",              aspect: "3:4",  pdf: "/PPM Decks/Kinder Print Shoot.pdf",
-    x: 820,  y: 305,  w: 225,  h: 300,  rot: 1,    z: 88 },
-  { id: "w-kitser",   src: "/Marketing Pitch/kister.png",        aspect: "3:4",  pdf: "/Marketing Pitch/Kitser August Sale.pdf",
-    x: 630,  y: 540,  w: 230,  h: 307,  rot: -1,   z: 55 },
-  { id: "w-artkalaa-2", src: "/Marketing Pitch/artkalaa 2.png",  aspect: "1:1",  pdf: "/Marketing Pitch/Artkalaa Pitch Deck.pdf",
-    x: 500,  y: 565,  w: 210,  h: 210,  rot: 0.5,  z: 105 },
-
-  // ── RIGHT CLUSTER ─────────────────────────────────────
-  { id: "w-ponds",    src: "/Treatment Notes/ponds.png",         aspect: "16:9", pdf: "/Treatment Notes/Ponds  BB cream TN.pdf",
-    x: 1010, y: 135,  w: 410,  h: 231,  rot: -1,   z: 115 },
-  { id: "w-justbe",   src: "/Marketing Pitch/Just be.png",       aspect: "16:9", pdf: "/Marketing Pitch/Just Be.pdf",
-    x: 1370, y: 155,  w: 350,  h: 197,  rot: 1,    z: 82 },
-  { id: "w-pathan-1", src: "/Movie - OTT pitches/Pathan 1.png",  aspect: "4:5",  pdf: "/Movie - OTT pitches/Pathan Brothers Series.pdf",
-    x: 960,  y: 310,  w: 255,  h: 319,  rot: 1.5,  z: 72 },
-  { id: "w-godrej",   src: "/Treatment Notes/godrej.png",        aspect: "4:3",  pdf: "/Treatment Notes/Godrej Capital - Director_s Note.pdf",
-    x: 1230, y: 320,  w: 310,  h: 233,  rot: -1.5, z: 92 },
-  { id: "w-oool",     src: "/Marketing Pitch/oool.png",          aspect: "4:3",  pdf: "/Marketing Pitch/OOOL Digital Strategy.pdf",
-    x: 1490, y: 290,  w: 280,  h: 210,  rot: 1.5,  z: 108 },
-  { id: "w-deva",     src: "/Marketing Pitch/Deva.png",          aspect: "4:5",  pdf: "/Marketing Pitch/Deva_s Khayal.pdf",
-    x: 1090, y: 510,  w: 230,  h: 288,  rot: -0.5, z: 50 },
-  { id: "w-pathan-2", src: "/Movie - OTT pitches/Pathan 2.png",  aspect: "3:4",  pdf: "/Movie - OTT pitches/Pathan Brothers Series.pdf",
-    x: 1330, y: 495,  w: 235,  h: 313,  rot: 0.5,  z: 78 },
-  { id: "w-bubbling", src: "/Marketing Pitch/the.png",           aspect: "4:5",  pdf: "/Marketing Pitch/The Bubbling Fish and Nirala - The Plan.pdf",
-    x: 1550, y: 505,  w: 240,  h: 300,  rot: -2,   z: 45 },
-
-  // ── BOTTOM SCATTER ────────────────────────────────────
-  { id: "w-murgi-1",  src: "/Movie - OTT pitches/Murgi.png",     aspect: "4:5",  pdf: "/Movie - OTT pitches/Murgi.pdf",
-    x: 440,  y: 590,  w: 240,  h: 300,  rot: 0,    z: 120 },
+const allCards: WallImage[] = [
+  { id: "w-centrum", src: "/PPM Decks/Centrum.png",     aspect: "16:9", title: "Centrum",        pdf: null,
+    x: 80,  y: 145, w: 450, h: 253, rot: -1,   z: 100 },
+  { id: "w-hdfc",    src: "/PPM Decks/HDFC.png",        aspect: "16:9", title: "HDFC KVS",       pdf: "/PPM Decks/HDFC KVS Post PPM Deck.pdf",
+    x: 460, y: 135, w: 480, h: 270, rot: 0.5,  z: 110 },
+  { id: "w-ponds",   src: "/Treatment Notes/ponds.png", aspect: "16:9", title: "Ponds BB Cream", pdf: "/Treatment Notes/Ponds  BB cream TN.pdf",
+    x: 870, y: 140, w: 460, h: 259, rot: -0.5, z: 105 },
+  { id: "w-justbe",  src: "/Marketing Pitch/Just be.png", aspect: "16:9", title: "Just Be",      pdf: "/Marketing Pitch/Just Be.pdf",
+    x: 1280, y: 155, w: 440, h: 248, rot: 1,    z: 95 },
+  { id: "w-sprite",  src: "/PPM Decks/Sprite.png",      aspect: "4:3",  title: "Sprite",         pdf: null,
+    x: 100, y: 345, w: 420, h: 315, rot: -1.5, z: 90 },
+  { id: "w-idee",    src: "/PPM Decks/IDEE.png",        aspect: "4:3",  title: "IDEE",           pdf: "/PPM Decks/IDEE PPM.pdf",
+    x: 580, y: 335, w: 440, h: 330, rot: 1,    z: 85 },
+  { id: "w-godrej",  src: "/Treatment Notes/godrej.png", aspect: "4:3", title: "Godrej Capital", pdf: "/Treatment Notes/Godrej Capital - Director_s Note.pdf",
+    x: 1080, y: 340, w: 420, h: 315, rot: -0.5, z: 80 },
+  { id: "w-oool",    src: "/Marketing Pitch/oool.png",  aspect: "4:3",  title: "OOOL Digital",   pdf: "/Marketing Pitch/OOOL Digital Strategy.pdf",
+    x: 1430, y: 355, w: 340, h: 255, rot: 1.5,  z: 75 },
+  { id: "w-lifestyle", src: "/Others/life.png",         aspect: "4:3",  title: "Lifestyle",      pdf: null,
+    x: 380, y: 600, w: 440, h: 330, rot: -1,   z: 70 },
 ];
 
 const CANVAS_W = 1800;
 
 export default function ProductionWall() {
-  const sectionRef = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
   const [sectionH, setSectionH] = useState(0);
 
   useEffect(() => {
-    const maxY = cards.reduce((m, c) => Math.max(m, c.y + c.h), 0);
+    const maxY = allCards.reduce((m, c) => Math.max(m, c.y + c.h), 0);
     setSectionH(Math.max(window.innerHeight, maxY + 120));
     requestAnimationFrame(() => requestAnimationFrame(() => setVisible(true)));
   }, []);
 
-  const handleClick = (pdf: string | null, src: string) => {
-    window.open(pdf || src, "_blank");
+  const handleClick = (pdf: string | null) => {
+    if (pdf) window.open(pdf, "_blank");
   };
 
   return (
     <section
-      ref={sectionRef}
       className="w-full relative"
       style={{ backgroundColor: "#0b0b0b", minHeight: sectionH || "100vh" }}
     >
@@ -106,46 +72,54 @@ export default function ProductionWall() {
 
       <div
         className="relative mx-auto"
-        style={{ width: CANVAS_W, maxWidth: "100%", minHeight: sectionH ? sectionH - 140 : "calc(100vh - 140px)" }}
+        style={{ width: CANVAS_W, maxWidth: "100%", minHeight: sectionH ? sectionH - 120 : "calc(100vh - 120px)" }}
       >
-        {cards.map((card, i) => {
-          const delay = Math.min(i * 0.07, 1.4);
-          const origZ = card.z;
+        {allCards.map((card, i) => {
+          const delay = Math.min(i * 0.1, 1.0);
           return (
             <div
               key={card.id}
               className="absolute cursor-pointer"
               style={{
                 left: `${(card.x / CANVAS_W) * 100}%`,
+                top: card.y,
                 width: card.w,
                 height: card.h,
-                zIndex: origZ,
+                zIndex: card.z,
                 opacity: 0,
-                animation: visible ? `cardEntrance 0.8s ease-out ${delay}s forwards` : "none",
+                animation: visible ? `cardEntrance 0.7s ease-out ${delay}s forwards` : "none",
               }}
               onMouseEnter={(e) => { e.currentTarget.style.zIndex = "999"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.zIndex = String(origZ); }}
-              onClick={() => handleClick(card.pdf, card.src)}
+              onMouseLeave={(e) => { e.currentTarget.style.zIndex = String(card.z); }}
+              onClick={() => handleClick(card.pdf)}
             >
               <div
-                className="w-full h-full overflow-hidden"
+                className="w-full h-full overflow-hidden group relative"
                 style={{
-                  transform: `translateY(0) rotate(${card.rot}deg)`,
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 20px rgba(0,0,0,0.5)",
-                  transition: "transform 0.35s ease, box-shadow 0.35s ease, filter 0.35s ease",
+                  transform: `rotate(${card.rot}deg)`,
+                  borderRadius: "18px",
+                  boxShadow: "0 6px 28px rgba(0,0,0,0.55)",
+                  transition: "transform 0.4s cubic-bezier(0.25,0.1,0.25,1), box-shadow 0.4s ease, filter 0.4s ease",
                 }}
                 onMouseEnter={(e) => {
                   const el = e.currentTarget;
-                  el.style.transform = `translateY(-6px) rotate(${card.rot}deg) scale(1.03)`;
-                  el.style.boxShadow = "0 12px 40px rgba(0,0,0,0.65)";
+                  el.style.transform = `rotate(${card.rot}deg) scale(1.04)`;
+                  el.style.boxShadow = "0 16px 56px rgba(0,0,0,0.75)";
                   el.style.filter = "brightness(1.1)";
+                  const ov = el.querySelector<HTMLElement>(".wall-overlay");
+                  const ti = el.querySelector<HTMLElement>(".wall-title");
+                  if (ov) ov.style.opacity = "1";
+                  if (ti) { ti.style.opacity = "1"; ti.style.transform = "translateY(0)"; }
                 }}
                 onMouseLeave={(e) => {
                   const el = e.currentTarget;
-                  el.style.transform = `translateY(0) rotate(${card.rot}deg)`;
-                  el.style.boxShadow = "0 4px 20px rgba(0,0,0,0.5)";
+                  el.style.transform = `rotate(${card.rot}deg)`;
+                  el.style.boxShadow = "0 6px 28px rgba(0,0,0,0.55)";
                   el.style.filter = "brightness(1)";
+                  const ov = el.querySelector<HTMLElement>(".wall-overlay");
+                  const ti = el.querySelector<HTMLElement>(".wall-title");
+                  if (ov) ov.style.opacity = "0";
+                  if (ti) { ti.style.opacity = "0"; ti.style.transform = "translateY(6px)"; }
                 }}
               >
                 <img
@@ -153,8 +127,29 @@ export default function ProductionWall() {
                   alt=""
                   className="w-full h-full object-cover"
                   loading="lazy"
-                  style={{ display: "block" }}
+                  style={{ display: "block", borderRadius: "18px" }}
                 />
+                <div
+                  className="absolute inset-0 pointer-events-none wall-overlay"
+                  style={{
+                    borderRadius: "18px",
+                    background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0) 50%)",
+                    opacity: 0,
+                    transition: "opacity 0.3s ease",
+                  }}
+                />
+                <div
+                  className="absolute bottom-0 left-0 right-0 pointer-events-none px-5 pb-5 wall-title"
+                  style={{
+                    opacity: 0,
+                    transform: "translateY(6px)",
+                    transition: "opacity 0.3s ease, transform 0.3s ease",
+                  }}
+                >
+                  <p className="text-body-sm font-switzer font-[400] text-cinema-white/90">
+                    {card.title}
+                  </p>
+                </div>
               </div>
             </div>
           );
