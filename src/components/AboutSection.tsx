@@ -13,7 +13,7 @@ export default function AboutSection() {
   }, []);
 
   return (
-    <section id="about" ref={sectionRef} className="relative py-16 md:py-24 overflow-hidden reveal bg-cinema-black border-t border-cinema-white/8">
+    <section id="about" ref={sectionRef} className="relative py-12 md:py-16 overflow-hidden reveal bg-cinema-black border-t border-cinema-white/8">
       <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-20">
           <div className="lg:col-span-3">
