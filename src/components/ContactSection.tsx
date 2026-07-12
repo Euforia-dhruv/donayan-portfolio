@@ -54,7 +54,7 @@ export default function ContactSection() {
 
       {/* Content – z-index 2 */}
       <div
-        className="relative w-full max-w-[1400px] mx-auto px-8 md:px-10 py-20 md:py-20"
+        className="relative w-full max-w-[1400px] mx-auto px-8 md:px-10 pt-20 pb-16"
         style={{
           zIndex: 2,
           opacity: visible ? 1 : 0,

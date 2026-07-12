@@ -80,7 +80,7 @@ export default function ProductionWall() {
 
   useEffect(() => {
     const maxY = allCards.reduce((m, c) => Math.max(m, c.y + c.h), 0);
-    setSectionH(Math.max(window.innerHeight, maxY + 120));
+    setSectionH(maxY + 80);
     requestAnimationFrame(() => requestAnimationFrame(() => setVisible(true)));
   }, []);
 
@@ -107,7 +107,7 @@ export default function ProductionWall() {
 
       <div
         className="relative mx-auto"
-        style={{ width: CANVAS_W, maxWidth: "100%" }}
+        style={{ width: CANVAS_W, maxWidth: "100%", height: sectionH }}
       >
         {allCards.map((card, i) => {
           const delay = Math.min(i * 0.1, 1.0);

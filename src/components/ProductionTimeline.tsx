@@ -44,10 +44,10 @@ export default function ProductionTimeline() {
   const sorted = [...experience].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
 
   return (
-    <section id="process" ref={sectionRef} className="py-10 md:py-14 bg-cinema-black reveal">
+    <section id="process" ref={sectionRef} className="py-20 bg-cinema-black reveal">
       <div className="max-w-[1400px] mx-auto px-8 md:px-10">
         <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-4">Career</p>
-        <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] mb-10 md:mb-12">Production Timeline</h2>
+        <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] mb-8 md:mb-10">Production Timeline</h2>
 
         <div className="relative max-w-4xl">
           <div className="absolute left-[7px] md:left-[11px] top-0 bottom-0 w-px bg-cinema-white/8" />
@@ -55,7 +55,7 @@ export default function ProductionTimeline() {
           {sorted.map((entry, i) => {
             const brands = houseBrandMap[entry.productionHouseId] || [];
             return (
-              <div key={entry.id} className="relative pl-8 md:pl-12 pb-8 md:pb-10 last:pb-0"
+              <div key={entry.id} className="relative pl-8 md:pl-12 pb-6 md:pb-8 last:pb-0"
                 style={{ opacity: 0, animation: `heroFade 0.6s ease ${i * 0.15}s forwards` }}>
                 <div className="absolute left-0 top-1 w-[15px] h-[15px] md:w-[23px] md:h-[23px] rounded-full bg-gold border-2 border-gold z-10" />
 

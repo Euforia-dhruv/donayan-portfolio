@@ -25,7 +25,7 @@ export default function Brands() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-16 md:py-20 overflow-hidden reveal border-t border-cinema-white/8 bg-cinema-black"
+      className="relative py-20 overflow-hidden reveal border-t border-cinema-white/8 bg-cinema-black"
     >
       <div className="max-w-[1400px] mx-auto px-8 md:px-10 mb-8">
         <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">

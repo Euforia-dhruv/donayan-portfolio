@@ -26,12 +26,12 @@ export default function FeaturedProductions() {
 
   return (
     <>
-      <section id="featured" ref={sectionRef} className="relative pt-10 md:pt-14 pb-6 md:pb-10 overflow-hidden reveal bg-cinema-black">
+      <section id="featured" ref={sectionRef} className="relative py-20 overflow-hidden reveal bg-cinema-black">
         <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-10">
           <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-3 reveal reveal-delay-1">Production Archive</p>
-          <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] max-w-2xl mb-8 reveal reveal-delay-2">All Productions</h2>
+          <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] max-w-2xl mb-6 reveal reveal-delay-2">All Productions</h2>
 
-          <div className="flex flex-wrap gap-2 mb-8 reveal reveal-delay-3">
+          <div className="flex flex-wrap gap-2 mb-6 reveal reveal-delay-3">
             {categories.map((cat) => (
               <button key={cat} onClick={() => setActiveCat(cat)}
                 className={`text-caption font-switzer font-[400] uppercase tracking-[0.02em] px-4 py-2 transition-all duration-300 cursor-pointer border ${

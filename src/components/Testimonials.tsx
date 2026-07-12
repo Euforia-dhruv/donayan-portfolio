@@ -18,7 +18,7 @@ export default function Testimonials() {
   if (!siteContent.testimonials || siteContent.testimonials.length === 0) return null;
 
   return (
-    <section ref={sectionRef} className="pt-6 md:pt-10 pb-10 md:pb-14 bg-cinema-black border-t border-cinema-white/8 reveal">
+    <section ref={sectionRef} className="py-20 bg-cinema-black border-t border-cinema-white/8 reveal">
       <div className="max-w-[1400px] mx-auto px-8 md:px-10">
         <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-4">Testimonials</p>
 
