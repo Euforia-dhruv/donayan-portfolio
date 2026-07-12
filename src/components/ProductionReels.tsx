@@ -8,6 +8,7 @@ interface ReelEntry {
   id: number;
   url: string;
   hasMp4: boolean;
+  hasThumb: boolean;
   title: string;
   brand: string;
   year: string;
@@ -28,16 +29,15 @@ function isYoutubeUrl(url: string): boolean {
   return url.includes("youtube.com") || url.includes("youtu.be");
 }
 
-function isInstagramUrl(url: string): boolean {
-  return url.includes("instagram.com");
+function getInstagramCode(url: string): string | null {
+  const m = url.match(/instagram\.com\/(?:[a-zA-Z0-9_.-]+\/)?(?:p|reel|tv)\/([a-zA-Z0-9_-]+)/);
+  return m ? m[1] : null;
 }
 
 function extractVideoId(url: string): string | null {
   const yt = getYouTubeId(url);
   if (yt) return yt;
-  const ig = url.match(/(?:instagram\.com\/(?:p|reel|tv)\/)([a-zA-Z0-9_-]+)/);
-  if (ig) return ig[1];
-  return null;
+  return getInstagramCode(url);
 }
 
 function buildArchiveLookup(items: ArchiveItem[]): Map<string, ArchiveItem> {
@@ -49,39 +49,20 @@ function buildArchiveLookup(items: ArchiveItem[]): Map<string, ArchiveItem> {
   return map;
 }
 
-// Grid span patterns for editorial masonry (4-col grid)
 const SPANS = [
-  { col: 2, row: 1 },  // wide
-  { col: 1, row: 1 },  // standard
-  { col: 1, row: 1 },  // standard
-  { col: 2, row: 1 },  // wide
-  { col: 1, row: 1 },  // standard
-  { col: 1, row: 1 },  // standard
-  { col: 2, row: 1 },  // wide
-  { col: 1, row: 1 },  // standard
-  { col: 2, row: 1 },  // wide
-  { col: 1, row: 1 },  // standard
-  { col: 1, row: 1 },  // standard
-  { col: 2, row: 1 },  // wide
-  { col: 1, row: 1 },  // standard
-  { col: 2, row: 1 },  // wide
-  { col: 1, row: 1 },  // standard
-  { col: 1, row: 1 },  // standard
-  { col: 2, row: 1 },  // wide
-  { col: 1, row: 1 },  // standard
-  { col: 1, row: 1 },  // standard
-  { col: 2, row: 1 },  // wide
-  { col: 1, row: 1 },  // standard
-  { col: 2, row: 1 },  // wide
-  { col: 1, row: 1 },  // standard
-  { col: 1, row: 1 },  // standard
+  { col: 2 }, { col: 1 }, { col: 1 }, { col: 2 },
+  { col: 1 }, { col: 1 }, { col: 2 }, { col: 1 },
+  { col: 2 }, { col: 1 }, { col: 1 }, { col: 2 },
+  { col: 1 }, { col: 2 }, { col: 1 }, { col: 1 },
+  { col: 2 }, { col: 1 }, { col: 1 }, { col: 2 },
+  { col: 1 }, { col: 2 }, { col: 1 }, { col: 1 },
 ];
 
 const VALID_MP4 = new Set([
   1, 2, 3, 4, 5, 9, 10, 11, 12, 13, 16, 17, 18, 19, 23, 24, 25, 26, 27, 28,
 ]);
 
-const THUMB_IDS = new Set([14, 15, 22]);
+const VALID_THUMBS = new Set([14, 15, 22, 6.1, 6.2, 6.3, 6.4, 6.5]);
 
 function ReelLightbox({ entry, onClose }: { entry: ReelEntry; onClose: () => void }) {
   const [loaded, setLoaded] = useState(false);
@@ -125,7 +106,7 @@ function ReelLightbox({ entry, onClose }: { entry: ReelEntry; onClose: () => voi
           className="text-sm font-switzer font-[400] mb-3 truncate pr-20"
           style={{ color: "rgba(245,245,242,0.5)" }}
         >
-          {entry.brand} — {entry.title}
+          {entry.brand}{entry.brand && entry.title ? " — " : ""}{entry.title}
         </p>
         <div className="relative aspect-video" style={{ backgroundColor: "#141414" }}>
           {!loaded && (
@@ -146,7 +127,6 @@ function ReelLightbox({ entry, onClose }: { entry: ReelEntry; onClose: () => voi
               controls
               autoPlay
               className="w-full h-full object-contain"
-              style={{ borderRadius: "0" }}
             />
           ) : embedUrl ? (
             <iframe
@@ -166,11 +146,7 @@ function ReelLightbox({ entry, onClose }: { entry: ReelEntry; onClose: () => voi
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-switzer font-[400] uppercase tracking-[0.08em] no-underline"
-                style={{
-                  background: "#C8A24D",
-                  color: "#0A0A0A",
-                  borderRadius: "6px",
-                }}
+                style={{ background: "#C8A24D", color: "#0A0A0A", borderRadius: "6px" }}
               >
                 Open Original
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -185,23 +161,22 @@ function ReelLightbox({ entry, onClose }: { entry: ReelEntry; onClose: () => voi
   );
 }
 
-function ReelVideo({ entry, lightboxId }: { entry: ReelEntry; lightboxId: string | null }) {
+function ReelVideo({ entry }: { entry: ReelEntry }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const playedRef = useRef(false);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(
       ([e]) => {
-        setVisible(e.isIntersecting);
         const vid = videoRef.current;
         if (!vid) return;
         if (e.isIntersecting) {
           vid.play().catch(() => {});
-        } else {
+        } else if (playedRef.current) {
           vid.pause();
         }
       },
@@ -211,24 +186,17 @@ function ReelVideo({ entry, lightboxId }: { entry: ReelEntry; lightboxId: string
     return () => obs.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (lightboxId === `reel-${entry.id}`) {
-      const vid = videoRef.current;
-      if (vid) { vid.pause(); }
-    }
-  }, [lightboxId, entry.id]);
-
-  const posterPath: string | undefined = THUMB_IDS.has(entry.id)
-    ? `/assets/videos/${entry.id}.jpg`
-    : isYoutubeUrl(entry.url)
-    ? (getYouTubeThumbnail(entry.url) ?? undefined)
-    : undefined;
+  let posterPath: string | undefined;
+  if (entry.hasThumb) {
+    posterPath = `/assets/videos/${entry.id}.jpg`;
+  } else if (isYoutubeUrl(entry.url)) {
+    posterPath = getYouTubeThumbnail(entry.url) ?? undefined;
+  }
 
   return (
     <div
       ref={containerRef}
-      data-reel-id={entry.id}
-      className="relative overflow-hidden cursor-pointer group"
+      className="relative overflow-hidden cursor-pointer"
       style={{
         borderRadius: "12px",
         backgroundColor: "#141414",
@@ -251,47 +219,41 @@ function ReelVideo({ entry, lightboxId }: { entry: ReelEntry; lightboxId: string
           playsInline
           preload="none"
           className="w-full h-full object-cover"
-          style={{ display: "block" }}
+          onPlay={() => { playedRef.current = true; }}
         />
       ) : (
         <>
-          {posterPath ? (
-            <img
-              src={posterPath}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: "#1E1E1E" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: "rgba(245,245,242,0.2)" }}>
-                <rect x="2" y="2" width="20" height="20" rx="4" stroke="currentColor" strokeWidth="1.2" />
-                <circle cx="9.5" cy="9.5" r="2" stroke="currentColor" strokeWidth="1.2" />
-                <path d="M2 17l5-5 3 3 4-4 6 6" stroke="currentColor" strokeWidth="1.2" />
-              </svg>
-            </div>
-          )}
-          {isInstagramUrl(entry.url) && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                style={{ backgroundColor: "rgba(20,20,20,0.85)" }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ color: "#F5F5F2", marginLeft: "2px" }}>
-                  <path d="M8 5v14l11-7L8 5z" fill="currentColor" />
-                </svg>
-              </div>
-            </div>
-          )}
+          <img
+            src={posterPath || ""}
+            alt=""
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              const t = e.currentTarget;
+              if (t.dataset.fallback) return;
+              t.dataset.fallback = "1";
+              t.style.display = "none";
+              const placeholder = t.parentElement?.querySelector(".reel-fallback");
+              if (placeholder) (placeholder as HTMLElement).style.display = "flex";
+            }}
+          />
+          <div className="reel-fallback absolute inset-0 items-center justify-center" style={{ display: "none", backgroundColor: "#1E1E1E" }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: "rgba(245,245,242,0.2)" }}>
+              <rect x="2" y="2" width="20" height="20" rx="4" stroke="currentColor" strokeWidth="1.2" />
+              <circle cx="10" cy="10" r="2" stroke="currentColor" strokeWidth="1.2" />
+              <path d="M2 17l5-5 3 3 4-4 6 6" stroke="currentColor" strokeWidth="1.2" />
+            </svg>
+          </div>
         </>
       )}
 
       {/* Hover overlay */}
       <div
-        className="absolute inset-0 pointer-events-none transition-opacity duration-400"
+        className="absolute inset-0 pointer-events-none"
         style={{
           opacity: hovered ? 1 : 0,
           background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%)",
           borderRadius: "12px",
+          transition: "opacity 0.35s ease",
         }}
       />
 
@@ -304,26 +266,32 @@ function ReelVideo({ entry, lightboxId }: { entry: ReelEntry; lightboxId: string
           transition: "opacity 0.35s ease, transform 0.35s ease",
         }}
       >
-        <p className="text-xs font-switzer font-[500] uppercase tracking-[0.04em]" style={{ color: "rgba(245,245,242,0.75)" }}>
-          {entry.brand}
-        </p>
-        <p className="text-xs font-switzer font-[400]" style={{ color: "rgba(245,245,242,0.45)" }}>
-          {entry.role} · {entry.year}
-        </p>
+        {entry.brand && (
+          <p className="text-xs font-switzer font-[500] uppercase tracking-[0.04em]" style={{ color: "rgba(245,245,242,0.75)" }}>
+            {entry.brand}
+          </p>
+        )}
+        {(entry.role || entry.year) && (
+          <p className="text-xs font-switzer font-[400]" style={{ color: "rgba(245,245,242,0.45)" }}>
+            {entry.role}{entry.role && entry.year ? " · " : ""}{entry.year}
+          </p>
+        )}
       </div>
 
       {/* Play button */}
       <div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-500"
+        className="absolute inset-0 flex items-center justify-center pointer-events-none"
         style={{
+          transition: "opacity 0.5s ease",
           opacity: hovered ? 1 : 0.7,
         }}
       >
         <div
-          className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500"
+          className="w-12 h-12 rounded-full flex items-center justify-center"
           style={{
             backgroundColor: hovered ? "rgba(200,162,77,0.9)" : "rgba(20,20,20,0.8)",
             transform: hovered ? "scale(1)" : "scale(0.85)",
+            transition: "all 0.5s ease",
           }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ color: hovered ? "#0A0A0A" : "#F5F5F2", marginLeft: "2px" }}>
@@ -338,13 +306,14 @@ function ReelVideo({ entry, lightboxId }: { entry: ReelEntry; lightboxId: string
 export default function ProductionReels() {
   const [entries, setEntries] = useState<ReelEntry[]>([]);
   const [lightbox, setLightbox] = useState<string | null>(null);
-  const [visible, setVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [fetchState, setFetchState] = useState<"loading" | "loaded" | "error">("loading");
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setVisible(true); },
-      { threshold: 0.1 }
+      ([e]) => { if (e.isIntersecting) setMounted(true); },
+      { threshold: 0.05 }
     );
     const el = sectionRef.current;
     if (el) obs.observe(el);
@@ -353,38 +322,72 @@ export default function ProductionReels() {
 
   useEffect(() => {
     fetch(TXT_URL)
-      .then((r) => r.text())
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.text();
+      })
       .then((text) => {
-        const lines = text.trim().split("\n");
-        const archiveLookup = buildArchiveLookup(archiveData as ArchiveItem[]);
+        const lines = text.trim().split("\n").filter(Boolean);
+        console.log(`[ProductionReels] TXT loaded: ${lines.length} lines`);
 
-        const parsed: ReelEntry[] = lines.map((line) => {
+        const archiveLookup = buildArchiveLookup(archiveData as ArchiveItem[]);
+        const parsed: ReelEntry[] = [];
+
+        for (const line of lines) {
           const numMatch = line.match(/^(\d+)/);
-          if (!numMatch) return null;
+          if (!numMatch) {
+            console.warn(`[ProductionReels] Skipped line (no number): "${line}"`);
+            continue;
+          }
           const id = parseInt(numMatch[0], 10);
           const url = line.slice(numMatch[0].length).trim();
+
+          if (!url) {
+            console.warn(`[ProductionReels] Skipped ID ${id}: empty URL`);
+            continue;
+          }
+
           const vidId = extractVideoId(url);
           const archive = vidId ? archiveLookup.get(vidId) : undefined;
 
-          return {
+          if (!archive) {
+            console.log(`[ProductionReels] ID ${id}: no archive match for URL "${url}" (vidId=${vidId})`);
+          }
+
+          const hasMp4 = VALID_MP4.has(id);
+          const hasThumb = VALID_THUMBS.has(id);
+
+          if (!hasMp4 && !hasThumb) {
+            console.log(`[ProductionReels] ID ${id}: no local MP4 or JPG, using thumbnail from URL`);
+          }
+
+          parsed.push({
             id,
             url,
-            hasMp4: VALID_MP4.has(id),
+            hasMp4,
+            hasThumb,
             title: archive?.title || `Video ${id}`,
             brand: archive?.brand || "",
             year: archive?.year || "",
             role: archive?.role || "",
-          };
-        }).filter(Boolean) as ReelEntry[];
+          });
+        }
 
+        console.log(`[ProductionReels] Parsed ${parsed.length} entries`);
         setEntries(parsed);
+        setFetchState("loaded");
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("[ProductionReels] Failed to load:", err);
+        setFetchState("error");
+      });
   }, []);
 
   const activeEntry = lightbox
     ? entries.find((e) => `reel-${e.id}` === lightbox) || null
     : null;
+
+  const sectionVisible = mounted || fetchState === "loaded";
 
   return (
     <section
@@ -395,10 +398,9 @@ export default function ProductionReels() {
       <div className="max-w-[1500px] mx-auto px-8 md:px-10">
         {/* Header */}
         <div
-          className="mb-12 md:mb-16"
           style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0)" : "translateY(20px)",
+            opacity: sectionVisible ? 1 : 0,
+            transform: sectionVisible ? "translateY(0)" : "translateY(20px)",
             transition: "opacity 0.8s ease, transform 0.8s ease",
           }}
         >
@@ -409,47 +411,76 @@ export default function ProductionReels() {
             Production Archive
           </p>
           <h2
-            className="font-switzer font-[300] leading-[1] tracking-[-0.03em]"
-            style={{
-              fontSize: "clamp(32px, 4vw, 54px)",
-              color: "#F5F5F2",
-            }}
+            className="font-switzer font-[300] leading-[1] tracking-[-0.03em] mb-12 md:mb-16"
+            style={{ fontSize: "clamp(32px, 4vw, 54px)", color: "#F5F5F2" }}
           >
             Production Reels
           </h2>
         </div>
 
-        {/* Grid */}
-        <div
-          className="grid gap-6 md:gap-8"
-          style={{
-            gridTemplateColumns: "repeat(4, 1fr)",
-            opacity: visible ? 1 : 0,
-            transition: "opacity 0.8s ease 0.15s",
-          }}
-        >
-          {entries.map((entry, i) => {
-            const span = SPANS[i % SPANS.length];
-            return (
-              <div
-                key={entry.id}
-                style={{
-                  gridColumn: `span ${span.col}`,
-                  opacity: 0,
-                  animation: visible
-                    ? `cardEntrance 0.7s ease-out ${0.05 + i * 0.06}s forwards`
-                    : "none",
-                }}
-                onClick={() => setLightbox(`reel-${entry.id}`)}
-              >
-                <ReelVideo
-                  entry={entry}
-                  lightboxId={lightbox}
-                />
-              </div>
-            );
-          })}
-        </div>
+        {/* Loading */}
+        {fetchState === "loading" && (
+          <div className="flex items-center justify-center py-24">
+            <div
+              className="w-8 h-8 rounded-full"
+              style={{
+                border: "2px solid rgba(245,245,242,0.1)",
+                borderTopColor: "#C8A24D",
+                animation: "spin 0.8s linear infinite",
+              }}
+            />
+          </div>
+        )}
+
+        {/* Error */}
+        {fetchState === "error" && (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <p className="text-sm font-switzer font-[400] mb-2" style={{ color: "rgba(245,245,242,0.4)" }}>
+              Failed to load production reels
+            </p>
+            <p className="text-xs font-switzer font-[300]" style={{ color: "rgba(245,245,242,0.25)" }}>
+              Check that <code className="text-xs" style={{ color: "rgba(200,162,77,0.6)" }}>public/assets/videos/TXT.txt</code> exists and is accessible
+            </p>
+          </div>
+        )}
+
+        {/* Grid — always rendered with proper layout */}
+        {fetchState !== "loading" && (
+          <div
+            className="grid gap-6 md:gap-8"
+            style={{
+              gridTemplateColumns: "repeat(4, 1fr)",
+              minHeight: entries.length > 0 ? "auto" : "200px",
+              opacity: entries.length > 0 ? 1 : 0,
+              transition: "opacity 0.6s ease",
+            }}
+          >
+            {entries.map((entry, i) => {
+              const span = SPANS[i % SPANS.length];
+              return (
+                <div
+                  key={entry.id}
+                  style={{
+                    gridColumn: `span ${span.col}`,
+                    visibility: "visible",
+                  }}
+                  onClick={() => setLightbox(`reel-${entry.id}`)}
+                >
+                  <div
+                    style={{
+                      opacity: 0,
+                      animation: sectionVisible
+                        ? `cardEntrance 0.7s ease-out ${0.05 + i * 0.06}s forwards`
+                        : undefined,
+                    }}
+                  >
+                    <ReelVideo entry={entry} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {activeEntry && (
