@@ -12,6 +12,7 @@ interface VideoEntry {
   brand: string;
   year: string;
   role: string;
+  description: string;
   hasMp4: boolean;
   images: string[] | null;
   hasImage: boolean;
@@ -28,6 +29,7 @@ interface ArchiveItem {
   brand: string;
   year: string;
   role: string;
+  description: string;
 }
 
 function isYoutubeUrl(url: string): boolean {
@@ -61,6 +63,7 @@ const ENTRIES: VideoEntry[] = videoEntries.map(
       brand: arch?.brand || "",
       year: arch?.year || "",
       role: arch?.role || "",
+      description: arch?.description || "",
     };
   }
 );
@@ -142,7 +145,6 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
       );
     }
 
-    // Wall card (src-based image)
     if (entry.src) {
       return (
         <img src={entry.src} alt="" className="w-full h-full object-cover"
@@ -174,7 +176,7 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden cursor-pointer"
+      className="relative overflow-hidden cursor-pointer group"
       style={{
         borderRadius: "12px",
         backgroundColor: "#141414",
@@ -190,40 +192,78 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
     >
       {renderContent()}
 
+      {/* Gradient overlay — always visible */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           borderRadius: "12px",
-          background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%)",
-          opacity: hovered ? 1 : 0,
-          transition: "opacity 0.35s ease",
+          background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0) 60%)",
         }}
       />
 
+      {/* Text overlay */}
       <div
-        className="absolute bottom-0 left-0 right-0 pointer-events-none px-4 pb-4"
+        className="absolute bottom-0 left-0 right-0 pointer-events-none"
         style={{
-          opacity: hovered ? 1 : 0,
-          transform: hovered ? "translateY(0)" : "translateY(6px)",
-          transition: "opacity 0.35s ease, transform 0.35s ease",
+          padding: "0 20px 24px",
+          transform: hovered ? "translateY(-4px)" : "translateY(0)",
+          transition: "transform 250ms ease, opacity 250ms ease",
         }}
       >
-        {entry.brand && (
-          <p className="text-xs font-switzer font-[500] uppercase tracking-[0.04em]" style={{ color: "rgba(245,245,242,0.75)" }}>
-            {entry.brand}
+        {entry.title && (
+          <p
+            className="font-switzer"
+            style={{
+              fontSize: "17px",
+              fontWeight: 600,
+              color: "#fff",
+              lineHeight: 1.3,
+              marginBottom: "4px",
+            }}
+          >
+            {entry.title}
           </p>
         )}
+
         {(entry.role || entry.year) && (
-          <p className="text-xs font-switzer font-[400]" style={{ color: "rgba(245,245,242,0.45)" }}>
+          <p
+            className="font-switzer"
+            style={{
+              fontSize: "13px",
+              fontWeight: 500,
+              color: "rgba(255,255,255,0.7)",
+              lineHeight: 1.4,
+              marginBottom: entry.description ? "10px" : "0",
+            }}
+          >
             {entry.role}{entry.role && entry.year ? " · " : ""}{entry.year}
+          </p>
+        )}
+
+        {entry.description && (
+          <p
+            className="font-switzer"
+            style={{
+              fontSize: "14px",
+              fontWeight: 400,
+              color: "rgba(255,255,255,0.9)",
+              lineHeight: 1.45,
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {entry.description}
           </p>
         )}
       </div>
 
+      {/* Play button — centered, always visible */}
       {entry.hasMp4 && !videoFailed && (
         <div
           className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          style={{ opacity: hovered ? 1 : 0.7, transition: "opacity 0.5s ease" }}
+          style={{ top: "-8%" }}
         >
           <div
             className="w-12 h-12 rounded-full flex items-center justify-center"
