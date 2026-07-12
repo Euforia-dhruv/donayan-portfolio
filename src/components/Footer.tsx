@@ -2,7 +2,7 @@ import siteContent from "@/data/site-content.json";
 
 export default function Footer() {
   return (
-    <footer className="bg-cinema-black border-t border-cinema-white/5 py-12 md:py-16">
+    <footer className="bg-cinema-black border-t border-cinema-white/5 py-8 md:py-10">
       <div className="max-w-[1400px] mx-auto px-8 md:px-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div>
