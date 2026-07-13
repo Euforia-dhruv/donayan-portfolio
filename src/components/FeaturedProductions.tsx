@@ -72,7 +72,7 @@ export default function FeaturedProductions() {
 
   const items = useMemo(() => {
     const filtered = activeCat === "All" ? archive : archive.filter((p) => p.category === activeCat);
-    return filtered.filter((p) => {
+    const archiveItems = filtered.filter((p) => {
       const thumb = p.thumbnail || getYouTubeThumbnail(p.url) || "";
       if (thumb) return true;
       const ve = getVideoForArchive(p) as { hasMp4?: boolean; hasImage?: boolean; images?: string[] | null; src?: string | null } | undefined;
@@ -80,9 +80,41 @@ export default function FeaturedProductions() {
       if (p.documents && p.documents.length > 0) return true;
       return false;
     });
+
+    if (activeCat !== "All") return archiveItems;
+
+    const usedCodes = new Set(archiveItems.map((a) => {
+      const ve = getVideoForArchive(a);
+      return ve ? `${ve.id}` : null;
+    }).filter(Boolean));
+
+    const wallCards = (videoEntries as any[])
+      .filter((v) => v.id >= 101 && v.src && !usedCodes.has(`${v.id}`))
+      .map((v) => ({
+        id: `wall-${v.id}`,
+        title: v.title || "",
+        brand: v.title || "",
+        year: "",
+        role: "",
+        url: v.url || "",
+        type: "image",
+        category: "Brand Films",
+        featured: false,
+        thumbnail: "",
+        description: "",
+        documents: v.url ? [{ label: "View Document", path: v.url }] : [],
+        _wallSrc: v.src as string,
+      }));
+
+    return [...archiveItems, ...wallCards];
   }, [activeCat]);
 
-  const handleClick = (p: (typeof archive)[0]) => {
+  const handleClick = (p: any) => {
+    if (p._wallSrc) {
+      const ve = (videoEntries as any[]).find((v) => `wall-${v.id}` === p.id);
+      if (ve?.url) window.open(ve.url, "_blank", "noopener,noreferrer");
+      return;
+    }
     if (p.url) setVideo({ url: p.url, title: p.title });
     else if (p.documents?.[0]?.path) window.open(p.documents[0].path, "_blank", "noopener,noreferrer");
   };
@@ -107,10 +139,12 @@ export default function FeaturedProductions() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {items.map((p, i) => {
-              const thumb = p.thumbnail || getYouTubeThumbnail(p.url) || "";
-              const ve = getVideoForArchive(p) as { hasMp4?: boolean; hasImage?: boolean; images?: string[] | null; src?: string | null; videoUrl?: string | null; id?: number } | undefined;
-              const hasVideo = !!p.url;
-              const hasDoc = !!p.documents?.[0]?.path;
+              const wp = p as any;
+              const thumb = wp.thumbnail || getYouTubeThumbnail(wp.url) || "";
+              const ve = wp._wallSrc ? null : getVideoForArchive(wp) as { hasMp4?: boolean; hasImage?: boolean; images?: string[] | null; src?: string | null; videoUrl?: string | null; id?: number } | undefined;
+              const wallSrc = wp._wallSrc as string | undefined;
+              const hasVideo = !!wp.url;
+              const hasDoc = !!wp.documents?.[0]?.path;
               const hasMp4 = ve?.hasMp4 && ve?.videoUrl;
               const hasImages = Array.isArray(ve?.images) && ve.images.length > 0;
               const hasSrc = !!ve?.src;
@@ -121,6 +155,13 @@ export default function FeaturedProductions() {
                     {thumb ? (
                       <img
                         src={thumb}
+                        alt={p.title}
+                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    ) : wallSrc ? (
+                      <img
+                        src={getMediaUrl(wallSrc)}
                         alt={p.title}
                         className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
                         loading="lazy"
@@ -170,11 +211,11 @@ export default function FeaturedProductions() {
                     <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/90 via-cinema-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-5">
                       <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                         <div className="flex flex-wrap items-center gap-2 mb-2">
-                          <span className="text-caption font-switzer font-[400] text-cinema-white uppercase tracking-[0.02em]">{p.category}</span>
+                          {p.category && <span className="text-caption font-switzer font-[400] text-cinema-white uppercase tracking-[0.02em]">{p.category}</span>}
                           {p.year && <span className="text-caption font-switzer font-[400] text-cinema-white/50 uppercase tracking-[0.02em]">{p.year}</span>}
                         </div>
-                        <h3 className="text-body-sm md:text-body font-switzer font-[300] text-cinema-white leading-[1.1]">{p.brand}</h3>
-                        <p className="text-caption font-switzer font-[400] text-cinema-white/50 mt-1">{p.role}</p>
+                        <h3 className="text-body-sm md:text-body font-switzer font-[300] text-cinema-white leading-[1.1]">{p.brand || p.title}</h3>
+                        {p.role && <p className="text-caption font-switzer font-[400] text-cinema-white/50 mt-1">{p.role}</p>}
                         {p.description && <p className="text-caption font-switzer font-[300] text-cinema-white/40 mt-1 line-clamp-2">{p.description}</p>}
                         <div className="flex gap-3 mt-3">
                           {hasVideo && <span className="text-caption font-switzer font-[500] text-cinema-white uppercase tracking-[0.02em] inline-flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7L8 5z" fill="currentColor" /></svg>Watch Campaign</span>}
@@ -185,12 +226,13 @@ export default function FeaturedProductions() {
                     <div className="absolute top-3 right-3 flex gap-1.5">
                       {p.featured && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-smoke/80 text-cinema-white">Featured</span>}
                       {p.url && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-smoke/80 text-stone">{getPlatformLabel(p.url)}</span>}
-                      {!p.url && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-smoke/80 text-stone">Document</span>}
+                      {wallSrc && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-smoke/80 text-stone">Document</span>}
+                      {!p.url && !wallSrc && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-smoke/80 text-stone">Document</span>}
                     </div>
                   </div>
                   <div className="mt-4">
-                    <h3 className="text-body-sm md:text-body font-switzer font-[300] text-cinema-white leading-[1.2] group-hover:text-stone transition-colors duration-500">{p.brand}</h3>
-                    <p className="text-caption font-switzer font-[400] text-stone mt-0.5">{p.role} · {p.year}</p>
+                    <h3 className="text-body-sm md:text-body font-switzer font-[300] text-cinema-white leading-[1.2] group-hover:text-stone transition-colors duration-500">{p.brand || p.title}</h3>
+                    <p className="text-caption font-switzer font-[400] text-stone mt-0.5">{p.role}{p.role && p.year ? " · " : ""}{p.year}</p>
                   </div>
                 </div>
               );
