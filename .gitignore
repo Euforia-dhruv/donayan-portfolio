@@ -41,6 +41,11 @@ public/assets/work-images/*.png
 public/assets/archive/*.mp4
 public/assets/archive/*.jpg
 
+# debug / test artifacts
+test-results/
+scripts/debug-gap.mjs
+scripts/verify-fix.mjs
+
 # root-level stray images
 *.jpeg
 /*.png

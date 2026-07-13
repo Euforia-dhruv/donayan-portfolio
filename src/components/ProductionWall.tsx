@@ -104,7 +104,7 @@ export default function ProductionWall() {
 
       <div
         className="relative mx-auto overflow-hidden"
-        style={{ width: CANVAS_W, maxWidth: "100%", height: 780 }}
+        style={{ width: CANVAS_W, maxWidth: "100%", height: 920 }}
       >
         {allCards.map((card, i) => {
           const delay = Math.min(i * 0.1, 1.0);

@@ -104,14 +104,16 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
       return (
         <video
           ref={videoRef}
-          src={entry.videoUrl || `/assets/archive/${entry.id}.mp4`}
           muted
           loop
           playsInline
           autoPlay
           className="w-full h-full object-contain"
           onError={() => setVideoFailed(true)}
-        />
+        >
+          <source src={`/assets/archive/${entry.id}.mp4`} type="video/mp4" />
+          {entry.videoUrl && <source src={entry.videoUrl} type="video/mp4" />}
+        </video>
       );
     }
 
@@ -164,6 +166,10 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
         <img src={getYouTubeThumbnail(entry.url) || ""} alt="" className="w-full h-full object-contain"
           onError={() => setVideoFailed(true)} />
       );
+    }
+
+    if (isInstagramUrl(entry.url)) {
+      return <InstagramFallback entry={entry} />;
     }
 
     return <MediaUnavailable />;
@@ -279,6 +285,31 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function isInstagramUrl(url: string): boolean {
+  return url.includes("instagram.com");
+}
+
+function InstagramFallback({ entry }: { entry: VideoEntry }) {
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center gap-2"
+      style={{
+        background: "linear-gradient(135deg, #833AB4, #FD1D1D, #F77737)",
+        color: "rgba(255,255,255,0.9)",
+      }}
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <rect x="2" y="2" width="20" height="20" rx="5" />
+        <circle cx="12" cy="12" r="5" />
+        <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+      </svg>
+      <span className="text-[11px] font-switzer font-[500] text-center leading-tight px-2">
+        {entry.brand || "Instagram"}
+      </span>
+      <span className="text-[10px] font-switzer font-[400] opacity-60">Reel</span>
     </div>
   );
 }
