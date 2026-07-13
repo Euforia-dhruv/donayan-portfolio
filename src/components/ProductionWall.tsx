@@ -76,11 +76,8 @@ const CANVAS_W = 1800;
 
 export default function ProductionWall() {
   const [visible, setVisible] = useState(false);
-  const [sectionH, setSectionH] = useState(0);
 
   useEffect(() => {
-    const maxY = allCards.reduce((m, c) => Math.max(m, c.y + c.h), 0);
-    setSectionH(maxY + 80);
     requestAnimationFrame(() => requestAnimationFrame(() => setVisible(true)));
   }, []);
 
@@ -106,8 +103,8 @@ export default function ProductionWall() {
       </div>
 
       <div
-        className="relative mx-auto"
-        style={{ width: CANVAS_W, maxWidth: "100%", height: sectionH }}
+        className="relative mx-auto overflow-hidden"
+        style={{ width: CANVAS_W, maxWidth: "100%", height: 780 }}
       >
         {allCards.map((card, i) => {
           const delay = Math.min(i * 0.1, 1.0);
