@@ -51,7 +51,7 @@ export default function FeaturedProductions() {
     return filtered.filter((p) => {
       const thumb = p.thumbnail || getYouTubeThumbnail(p.url) || "";
       if (thumb) return true;
-      const ve = getVideoForArchive(p);
+      const ve = getVideoForArchive(p) as { hasMp4?: boolean; hasImage?: boolean; images?: string[] | null; src?: string | null } | undefined;
       if (ve && (ve.hasMp4 || ve.hasImage || (Array.isArray(ve.images) && ve.images.length > 0) || ve.src)) return true;
       if (p.documents && p.documents.length > 0) return true;
       return false;
@@ -84,11 +84,11 @@ export default function FeaturedProductions() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {items.map((p, i) => {
               const thumb = p.thumbnail || getYouTubeThumbnail(p.url) || "";
-              const ve = getVideoForArchive(p);
+              const ve = getVideoForArchive(p) as { hasMp4?: boolean; hasImage?: boolean; images?: string[] | null; src?: string | null; videoUrl?: string | null; id?: number } | undefined;
               const hasVideo = !!p.url;
               const hasDoc = !!p.documents?.[0]?.path;
               const hasMp4 = ve?.hasMp4 && ve?.videoUrl;
-              const hasImages = ve?.images && ve.images.length > 0;
+              const hasImages = Array.isArray(ve?.images) && ve.images.length > 0;
               const hasSrc = !!ve?.src;
 
               return (
