@@ -52,7 +52,7 @@ export default function FeaturedProductions() {
       const thumb = p.thumbnail || getYouTubeThumbnail(p.url) || "";
       if (thumb) return true;
       const ve = getVideoForArchive(p);
-      if (ve && (ve.hasMp4 || ve.hasImage || (ve.images && ve.images.length > 0) || ve.src)) return true;
+      if (ve && (ve.hasMp4 || ve.hasImage || (ve.images?.length ?? 0) > 0 || ve.src)) return true;
       if (p.documents && p.documents.length > 0) return true;
       return false;
     });

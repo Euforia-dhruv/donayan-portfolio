@@ -82,7 +82,7 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
   const [imgError, setImgError] = useState(false);
   const portrait = isPortrait(entry.w, entry.h);
 
-  const hasRealMedia = entry.hasMp4 || (entry.images && entry.images.length > 0) || entry.src || entry.hasImage || isYoutubeUrl(entry.url);
+  const hasRealMedia = entry.hasMp4 || (entry.images?.length ?? 0) > 0 || entry.src || entry.hasImage || isYoutubeUrl(entry.url);
 
   // Intersection Observer for autoplay/pause
   useEffect(() => {
@@ -145,8 +145,8 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
       );
     }
 
-    if (entry.images && entry.images.length > 0 && !imgError) {
-      const validImages = entry.images;
+    if ((entry.images?.length ?? 0) > 0 && !imgError) {
+      const validImages = entry.images!;
       if (validImages.length === 1) {
         return (
           <img src={getMediaUrl(`/assets/archive/${validImages[0]}`)} alt="" className="w-full h-full object-cover" loading="lazy"
@@ -298,7 +298,7 @@ export default function ProductionReels() {
   }, []);
 
   const validEntries = ENTRIES.filter((e) => {
-    return e.hasMp4 || (e.images && e.images.length > 0) || e.src || e.hasImage || isYoutubeUrl(e.url);
+    return e.hasMp4 || (e.images?.length ?? 0) > 0 || e.src || e.hasImage || isYoutubeUrl(e.url);
   });
 
   return (
