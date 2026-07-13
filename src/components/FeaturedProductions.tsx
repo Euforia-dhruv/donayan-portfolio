@@ -1,12 +1,34 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 import archive from "@/data/archive.json";
+import videoEntries from "@/data/video-entries.json";
 import VideoModal from "@/components/VideoModal";
-import { getYouTubeThumbnail, getPlatformLabel } from "@/lib/video-utils";
+import { getYouTubeThumbnail, getYouTubeId, getPlatformLabel } from "@/lib/video-utils";
+import { getMediaUrl } from "@/lib/media";
 
 const categories = ["All", "Featured Campaigns", "Commercial Films", "Fashion Campaigns", "Celebrity Campaigns", "Brand Films", "Digital & Social Content", "Music Videos", "Behind the Scenes"];
-const isInstagramUrl = (u: string) => u.includes("instagram.com");
+
+function extractCode(url: string): string | null {
+  if (!url) return null;
+  const ig = url.match(/instagram\.com\/(?:[a-zA-Z0-9_.-]+\/)?(?:p|reel|tv)\/([a-zA-Z0-9_-]+)/);
+  if (ig) return `ig:${ig[1]}`;
+  const yt = getYouTubeId(url);
+  if (yt) return `yt:${yt}`;
+  return null;
+}
+
+const videoByCode = new Map<string, typeof videoEntries[0]>();
+for (const ve of videoEntries) {
+  const code = extractCode(ve.url);
+  if (code) videoByCode.set(code, ve);
+}
+
+function getVideoForArchive(item: typeof archive[0]): typeof videoEntries[0] | undefined {
+  const code = extractCode(item.url);
+  if (code) return videoByCode.get(code);
+  return undefined;
+}
 
 export default function FeaturedProductions() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -14,12 +36,28 @@ export default function FeaturedProductions() {
   const [video, setVideo] = useState<{ url: string; title: string } | null>(null);
 
   useEffect(() => {
-    const el = sectionRef.current; if (!el) return;
-    const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { el.classList.add("visible"); observer.unobserve(el); } }, { threshold: 0.1 });
-    observer.observe(el); return () => observer.disconnect();
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { el.classList.add("visible"); observer.unobserve(el); } },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
-  const filtered = activeCat === "All" ? archive : archive.filter((p) => p.category === activeCat);
+  const items = useMemo(() => {
+    const filtered = activeCat === "All" ? archive : archive.filter((p) => p.category === activeCat);
+    return filtered.filter((p) => {
+      const thumb = p.thumbnail || getYouTubeThumbnail(p.url) || "";
+      if (thumb) return true;
+      const ve = getVideoForArchive(p);
+      if (ve && (ve.hasMp4 || ve.hasImage || (ve.images && ve.images.length > 0) || ve.src)) return true;
+      if (p.documents && p.documents.length > 0) return true;
+      return false;
+    });
+  }, [activeCat]);
+
   const handleClick = (p: (typeof archive)[0]) => {
     if (p.url) setVideo({ url: p.url, title: p.title });
     else if (p.documents?.[0]?.path) window.open(p.documents[0].path, "_blank", "noopener,noreferrer");
@@ -44,30 +82,67 @@ export default function FeaturedProductions() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {filtered.map((p, i) => {
-              const instaThumb = p.thumbnail ? null : isInstagramUrl(p.url || "");
+            {items.map((p, i) => {
               const thumb = p.thumbnail || getYouTubeThumbnail(p.url) || "";
-              const hasVideo = !!p.url; const hasDoc = !!p.documents?.[0]?.path;
+              const ve = getVideoForArchive(p);
+              const hasVideo = !!p.url;
+              const hasDoc = !!p.documents?.[0]?.path;
+              const hasMp4 = ve?.hasMp4 && ve?.videoUrl;
+              const hasImages = ve?.images && ve.images.length > 0;
+              const hasSrc = !!ve?.src;
+
               return (
                 <div key={p.id} onClick={() => handleClick(p)} className={`group cursor-pointer reveal reveal-delay-${Math.min(i + 1, 5)}`}>
-                  <div className="relative aspect-[4/3] overflow-hidden bg-cinema-white/8">
-                    {thumb ? <img src={thumb} alt={p.title} className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105" loading="lazy" />
-                      : instaThumb
-                        ? <div className="w-full h-full flex flex-col items-center justify-center gap-2" style={{ backgroundColor: "#141414" }}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5">
-                              <rect x="2" y="2" width="20" height="20" rx="5" />
-                              <circle cx="12" cy="12" r="5" />
-                              <circle cx="17.5" cy="6.5" r="1.5" fill="rgba(255,255,255,0.3)" stroke="none" />
-                            </svg>
-                            <p className="text-caption text-white/50 font-switzer font-[400] uppercase tracking-[0.02em]">{p.brand}</p>
-                          </div>
-                        : <div className="w-full h-full flex flex-col items-center justify-center gap-2" style={{ backgroundColor: "#141414" }}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2">
-                              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" strokeLinecap="round" strokeLinejoin="round"/>
-                              <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                            <p className="text-caption text-white/30 font-switzer font-[400] uppercase tracking-[0.02em]">{p.brand}</p>
-                          </div>}
+                  <div className="relative aspect-[4/3] overflow-hidden bg-[#141414]">
+                    {thumb ? (
+                      <img
+                        src={thumb}
+                        alt={p.title}
+                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    ) : hasMp4 ? (
+                      <video
+                        muted
+                        loop
+                        playsInline
+                        autoPlay
+                        preload="metadata"
+                        className="w-full h-full object-cover"
+                        onMouseEnter={(e) => e.currentTarget.play().catch(() => {})}
+                        onMouseLeave={(e) => e.currentTarget.pause()}
+                      >
+                        <source src={`/api/video?url=${encodeURIComponent(ve!.videoUrl!)}`} type="video/mp4" />
+                      </video>
+                    ) : hasImages && ve!.images ? (
+                      <img
+                        src={getMediaUrl(`/assets/archive/${ve!.images[0]}`)}
+                        alt={p.title}
+                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    ) : hasSrc ? (
+                      <img
+                        src={getMediaUrl(ve!.src!)}
+                        alt={p.title}
+                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    ) : (ve?.hasImage) ? (
+                      <img
+                        src={getMediaUrl(`/assets/archive/${ve!.id}.jpg`)}
+                        alt={p.title}
+                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-[#141414]">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2">
+                          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/90 via-cinema-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-5">
                       <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                         <div className="flex flex-wrap items-center gap-2 mb-2">

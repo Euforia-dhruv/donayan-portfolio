@@ -82,6 +82,8 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
   const [imgError, setImgError] = useState(false);
   const portrait = isPortrait(entry.w, entry.h);
 
+  const hasRealMedia = entry.hasMp4 || (entry.images && entry.images.length > 0) || entry.src || entry.hasImage || isYoutubeUrl(entry.url);
+
   // Intersection Observer for autoplay/pause
   useEffect(() => {
     if (!entry.hasMp4 || videoFailed) return;
@@ -105,7 +107,6 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
     return () => obs.disconnect();
   }, [entry.hasMp4, videoFailed]);
 
-  // Track loadedmetadata for skeleton
   useEffect(() => {
     const vid = videoRef.current;
     if (!vid) return;
@@ -115,10 +116,12 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
     return () => vid.removeEventListener("loadedmetadata", onLoad);
   }, []);
 
+  // If no real media, don't render anything
+  if (!hasRealMedia && imgError) return null;
+
   const aspectRatio = `${entry.w} / ${entry.h}`;
 
   const renderMedia = () => {
-    // Video entries — show video with skeleton
     if (entry.hasMp4 && !videoFailed && entry.videoUrl) {
       return (
         <>
@@ -142,7 +145,6 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
       );
     }
 
-    // Multi-image entries
     if (entry.images && entry.images.length > 0 && !imgError) {
       const validImages = entry.images;
       if (validImages.length === 1) {
@@ -172,21 +174,18 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
       );
     }
 
-    // Image from src field (documents)
     if (entry.src && !imgError) {
       return (
         <img src={getMediaUrl(entry.src)} alt="" className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />
       );
     }
 
-    // Single image from archive
     if (entry.hasImage && !imgError) {
       return (
         <img src={getMediaUrl(`/assets/archive/${entry.id}.jpg`)} alt="" className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />
       );
     }
 
-    // YouTube thumbnail
     if (isYoutubeUrl(entry.url)) {
       const thumb = getYouTubeThumbnail(entry.url);
       if (thumb) {
@@ -194,23 +193,11 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
       }
     }
 
-    // Instagram or any remaining entry — show thumbnail with overlay
-    return (
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#141414]">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5">
-          <rect x="2" y="2" width="20" height="20" rx="5" />
-          <circle cx="12" cy="12" r="5" />
-          <circle cx="17.5" cy="6.5" r="1.5" fill="rgba(255,255,255,0.4)" stroke="none" />
-        </svg>
-        <span className="text-xs font-switzer font-[400] text-white/40 uppercase tracking-[0.05em]">
-          {entry.brand || "Instagram"}
-        </span>
-        <span className="text-[11px] font-switzer font-[400] text-white/30 px-4 py-1.5 border border-white/20 rounded-full">
-          Watch Reel
-        </span>
-      </div>
-    );
+    return null;
   };
+
+  const mediaContent = renderMedia();
+  if (!mediaContent) return null;
 
   return (
     <div
@@ -233,9 +220,8 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
         if (entry.url) window.open(entry.url, "_blank", "noopener,noreferrer");
       }}
     >
-      {renderMedia()}
+      {mediaContent}
 
-      {/* Gradient overlay */}
       <div
         className="absolute inset-0 pointer-events-none transition-opacity duration-500"
         style={{
@@ -245,7 +231,6 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
         }}
       />
 
-      {/* Text overlay */}
       <div
         className="absolute bottom-0 left-0 right-0 pointer-events-none"
         style={{
@@ -278,7 +263,6 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
         )}
       </div>
 
-      {/* Play button for working videos */}
       {entry.hasMp4 && !videoFailed && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div
@@ -312,6 +296,10 @@ export default function ProductionReels() {
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
+
+  const validEntries = ENTRIES.filter((e) => {
+    return e.hasMp4 || (e.images && e.images.length > 0) || e.src || e.hasImage || isYoutubeUrl(e.url);
+  });
 
   return (
     <section
@@ -350,7 +338,7 @@ export default function ProductionReels() {
           gridTemplateColumns: "repeat(4, 1fr)",
           gridAutoFlow: "dense",
         }}>
-          {ENTRIES.map((entry, i) => (
+          {validEntries.map((entry, i) => (
             <div
               key={entry.id}
               style={{
