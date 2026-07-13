@@ -63,7 +63,7 @@ function WallCard({ item }: { item: WallItem }) {
           aria-hidden="true"
         />
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 translate-y-2"
+          className={`pointer-events-none absolute inset-x-0 bottom-0 p-4 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 translate-y-2 ${item.playable ? "opacity-100 translate-y-0" : "opacity-0"}`}
         >
           <p className="font-switzer text-body-sm font-[400] leading-tight text-cinema-white">
             {item.label}
@@ -83,22 +83,6 @@ export default function ProductionWall() {
   const { projects } = useProjects();
   const [visible, setVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setVisible(true);
-          obs.unobserve(el);
-        }
-      },
-      { threshold: 0.04 },
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
 
   const items: WallItem[] = useMemo(() => {
     const result: WallItem[] = [];
@@ -124,6 +108,22 @@ export default function ProductionWall() {
     }
     return result;
   }, [projects]);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setVisible(true);
+          obs.unobserve(el);
+        }
+      },
+      { threshold: 0.04 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [items.length]);
 
   if (!items.length) return null;
 

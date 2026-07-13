@@ -28,11 +28,22 @@ export default function Hero() {
       >
         <img
           src={getMediaUrl("/hero-bg.jpg")}
-          alt="On set production — director's monitor view"
-          className="w-full h-full object-cover object-[center_40%]"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover object-[center_40%]"
           style={{ filter: "brightness(0.78) contrast(1.3) saturate(1.05)" }}
-          loading="eager"
-          fetchPriority="high"
+        />
+        <video
+          src={getMediaUrl("/assets/archive/4.mp4")}
+          poster={getMediaUrl("/hero-bg.jpg")}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover object-[center_40%]"
+          style={{ filter: "brightness(0.78) contrast(1.3) saturate(1.05)" }}
         />
         <div
           className="absolute inset-0"

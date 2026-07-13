@@ -28,6 +28,8 @@ export function resolveMedia(source: MediaSource): {
   const { src, externalUrl } = source;
   const link = externalUrl || src;
 
+  const isImage = (u?: string) =>
+    !!u && /\.(jpe?g|png|webp|gif|avif|svg)(\?|$)/i.test(u);
   const isVideoFile = (u?: string) => !!u && /\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(u);
   const isPdf = (u?: string) => !!u && /\.pdf(\?|$)/i.test(u);
   const isYouTube = (u?: string) =>
@@ -36,6 +38,7 @@ export function resolveMedia(source: MediaSource): {
   const isBehance = (u?: string) => !!u && u.includes("behance.net");
 
   if (isPdf(src)) return { kind: "pdf", displaySrc: src, link };
+  if (isImage(src)) return { kind: "image", displaySrc: src, link };
   if (isVideoFile(src)) return { kind: "video", displaySrc: src, link };
 
   if (isYouTube(src) || isYouTube(externalUrl)) {
@@ -152,10 +155,11 @@ export function Media({
           className={`h-full w-full object-cover transition-opacity duration-500 ${
             loaded ? "opacity-100" : "opacity-0"
           }`}
+          autoPlay
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
           onLoadedData={() => setLoaded(true)}
           onError={() => {
             setErrored(true);
