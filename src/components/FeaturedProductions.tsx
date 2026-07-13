@@ -53,16 +53,21 @@ export default function FeaturedProductions() {
                   <div className="relative aspect-[4/3] overflow-hidden bg-cinema-white/8">
                     {thumb ? <img src={thumb} alt={p.title} className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105" loading="lazy" />
                       : instaThumb
-                        ? <div className="w-full h-full flex flex-col items-center justify-center gap-1"
-                            style={{ background: "linear-gradient(135deg, #833AB4, #FD1D1D, #F77737)" }}>
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" className="opacity-80">
+                        ? <div className="w-full h-full flex flex-col items-center justify-center gap-2" style={{ backgroundColor: "#141414" }}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5">
                               <rect x="2" y="2" width="20" height="20" rx="5" />
                               <circle cx="12" cy="12" r="5" />
-                              <circle cx="17.5" cy="6.5" r="1.5" fill="white" stroke="none" />
+                              <circle cx="17.5" cy="6.5" r="1.5" fill="rgba(255,255,255,0.3)" stroke="none" />
                             </svg>
-                            <p className="text-caption text-white/90 font-switzer font-[500] uppercase tracking-[0.02em]">{p.brand}</p>
+                            <p className="text-caption text-white/50 font-switzer font-[400] uppercase tracking-[0.02em]">{p.brand}</p>
                           </div>
-                        : <div className="w-full h-full flex items-center justify-center"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="mx-auto text-stone mb-2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg><p className="text-caption text-stone font-switzer uppercase tracking-[0.02em]">{p.brand}</p></div>}
+                        : <div className="w-full h-full flex flex-col items-center justify-center gap-2" style={{ backgroundColor: "#141414" }}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2">
+                              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" strokeLinecap="round" strokeLinejoin="round"/>
+                              <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            <p className="text-caption text-white/30 font-switzer font-[400] uppercase tracking-[0.02em]">{p.brand}</p>
+                          </div>}
                     <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/90 via-cinema-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-5">
                       <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                         <div className="flex flex-wrap items-center gap-2 mb-2">
