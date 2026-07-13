@@ -1,92 +1,92 @@
 [
   {
-    "pdf": "/Marketing Pitch/Artkalaa Pitch Deck.pdf",
-    "cover": "/Marketing Pitch/artkalaa.png",
+    "pdf": "/assets/docs/marketing-pitch/Artkalaa Pitch Deck.pdf",
+    "cover": "/assets/docs/marketing-pitch/artkalaa.png",
     "name": "Artkalaa Pitch Deck"
   },
   {
-    "pdf": "/Marketing Pitch/Deva_s Khayal.pdf",
-    "cover": "/Marketing Pitch/Deva.png",
+    "pdf": "/assets/docs/marketing-pitch/Deva_s Khayal.pdf",
+    "cover": "/assets/docs/marketing-pitch/Deva.png",
     "name": "Deva_s Khayal"
   },
   {
-    "pdf": "/Marketing Pitch/Just Be.pdf",
-    "cover": "/Marketing Pitch/Just be.png",
+    "pdf": "/assets/docs/marketing-pitch/Just Be.pdf",
+    "cover": "/assets/docs/marketing-pitch/Just be.png",
     "name": "Just Be"
   },
   {
-    "pdf": "/Marketing Pitch/Kitser August Sale.pdf",
-    "cover": "/Marketing Pitch/artkalaa 2.png",
+    "pdf": "/assets/docs/marketing-pitch/Kitser August Sale.pdf",
+    "cover": "/assets/docs/marketing-pitch/artkalaa 2.png",
     "name": "Kitser August Sale"
   },
   {
-    "pdf": "/Marketing Pitch/OOOL Digital Strategy.pdf",
-    "cover": "/Marketing Pitch/oool.png",
+    "pdf": "/assets/docs/marketing-pitch/OOOL Digital Strategy.pdf",
+    "cover": "/assets/docs/marketing-pitch/oool.png",
     "name": "OOOL Digital Strategy"
   },
   {
-    "pdf": "/Marketing Pitch/The Bubbling Fish and Nirala - The Plan.pdf",
-    "cover": "/Marketing Pitch/the.png",
+    "pdf": "/assets/docs/marketing-pitch/The Bubbling Fish and Nirala - The Plan.pdf",
+    "cover": "/assets/docs/marketing-pitch/the.png",
     "name": "The Bubbling Fish and Nirala - The Plan"
   },
   {
-    "pdf": "/Movie - OTT pitches/Murgi.pdf",
-    "cover": "/Movie - OTT pitches/Murgi.png",
+    "pdf": "/assets/docs/movie-ott/Murgi.pdf",
+    "cover": "/assets/docs/movie-ott/Murgi.png",
     "name": "Murgi"
   },
   {
-    "pdf": "/Movie - OTT pitches/Pathan Brothers Series.pdf",
-    "cover": "/Movie - OTT pitches/Pathan 1.png",
+    "pdf": "/assets/docs/movie-ott/Pathan Brothers Series.pdf",
+    "cover": "/assets/docs/movie-ott/Pathan 1.png",
     "name": "Pathan Brothers Series"
   },
   {
-    "pdf": "/Others/Lifestyle SS_24 Cast Batch 5 (Bangkok).pdf",
-    "cover": "/Others/life.png",
+    "pdf": "/assets/docs/others/Lifestyle SS_24 Cast Batch 5 (Bangkok).pdf",
+    "cover": "/assets/docs/others/life.png",
     "name": "Lifestyle SS_24 Cast Batch 5 (Bangkok)"
   },
   {
-    "pdf": "/Others/Tanishq Casting.pdf",
-    "cover": "/Others/Tanishq.png",
+    "pdf": "/assets/docs/others/Tanishq Casting.pdf",
+    "cover": "/assets/docs/others/Tanishq.png",
     "name": "Tanishq Casting"
   },
   {
-    "pdf": "/PPM Decks/AX Celebrity Shoot SS_25.pdf",
-    "cover": "/PPM Decks/AX.png",
+    "pdf": "/assets/docs/ppm-decks/AX Celebrity Shoot SS_25.pdf",
+    "cover": "/assets/docs/ppm-decks/AX.png",
     "name": "AX Celebrity Shoot SS_25"
   },
   {
-    "pdf": "/PPM Decks/HDFC KVS Post PPM Deck.pdf",
-    "cover": "/PPM Decks/HDFC.png",
+    "pdf": "/assets/docs/ppm-decks/HDFC KVS Post PPM Deck.pdf",
+    "cover": "/assets/docs/ppm-decks/HDFC.png",
     "name": "HDFC KVS Post PPM Deck"
   },
   {
-    "pdf": "/PPM Decks/IDEE PPM.pdf",
-    "cover": "/PPM Decks/IDEE.png",
+    "pdf": "/assets/docs/ppm-decks/IDEE PPM.pdf",
+    "cover": "/assets/docs/ppm-decks/IDEE.png",
     "name": "IDEE PPM"
   },
   {
-    "pdf": "/PPM Decks/Kinder Print Shoot.pdf",
-    "cover": "/PPM Decks/Kinder.png",
+    "pdf": "/assets/docs/ppm-decks/Kinder Print Shoot.pdf",
+    "cover": "/assets/docs/ppm-decks/Kinder.png",
     "name": "Kinder Print Shoot"
   },
   {
-    "pdf": "/Treatment Notes/Fossil - SS_25 - PPM DECK.pdf",
-    "cover": "/Treatment Notes/fossil.png",
+    "pdf": "/assets/docs/resume.pdf",
+    "cover": null,
+    "name": "resume"
+  },
+  {
+    "pdf": "/assets/docs/treatment-notes/Fossil - SS_25 - PPM DECK.pdf",
+    "cover": "/assets/docs/treatment-notes/fossil.png",
     "name": "Fossil - SS_25 - PPM DECK"
   },
   {
-    "pdf": "/Treatment Notes/Godrej Capital - Director_s Note.pdf",
-    "cover": "/Treatment Notes/godrej.png",
+    "pdf": "/assets/docs/treatment-notes/Godrej Capital - Director_s Note.pdf",
+    "cover": "/assets/docs/treatment-notes/godrej.png",
     "name": "Godrej Capital - Director_s Note"
   },
   {
-    "pdf": "/Treatment Notes/Ponds  BB cream TN.pdf",
-    "cover": "/Treatment Notes/ponds.png",
+    "pdf": "/assets/docs/treatment-notes/Ponds  BB cream TN.pdf",
+    "cover": "/assets/docs/treatment-notes/ponds.png",
     "name": "Ponds  BB cream TN"
-  },
-  {
-    "pdf": "/resume.pdf",
-    "cover": "/Thank u.png",
-    "name": "resume"
   }
 ]
