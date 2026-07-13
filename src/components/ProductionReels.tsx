@@ -113,7 +113,7 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
           onError={() => setVideoFailed(true)}
         >
           <source src={`/assets/archive/${entry.id}.mp4`} type="video/mp4" />
-          {entry.videoUrl && <source src={entry.videoUrl} type="video/mp4" />}
+          {entry.videoUrl && <source src={`/api/video?url=${encodeURIComponent(entry.videoUrl)}`} type="video/mp4" />}
         </video>
       );
     }
