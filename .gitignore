@@ -41,6 +41,9 @@ public/assets/work-images/*.png
 public/assets/archive/*.mp4
 public/assets/archive/*.jpg
 
+# supabase temp
+supabase/.temp
+
 # debug / test artifacts
 test-results/
 scripts/debug-gap.mjs
