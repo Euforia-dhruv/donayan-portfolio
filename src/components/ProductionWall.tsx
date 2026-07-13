@@ -3,14 +3,16 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import { useProjects } from "@/lib/convex/site-data";
 import { Media, isPlayableSource, type MediaSource } from "@/components/Media";
+import wallAssets from "@/lib/wall-assets.json";
 
 interface WallItem {
-  id: string;
-  label: string;
+  key: string;
+  file: string;
   source: MediaSource;
-  externalUrl?: string;
+  externalUrl: string;
   orientation: string;
   playable: boolean;
+  label: string;
 }
 
 function aspectFor(orientation?: string): string {
@@ -30,11 +32,11 @@ function WallCard({ item }: { item: WallItem }) {
   return (
     <div className="mb-5 break-inside-avoid">
       <div
-        role={item.externalUrl ? "button" : undefined}
-        tabIndex={item.externalUrl ? 0 : undefined}
+        role="button"
+        tabIndex={0}
         onClick={open}
         onKeyDown={(e) => {
-          if (item.externalUrl && (e.key === "Enter" || e.key === " ")) {
+          if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             open();
           }
@@ -48,31 +50,23 @@ function WallCard({ item }: { item: WallItem }) {
             ? "0 24px 60px rgba(0,0,0,0.55)"
             : "0 4px 14px rgba(0,0,0,0.25)",
         }}
-        aria-label={item.externalUrl ? `${item.label} — open project` : item.label}
+        aria-label={`${item.label} — open original`}
       >
-        <Media
-          source={item.source}
-          label={item.label}
-          alt={item.label}
-          showPlay={item.playable}
-          rounded
-        />
+        <Media source={item.source} label={item.label} alt={item.label} showPlay={item.playable} rounded />
 
         <div
           className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
           aria-hidden="true"
         />
         <div
-          className={`pointer-events-none absolute inset-x-0 bottom-0 p-4 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 translate-y-2 ${item.playable ? "opacity-100 translate-y-0" : "opacity-0"}`}
+          className={`pointer-events-none absolute inset-x-0 bottom-0 p-4 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 translate-y-2 ${item.playable ? "translate-y-0 opacity-100" : "opacity-0"}`}
         >
           <p className="font-switzer text-body-sm font-[400] leading-tight text-cinema-white">
             {item.label}
           </p>
-          {item.externalUrl && (
-            <span className="mt-1 inline-block text-caption font-switzer uppercase tracking-[0.02em] text-gold/80">
-              Open Project
-            </span>
-          )}
+          <span className="mt-1 inline-block text-caption font-switzer uppercase tracking-[0.02em] text-gold/80">
+            Open Original
+          </span>
         </div>
       </div>
     </div>
@@ -85,28 +79,23 @@ export default function ProductionWall() {
   const sectionRef = useRef<HTMLElement>(null);
 
   const items: WallItem[] = useMemo(() => {
-    const result: WallItem[] = [];
-    for (const p of projects) {
-      if (!p.published) continue;
-
-      const source: MediaSource = {
-        src: p.thumbnail || p.videos?.[0],
-        externalUrl: p.externalUrl || p.videos?.[0],
-        poster: p.thumbnail,
-      };
-
-      const playable = isPlayableSource(source) || !!p.videos?.length;
-
-      result.push({
-        id: p._id,
-        label: p.brand || p.title || "Project",
+    return wallAssets.map((asset, i) => {
+      const p = projects[asset.projectIndex];
+      const sourceUrl = p?.externalUrl || p?.videos?.[0] || asset.file;
+      const label = p?.brand || p?.title || `Work ${i + 1}`;
+      const isVideo = /\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(asset.file);
+      const source: MediaSource = { src: asset.file };
+      const playable = isVideo || isPlayableSource(source);
+      return {
+        key: asset.file,
+        file: asset.file,
         source,
-        externalUrl: p.externalUrl || undefined,
-        orientation: p.orientation || "landscape",
+        externalUrl: sourceUrl,
+        orientation: p?.orientation || (isVideo ? "landscape" : "square"),
         playable,
-      });
-    }
-    return result;
+        label,
+      };
+    });
   }, [projects]);
 
   useEffect(() => {
@@ -157,7 +146,7 @@ export default function ProductionWall() {
             The Wall
           </h2>
           <p className="mt-2 font-switzer text-caption font-[400] text-stone/60">
-            {items.length} projects
+            {items.length} works
           </p>
         </div>
 
@@ -169,8 +158,8 @@ export default function ProductionWall() {
             transition: "opacity 0.6s ease, transform 0.6s ease",
           }}
         >
-          {items.map((item, i) => (
-            <WallCard key={item.id} item={item} />
+          {items.map((item) => (
+            <WallCard key={item.key} item={item} />
           ))}
         </div>
       </div>
