@@ -31,6 +31,15 @@ export default function Navigation() {
   }, [menuOpen]);
 
   useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -70,17 +79,17 @@ export default function Navigation() {
       aria-label="Main navigation"
     >
       <div className="max-w-[1400px] mx-auto px-8 md:px-10 flex items-center justify-between h-20 md:h-24">
-        <a
-          href="#"
-          className="no-underline focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cinema-black rounded-lg"
-          aria-label="Donayan Sahdev — Home"
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="bg-transparent border-none p-0 cursor-pointer no-underline focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cinema-black rounded-lg"
+          aria-label="Donayan Sahdev — Scroll to top"
         >
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="text-cinema-white" aria-hidden="true">
             <circle cx="16" cy="16" r="15" stroke="currentColor" strokeWidth="1.5" />
             <path d="M10 16h12M16 10v12" stroke="currentColor" strokeWidth="1.5" />
             <circle cx="16" cy="16" r="5" fill="currentColor" />
           </svg>
-        </a>
+        </button>
 
         <div className="hidden md:flex items-center gap-8" role="list">
           {navItems.map((item) => (

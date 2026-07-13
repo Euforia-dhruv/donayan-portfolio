@@ -27,14 +27,14 @@ export const metadata: Metadata = {
     siteName: "Donayan Sahdev",
     locale: "en_IN",
     type: "website",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Donayan Sahdev — Production Portfolio" }],
+    images: [{ url: "/og-image.svg", width: 1200, height: 630, alt: "Donayan Sahdev — Production Portfolio" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Donayan Sahdev — Freelance Director's Assistant & Creative Producer",
     description:
       "Mumbai-based Freelance Director's Assistant and Creative Producer. 60+ commercial productions.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.svg"],
   },
   robots: {
     index: true,

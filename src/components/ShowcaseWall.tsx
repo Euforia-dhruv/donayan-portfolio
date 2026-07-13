@@ -8,7 +8,6 @@ import {
   getYouTubeId,
   getPlatformLabel,
   getDurationLabel,
-  isEmbeddable,
 } from "@/lib/video-utils";
 import archive from "@/data/archive.json";
 import galleryCards from "@/data/gallery-cards.json";

@@ -39,6 +39,9 @@
   --text-heading: 54px;
   --text-heading--line-height: 1;
   --text-heading--letter-spacing: -0.023px;
+  --text-heading-lg: 64px;
+  --text-heading-lg--line-height: 1;
+  --text-heading-lg--letter-spacing: -0.03px;
   --text-display: 84px;
   --text-display--line-height: 1;
   --text-display--letter-spacing: -0.04px;
@@ -108,21 +111,17 @@ section.reveal {
   overflow: hidden;
   padding-top: 0;
   padding-bottom: 0;
-  margin-top: 0;
-  margin-bottom: 0;
   opacity: 0;
   transform: translateY(40px);
   transition: max-height 0.8s ease,
-              padding-top 0.8s ease,
-              padding-bottom 0.8s ease,
               opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
               transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 section.reveal.visible {
   max-height: 10000px;
-  padding-top: 80px;
-  padding-bottom: 80px;
+  padding-top: inherit;
+  padding-bottom: inherit;
   opacity: 1;
   transform: translateY(0);
 }
@@ -151,6 +150,11 @@ section.reveal.visible .reveal {
 
 @keyframes cardEntrance {
   from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
 

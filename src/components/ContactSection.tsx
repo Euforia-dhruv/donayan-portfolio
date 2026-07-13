@@ -66,7 +66,7 @@ export default function ContactSection() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSd_placeholder/viewform"
+                href={siteContent.contact.googleFormUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gold text-cinema-black text-body-sm font-switzer font-[400] uppercase tracking-[0.02em] no-underline transition-opacity hover:opacity-85"
@@ -144,7 +144,7 @@ export default function ContactSection() {
                 Let&apos;s discuss your next production. Fill out the project brief and I&apos;ll get back to you within 24 hours.
               </p>
               <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSd_placeholder/viewform"
+                href={siteContent.contact.googleFormUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gold text-cinema-black text-body-sm font-switzer font-[400] uppercase tracking-[0.02em] no-underline transition-opacity hover:opacity-85"

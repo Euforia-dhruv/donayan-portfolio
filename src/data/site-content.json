@@ -24,7 +24,7 @@
     "description": "Mumbai-based Freelance Director's Assistant and Creative Producer. 60+ commercial productions across advertising, fashion, celebrity campaigns, and music videos. Available for freelance and in-house productions.",
     "ogTitle": "Donayan Sahdev — Production Portfolio",
     "ogDescription": "Freelance Director's Assistant & Creative Producer. Production · Commercials · Brand Films · Music Videos.",
-    "ogImage": "/og-image.jpg"
+    "ogImage": "/og-image.svg"
   },
   "hero": {
     "ctaPrimary": "Explore Production Log",
@@ -52,7 +52,8 @@
     "submitLabel": "Send Message",
     "confirmation": "Message sent — I'll get back to you shortly.",
     "error": "Something didn't go through. Try again or email directly.",
-    "location": "Mumbai, India"
+    "location": "Mumbai, India",
+    "googleFormUrl": "https://docs.google.com/forms/d/e/1FAIpQLSd_placeholder/viewform"
   },
   "footer": {
     "copyright": "© 2026 Donayan Sahdev. All rights reserved.",

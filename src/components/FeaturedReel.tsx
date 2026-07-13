@@ -3,7 +3,7 @@
 import { useState } from "react";
 import archive from "@/data/archive.json";
 import VideoModal from "@/components/VideoModal";
-import { getYouTubeEmbedUrl, getYouTubeThumbnail, getPlatformLabel } from "@/lib/video-utils";
+import { getYouTubeEmbedUrl, getPlatformLabel } from "@/lib/video-utils";
 
 const featured = archive.filter((a) => a.featured && a.url);
 const firstFeature = featured[0];

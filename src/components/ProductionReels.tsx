@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getYouTubeThumbnail, getYouTubeId } from "@/lib/video-utils";
 import { getMediaUrl } from "@/lib/media";
 import videoEntries from "@/data/video-entries.json";
@@ -147,49 +147,51 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
 
     if (Array.isArray(entry.images) && entry.images.length > 0 && !imgError) {
       const validImages = entry.images!;
+      const label = entry.brand || entry.title || "Campaign visual";
       if (validImages.length === 1) {
         return (
-          <img src={getMediaUrl(`/assets/archive/${validImages[0]}`)} alt="" className="w-full h-full object-cover" loading="lazy"
+          <img src={getMediaUrl(`/assets/archive/${validImages[0]}`)} alt={`${label}`} className="w-full h-full object-cover" loading="lazy"
             onError={() => setImgError(true)} />
         );
       }
       return (
         <div className="w-full h-full grid gap-[2px]" style={{ gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr 1fr" }}>
           <div className="col-span-2 row-span-1 w-full h-full">
-            <img src={getMediaUrl(`/assets/archive/${validImages[0]}`)} alt="" className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />
+            <img src={getMediaUrl(`/assets/archive/${validImages[0]}`)} alt={`${label} — hero`} className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />
           </div>
           <div className="w-full h-full">
-            <img src={getMediaUrl(`/assets/archive/${validImages[1]}`)} alt="" className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />
+            <img src={getMediaUrl(`/assets/archive/${validImages[1]}`)} alt={`${label} — detail 1`} className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />
           </div>
           <div className="w-full h-full">
-            <img src={getMediaUrl(`/assets/archive/${validImages[2]}`)} alt="" className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />
+            <img src={getMediaUrl(`/assets/archive/${validImages[2]}`)} alt={`${label} — detail 2`} className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />
           </div>
           <div className="w-full h-full">
-            <img src={getMediaUrl(`/assets/archive/${validImages[3]}`)} alt="" className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />
+            <img src={getMediaUrl(`/assets/archive/${validImages[3]}`)} alt={`${label} — detail 3`} className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />
           </div>
           <div className="col-span-2 row-span-1 w-full h-full flex justify-center">
-            <img src={getMediaUrl(`/assets/archive/${validImages[4]}`)} alt="" className="h-full object-contain" loading="lazy" onError={() => setImgError(true)} />
+            <img src={getMediaUrl(`/assets/archive/${validImages[4]}`)} alt={`${label} — detail 4`} className="h-full object-contain" loading="lazy" onError={() => setImgError(true)} />
           </div>
         </div>
       );
     }
 
+    const label = entry.brand || entry.title || "Campaign visual";
     if (entry.src && !imgError) {
       return (
-        <img src={getMediaUrl(entry.src)} alt="" className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />
+        <img src={getMediaUrl(entry.src)} alt={`${label}`} className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />
       );
     }
 
     if (entry.hasImage && !imgError) {
       return (
-        <img src={getMediaUrl(`/assets/archive/${entry.id}.jpg`)} alt="" className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />
+        <img src={getMediaUrl(`/assets/archive/${entry.id}.jpg`)} alt={`${label}`} className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />
       );
     }
 
     if (isYoutubeUrl(entry.url)) {
       const thumb = getYouTubeThumbnail(entry.url);
       if (thumb) {
-        return <img src={thumb} alt="" className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />;
+        return <img src={thumb} alt={`${label} — video thumbnail`} className="w-full h-full object-cover" loading="lazy" onError={() => setImgError(true)} />;
       }
     }
 

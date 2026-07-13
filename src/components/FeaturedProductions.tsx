@@ -3,7 +3,6 @@
 import { useRef, useEffect, useState, useMemo } from "react";
 import archive from "@/data/archive.json";
 import videoEntries from "@/data/video-entries.json";
-import VideoModal from "@/components/VideoModal";
 import { getYouTubeThumbnail, getYouTubeId, getPlatformLabel } from "@/lib/video-utils";
 import { getMediaUrl } from "@/lib/media";
 
