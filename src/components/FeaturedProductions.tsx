@@ -18,15 +18,39 @@ function extractCode(url: string): string | null {
   return null;
 }
 
+const brandAliases: Record<string, string> = {
+  "pathan brothers": "pathan bros",
+  "idée": "idee",
+  "pond's": "ponds",
+  "oool": "oool digital",
+  "deva's khayal": "deva",
+  "the bubbling fish & nirala": "the bubbling fish",
+};
+
+function normalize(str: string): string {
+  return str.toLowerCase().trim().normalize("NFD").replace(/\p{Diacritic}/gu, "").replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ").trim();
+}
+
 const videoByCode = new Map<string, typeof videoEntries[0]>();
+const videoByBrand = new Map<string, typeof videoEntries[0]>();
 for (const ve of videoEntries) {
   const code = extractCode(ve.url);
   if (code) videoByCode.set(code, ve);
+  if (ve.title) {
+    const key = normalize(ve.title);
+    videoByBrand.set(key, ve);
+  }
 }
 
 function getVideoForArchive(item: typeof archive[0]): typeof videoEntries[0] | undefined {
   const code = extractCode(item.url);
   if (code) return videoByCode.get(code);
+  let brand = normalize(item.brand);
+  if (brandAliases[brand]) brand = brandAliases[brand];
+  if (videoByBrand.has(brand)) return videoByBrand.get(brand);
+  for (const [key, ve] of videoByBrand) {
+    if (brand.includes(key) || key.includes(brand)) return ve;
+  }
   return undefined;
 }
 
