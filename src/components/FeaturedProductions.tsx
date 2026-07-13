@@ -7,7 +7,29 @@ import VideoModal from "@/components/VideoModal";
 import { getYouTubeThumbnail, getYouTubeId, getPlatformLabel } from "@/lib/video-utils";
 import { getMediaUrl } from "@/lib/media";
 
-const categories = ["All", "Featured Campaigns", "Commercial Films", "Fashion Campaigns", "Celebrity Campaigns", "Brand Films", "Digital & Social Content", "Music Videos", "Behind the Scenes"];
+const COLLAB_URLS = new Set([
+  "https://www.instagram.com/reel/C9Hady1yVDJ/",
+  "https://www.instagram.com/p/C6BbgzXoyLR/",
+  "https://www.instagram.com/reel/C7RB6gGoVDQ/",
+  "https://www.instagram.com/p/Cz-2Mi0C6Bg/",
+]);
+
+const VIRAL_IDS = new Set(["archive-1", "archive-2", "archive-3", "archive-5", "archive-6", "archive-7", "archive-11", "archive-12"]);
+
+const filters = [
+  { key: "all", label: "All" },
+  { key: "commercials", label: "Commercials" },
+  { key: "music-videos", label: "Music Videos" },
+  { key: "brand-films", label: "Brand Films" },
+  { key: "posts", label: "Posts" },
+  { key: "reels", label: "Reels" },
+  { key: "collaborations", label: "Collaborations" },
+  { key: "viral", label: "Viral" },
+];
+
+function normalize(str: string): string {
+  return str.toLowerCase().trim().normalize("NFD").replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ").trim();
+}
 
 function extractCode(url: string): string | null {
   if (!url) return null;
@@ -27,24 +49,19 @@ const brandAliases: Record<string, string> = {
   "the bubbling fish & nirala": "the bubbling fish",
 };
 
-function normalize(str: string): string {
-  return str.toLowerCase().trim().normalize("NFD").replace(/\p{Diacritic}/gu, "").replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ").trim();
-}
-
-const videoByCode = new Map<string, typeof videoEntries[0]>();
-const videoByBrand = new Map<string, typeof videoEntries[0]>();
+const videoByCode = new Map<string, any>();
+const videoByBrand = new Map<string, any>();
 for (const ve of videoEntries) {
   const code = extractCode(ve.url);
   if (code) videoByCode.set(code, ve);
   if (ve.title) {
-    const key = normalize(ve.title);
-    videoByBrand.set(key, ve);
+    videoByBrand.set(normalize(ve.title), ve);
   }
 }
 
-function getVideoForArchive(item: typeof archive[0]): typeof videoEntries[0] | undefined {
+function getVideoForArchive(item: any): any {
   const code = extractCode(item.url);
-  if (code) return videoByCode.get(code);
+  if (code && videoByCode.has(code)) return videoByCode.get(code);
   let brand = normalize(item.brand);
   if (brandAliases[brand]) brand = brandAliases[brand];
   if (videoByBrand.has(brand)) return videoByBrand.get(brand);
@@ -54,10 +71,182 @@ function getVideoForArchive(item: typeof archive[0]): typeof videoEntries[0] | u
   return undefined;
 }
 
+function getItemFilterKey(item: typeof archive[0]): string[] {
+  const keys: string[] = [];
+  const isIG = item.url?.includes("instagram.com");
+  const isReel = item.url?.includes("/reel/");
+  const isPost = isIG && !isReel;
+  const isYT = item.url?.includes("youtube") || item.url?.includes("youtu.be");
+  const cat = (item.category || "").toLowerCase();
+  const ve = getVideoForArchive(item);
+
+  if (cat.includes("commercial") || cat.includes("fashion") || cat.includes("celebrity")) keys.push("commercials");
+  if (cat.includes("music")) keys.push("music-videos");
+  if (cat.includes("brand")) keys.push("brand-films");
+  if (cat.includes("behind")) keys.push("commercials");
+  if (cat.includes("digital") || cat.includes("social")) {
+    if (isReel) keys.push("reels");
+    else if (isPost) keys.push("posts");
+    else keys.push("reels");
+  }
+  if (isPost) keys.push("posts");
+  if (isReel) keys.push("reels");
+  if (isYT && !isReel) {
+    if (cat.includes("commercial") || cat.includes("fashion") || cat.includes("celebrity")) keys.push("commercials");
+    else if (cat.includes("music")) keys.push("music-videos");
+    else if (cat.includes("brand")) keys.push("brand-films");
+    else keys.push("commercials");
+  }
+  if (item.url && COLLAB_URLS.has(item.url)) keys.push("collaborations");
+  if (item.featured || VIRAL_IDS.has(item.id)) keys.push("viral");
+  if (ve?.hasMp4 || ve?.images || ve?.hasImage || ve?.src || item.thumbnail || getYouTubeThumbnail(item.url)) keys.push("all");
+  return keys;
+}
+
+function ArchiveCard({ item, index }: { item: any; index: number }) {
+  const [hovered, setHovered] = useState(false);
+  const [imgError, setImgError] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+  const ve = getVideoForArchive(item);
+  const thumb = item.thumbnail || getYouTubeThumbnail(item.url) || "";
+  const hasMp4 = ve?.hasMp4 && ve?.videoUrl;
+  const hasImages = Array.isArray(ve?.images) && ve.images.length > 0;
+  const hasSrc = !!ve?.src;
+  const hasImage = ve?.hasImage;
+  const isCollab = item.url && COLLAB_URLS.has(item.url);
+  const isViral = item.featured || VIRAL_IDS.has(item.id);
+
+  if (!thumb && !hasMp4 && !hasImages && !hasSrc && !hasImage) return null;
+
+  const mediaContent = () => {
+    if (thumb && !imgError) {
+      return (
+        <img src={thumb} alt={item.title} className="w-full h-full object-cover"
+          loading="lazy" onError={() => setImgError(true)}
+          style={{ transition: "transform 0.6s cubic-bezier(0.25,0.1,0.25,1)", transform: hovered ? "scale(1.04)" : "scale(1)" }}
+        />
+      );
+    }
+    if (hasMp4 && !videoFailed) {
+      return (
+        <video muted loop playsInline autoPlay preload="metadata" className="w-full h-full object-cover"
+          onError={() => setVideoFailed(true)}
+        >
+          <source src={`/api/video?url=${encodeURIComponent(ve.videoUrl)}`} type="video/mp4" />
+        </video>
+      );
+    }
+    if (hasImages && ve.images && !imgError) {
+      return (
+        <img src={getMediaUrl(`/assets/archive/${ve.images[0]}`)} alt={item.title} className="w-full h-full object-cover"
+          loading="lazy" onError={() => setImgError(true)}
+          style={{ transition: "transform 0.6s cubic-bezier(0.25,0.1,0.25,1)", transform: hovered ? "scale(1.04)" : "scale(1)" }}
+        />
+      );
+    }
+    if (hasSrc && !imgError) {
+      return (
+        <img src={getMediaUrl(ve.src)} alt={item.title} className="w-full h-full object-cover"
+          loading="lazy" onError={() => setImgError(true)}
+          style={{ transition: "transform 0.6s cubic-bezier(0.25,0.1,0.25,1)", transform: hovered ? "scale(1.04)" : "scale(1)" }}
+        />
+      );
+    }
+    if (hasImage && !imgError) {
+      return (
+        <img src={getMediaUrl(`/assets/archive/${ve.id}.jpg`)} alt={item.title} className="w-full h-full object-cover"
+          loading="lazy" onError={() => setImgError(true)}
+          style={{ transition: "transform 0.6s cubic-bezier(0.25,0.1,0.25,1)", transform: hovered ? "scale(1.04)" : "scale(1)" }}
+        />
+      );
+    }
+    return null;
+  };
+
+  const media = mediaContent();
+  if (!media) return null;
+
+  return (
+    <div className="break-inside-avoid mb-5" style={{
+      opacity: 0,
+      animation: `cardEntrance 0.6s ease ${0.03 + index * 0.025}s forwards`,
+    }}>
+      <div
+        className="relative overflow-hidden cursor-pointer group"
+        style={{
+          borderRadius: "20px",
+          backgroundColor: "#141414",
+          transform: hovered ? "translateY(-3px)" : "translateY(0)",
+          boxShadow: hovered ? "0 20px 50px rgba(0,0,0,0.5)" : "0 2px 8px rgba(0,0,0,0.2)",
+          transition: "transform 0.4s cubic-bezier(0.25,0.1,0.25,1), box-shadow 0.4s ease",
+        }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onClick={() => {
+          if (item.url) window.open(item.url, "_blank", "noopener,noreferrer");
+          else if (item.documents?.[0]?.path) window.open(item.documents[0].path, "_blank");
+        }}
+      >
+        {media}
+
+        <div className="absolute inset-0 pointer-events-none transition-opacity duration-400"
+          style={{
+            borderRadius: "20px",
+            background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.15) 50%, transparent 70%)",
+            opacity: hovered ? 1 : 0.4,
+            transition: "opacity 0.4s ease",
+          }}
+        />
+
+        <div className="absolute bottom-0 left-0 right-0 pointer-events-none p-5"
+          style={{
+            opacity: hovered ? 1 : 0.9,
+            transform: hovered ? "translateY(0)" : "translateY(0)",
+            transition: "opacity 0.4s ease, transform 0.4s ease",
+          }}
+        >
+          <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+            {item.year && (
+              <span className="text-caption font-switzer font-[400] text-cinema-white/60 uppercase tracking-[0.02em]">
+                {item.year}
+              </span>
+            )}
+            {item.url && (
+              <span className="text-caption font-switzer font-[400] text-cinema-white/40 uppercase tracking-[0.02em]">
+                {getPlatformLabel(item.url)}
+              </span>
+            )}
+          </div>
+          <h3 className="text-body-sm md:text-body font-switzer font-[400] text-cinema-white leading-[1.15]">
+            {item.brand}
+          </h3>
+          {item.role && (
+            <p className="text-caption font-switzer font-[400] text-cinema-white/50 mt-0.5">
+              {item.role}
+            </p>
+          )}
+          {isCollab && (
+            <p className="text-caption font-switzer font-[400] text-gold/80 uppercase tracking-[0.02em] mt-1.5 inline-flex items-center gap-1">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z" />
+              </svg>
+              Collaboration · @gireesh_sahdev
+            </p>
+          )}
+          {isViral && !isCollab && (
+            <span className="text-caption font-switzer font-[400] text-gold/60 uppercase tracking-[0.02em] mt-1 inline-block">
+              Featured Campaign
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function FeaturedProductions() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [activeCat, setActiveCat] = useState("All");
-  const [video, setVideo] = useState<{ url: string; title: string } | null>(null);
+  const [activeFilter, setActiveFilter] = useState("all");
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -71,177 +260,54 @@ export default function FeaturedProductions() {
   }, []);
 
   const items = useMemo(() => {
-    const filtered = activeCat === "All" ? archive : archive.filter((p) => p.category === activeCat);
-    const archiveItems = filtered.filter((p) => {
-      const thumb = p.thumbnail || getYouTubeThumbnail(p.url) || "";
-      if (thumb) return true;
-      const ve = getVideoForArchive(p) as { hasMp4?: boolean; hasImage?: boolean; images?: string[] | null; src?: string | null } | undefined;
-      if (ve && (ve.hasMp4 || ve.hasImage || (Array.isArray(ve.images) && ve.images.length > 0) || ve.src)) return true;
-      if (p.documents && p.documents.length > 0) return true;
-      return false;
+    return archive.filter((item: any) => {
+      const keys = getItemFilterKey(item);
+      if (activeFilter === "all") return keys.includes("all");
+      return keys.includes(activeFilter);
     });
-
-    if (activeCat !== "All") return archiveItems;
-
-    const usedCodes = new Set(archiveItems.map((a) => {
-      const ve = getVideoForArchive(a);
-      return ve ? `${ve.id}` : null;
-    }).filter(Boolean));
-
-    const wallCards = (videoEntries as any[])
-      .filter((v) => v.id >= 101 && v.src && !usedCodes.has(`${v.id}`))
-      .map((v) => ({
-        id: `wall-${v.id}`,
-        title: v.title || "",
-        brand: v.title || "",
-        year: "",
-        role: "",
-        url: v.url || "",
-        type: "image",
-        category: "Brand Films",
-        featured: false,
-        thumbnail: "",
-        description: "",
-        documents: v.url ? [{ label: "View Document", path: v.url }] : [],
-        _wallSrc: v.src as string,
-      }));
-
-    return [...archiveItems, ...wallCards];
-  }, [activeCat]);
-
-  const handleClick = (p: any) => {
-    if (p._wallSrc) {
-      const ve = (videoEntries as any[]).find((v) => `wall-${v.id}` === p.id);
-      if (ve?.url) window.open(ve.url, "_blank", "noopener,noreferrer");
-      return;
-    }
-    if (p.url) setVideo({ url: p.url, title: p.title });
-    else if (p.documents?.[0]?.path) window.open(p.documents[0].path, "_blank", "noopener,noreferrer");
-  };
+  }, [activeFilter]);
 
   return (
-    <>
-      <section id="featured" ref={sectionRef} className="relative py-20 overflow-hidden reveal bg-cinema-black">
-        <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-10">
-          <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-3 reveal reveal-delay-1">Production Archive</p>
-          <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] max-w-2xl mb-6 reveal reveal-delay-2">All Productions</h2>
+    <section id="featured" ref={sectionRef} className="relative py-20 overflow-hidden reveal bg-cinema-black">
+      <div className="relative z-10 max-w-[1500px] mx-auto px-8 md:px-10">
+        <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-3 reveal reveal-delay-1">
+          Production Archive
+        </p>
+        <h2 className="font-switzer font-[300] leading-[1] tracking-[-0.03em] max-w-2xl mb-6 reveal reveal-delay-2"
+          style={{ fontSize: "clamp(28px, 3.5vw, 48px)", color: "#F5F5F2" }}>
+          All Productions
+        </h2>
 
-          <div className="flex flex-wrap gap-2 mb-6 reveal reveal-delay-3">
-            {categories.map((cat) => (
-              <button key={cat} onClick={() => setActiveCat(cat)}
-                className={`text-caption font-switzer font-[400] uppercase tracking-[0.02em] px-4 py-2 transition-all duration-300 cursor-pointer border ${
-                  activeCat === cat ? "bg-gold text-cinema-black border-gold" : "bg-transparent text-stone border-cinema-white/10 hover:border-cinema-white/30"
-                }`}>
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {items.map((p, i) => {
-              const wp = p as any;
-              const thumb = wp.thumbnail || getYouTubeThumbnail(wp.url) || "";
-              const ve = wp._wallSrc ? null : getVideoForArchive(wp) as { hasMp4?: boolean; hasImage?: boolean; images?: string[] | null; src?: string | null; videoUrl?: string | null; id?: number } | undefined;
-              const wallSrc = wp._wallSrc as string | undefined;
-              const hasVideo = !!wp.url;
-              const hasDoc = !!wp.documents?.[0]?.path;
-              const hasMp4 = ve?.hasMp4 && ve?.videoUrl;
-              const hasImages = Array.isArray(ve?.images) && ve.images.length > 0;
-              const hasSrc = !!ve?.src;
-
-              return (
-                <div key={p.id} onClick={() => handleClick(p)} className={`group cursor-pointer reveal reveal-delay-${Math.min(i + 1, 5)}`}>
-                  <div className="relative aspect-[4/3] overflow-hidden bg-[#141414]">
-                    {thumb ? (
-                      <img
-                        src={thumb}
-                        alt={p.title}
-                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    ) : wallSrc ? (
-                      <img
-                        src={getMediaUrl(wallSrc)}
-                        alt={p.title}
-                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    ) : hasMp4 ? (
-                      <video
-                        muted
-                        loop
-                        playsInline
-                        autoPlay
-                        preload="metadata"
-                        className="w-full h-full object-cover"
-                        onMouseEnter={(e) => e.currentTarget.play().catch(() => {})}
-                        onMouseLeave={(e) => e.currentTarget.pause()}
-                      >
-                        <source src={`/api/video?url=${encodeURIComponent(ve!.videoUrl!)}`} type="video/mp4" />
-                      </video>
-                    ) : hasImages && ve!.images ? (
-                      <img
-                        src={getMediaUrl(`/assets/archive/${ve!.images[0]}`)}
-                        alt={p.title}
-                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    ) : hasSrc ? (
-                      <img
-                        src={getMediaUrl(ve!.src!)}
-                        alt={p.title}
-                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    ) : (ve?.hasImage) ? (
-                      <img
-                        src={getMediaUrl(`/assets/archive/${ve!.id}.jpg`)}
-                        alt={p.title}
-                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-[#141414]">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2">
-                          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/90 via-cinema-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-5">
-                      <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                        <div className="flex flex-wrap items-center gap-2 mb-2">
-                          {p.category && <span className="text-caption font-switzer font-[400] text-cinema-white uppercase tracking-[0.02em]">{p.category}</span>}
-                          {p.year && <span className="text-caption font-switzer font-[400] text-cinema-white/50 uppercase tracking-[0.02em]">{p.year}</span>}
-                        </div>
-                        <h3 className="text-body-sm md:text-body font-switzer font-[300] text-cinema-white leading-[1.1]">{p.brand || p.title}</h3>
-                        {p.role && <p className="text-caption font-switzer font-[400] text-cinema-white/50 mt-1">{p.role}</p>}
-                        {p.description && <p className="text-caption font-switzer font-[300] text-cinema-white/40 mt-1 line-clamp-2">{p.description}</p>}
-                        <div className="flex gap-3 mt-3">
-                          {hasVideo && <span className="text-caption font-switzer font-[500] text-cinema-white uppercase tracking-[0.02em] inline-flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7L8 5z" fill="currentColor" /></svg>Watch Campaign</span>}
-                          {hasDoc && <span className="text-caption font-switzer font-[400] text-cinema-white/50 uppercase tracking-[0.02em] inline-flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" strokeWidth="1.2"/></svg>View Case Study</span>}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="absolute top-3 right-3 flex gap-1.5">
-                      {p.featured && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-smoke/80 text-cinema-white">Featured</span>}
-                      {p.url && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-smoke/80 text-stone">{getPlatformLabel(p.url)}</span>}
-                      {wallSrc && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-smoke/80 text-stone">Document</span>}
-                      {!p.url && !wallSrc && <span className="px-2 py-1 text-caption font-switzer font-[400] uppercase tracking-[0.02em] bg-smoke/80 text-stone">Document</span>}
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <h3 className="text-body-sm md:text-body font-switzer font-[300] text-cinema-white leading-[1.2] group-hover:text-stone transition-colors duration-500">{p.brand || p.title}</h3>
-                    <p className="text-caption font-switzer font-[400] text-stone mt-0.5">{p.role}{p.role && p.year ? " · " : ""}{p.year}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+        <div className="flex flex-wrap gap-2 mb-8 reveal reveal-delay-3">
+          {filters.map((f) => (
+            <button
+              key={f.key}
+              onClick={() => setActiveFilter(f.key)}
+              className={`text-caption font-switzer font-[400] uppercase tracking-[0.02em] px-4 py-2 transition-all duration-300 cursor-pointer border ${
+                activeFilter === f.key
+                  ? "bg-gold text-cinema-black border-gold"
+                  : "bg-transparent text-stone border-cinema-white/10 hover:border-cinema-white/30"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
         </div>
-      </section>
 
-      {video && <VideoModal url={video.url} title={video.title} onClose={() => setVideo(null)} />}
-    </>
+        {items.length === 0 && (
+          <div className="text-center py-16">
+            <p className="text-body font-switzer font-[300] text-stone">
+              No projects match this filter.
+            </p>
+          </div>
+        )}
+
+        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5">
+          {items.map((item: any, i: number) => (
+            <ArchiveCard key={item.id} item={item} index={i} />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
