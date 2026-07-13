@@ -1,69 +1,47 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-
-interface AboutData {
-  id: string;
-  bio: string;
-  photo_url: string | null;
-  skills: string[];
-  experience: string | null;
-  email: string | null;
-  social_links: Record<string, string>;
-  resume_url: string | null;
-}
-
-const defaultAbout: AboutData = {
-  id: "",
-  bio: "",
-  photo_url: "",
-  skills: [],
-  experience: "",
-  email: "",
-  social_links: {},
-  resume_url: "",
-};
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
 
 export default function AboutPage() {
-  const [data, setData] = useState<AboutData>(defaultAbout);
+  const aboutData = useQuery(api.about.get);
+  const upsert = useMutation(api.about.upsert);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const supabase = createClient();
+  const [form, setForm] = useState({ bio: "", skills: "", experience: "", education: "" });
 
   useEffect(() => {
-    supabase.from("about").select("*").limit(1).single().then(({ data: item }) => {
-      if (item) setData(item);
+    if (aboutData !== undefined) {
+      setForm({
+        bio: aboutData?.bio ?? "",
+        skills: (aboutData?.skills ?? []).join(", "),
+        experience: aboutData?.experience ?? "",
+        education: aboutData?.education ?? "",
+      });
       setLoading(false);
-    });
-  }, []);
+    }
+  }, [aboutData]);
 
   const save = async () => {
     setSaving(true);
-    const payload = {
-      bio: data.bio,
-      photo_url: data.photo_url || null,
-      skills: data.skills,
-      experience: data.experience || null,
-      email: data.email || null,
-      social_links: data.social_links,
-      resume_url: data.resume_url || null,
-    };
-
-    if (data.id) {
-      const { error } = await supabase.from("about").update(payload).eq("id", data.id);
-      if (error) { toast.error(error.message); setSaving(false); return; }
-    } else {
-      const { error } = await supabase.from("about").insert(payload).select().single();
-      if (error) { toast.error(error.message); setSaving(false); return; }
+    try {
+      await upsert({
+        bio: form.bio,
+        skills: form.skills.split(",").map((s: string) => s.trim()).filter(Boolean),
+        experience: form.experience.trim() || undefined,
+        education: form.education.trim() || undefined,
+      });
+      toast.success("About page saved");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save");
     }
-    toast.success("About page saved");
     setSaving(false);
   };
 
@@ -83,27 +61,19 @@ export default function AboutPage() {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="bio">Bio</Label>
-            <Textarea id="bio" value={data.bio} onChange={(e) => setData({ ...data, bio: e.target.value })} rows={6} />
+            <Textarea id="bio" value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} rows={6} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="photo">Photo URL</Label>
-            <Input id="photo" value={data.photo_url ?? ""} onChange={(e) => setData({ ...data, photo_url: e.target.value })} />
+            <Label htmlFor="experience">Experience details</Label>
+            <Textarea id="experience" value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })} rows={3} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="experience">Experience</Label>
-            <Textarea id="experience" value={data.experience ?? ""} onChange={(e) => setData({ ...data, experience: e.target.value })} rows={3} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={data.email ?? ""} onChange={(e) => setData({ ...data, email: e.target.value })} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="resume">Resume URL</Label>
-            <Input id="resume" value={data.resume_url ?? ""} onChange={(e) => setData({ ...data, resume_url: e.target.value })} />
+            <Label htmlFor="education">Education</Label>
+            <Textarea id="education" value={form.education} onChange={(e) => setForm({ ...form, education: e.target.value })} rows={3} />
           </div>
           <div className="space-y-2">
             <Label>Skills (comma-separated)</Label>
-            <Input value={data.skills.join(", ")} onChange={(e) => setData({ ...data, skills: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })} />
+            <Input value={form.skills} onChange={(e) => setForm({ ...form, skills: e.target.value })} />
           </div>
           <Button onClick={save} disabled={saving}>{saving ? "Saving..." : "Save Changes"}</Button>
         </CardContent>

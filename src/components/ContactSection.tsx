@@ -1,12 +1,47 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { getMediaUrl } from "@/lib/media";
-import siteContent from "@/data/site-content.json";
+import { useSettings } from "@/lib/convex/site-data";
+import { useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 export default function ContactSection() {
+  const { settings } = useSettings();
+  const sendMessage = useMutation(api.contact.create);
   const [visible, setVisible] = useState(false);
   const ref = useRef<HTMLElement>(null);
+  const [formState, setFormState] = useState<{ name: string; email: string; message: string }>({ name: "", email: "", message: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [formError, setFormError] = useState("");
+
+  const email = settings?.email || "donayan@donayan.com";
+  const phone = settings?.phone || "+91 98765 43210";
+  const instagram = settings?.instagram || "https://www.instagram.com/donayan_";
+  const linkedin = settings?.linkedin || "https://linkedin.com/in/donayansahdev";
+
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError("");
+    if (!formState.name || !formState.email || !formState.message) {
+      setFormError("Please fill in all fields.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await sendMessage({
+        name: formState.name,
+        email: formState.email,
+        message: formState.message,
+      });
+      setSubmitted(true);
+      setFormState({ name: "", email: "", message: "" });
+    } catch (err) {
+      setFormError("Something didn't go through. Try again or email directly.");
+    }
+    setSubmitting(false);
+  }, [formState, sendMessage]);
 
   useEffect(() => {
     const el = ref.current;
@@ -58,17 +93,15 @@ export default function ContactSection() {
               Contact
             </p>
             <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] text-balance">
-              {siteContent.contact.header}
+              Let&apos;s work together.
             </h2>
             <p className="mt-5 text-subheading font-switzer font-[300] text-stone leading-[1.4]">
-              {siteContent.contact.intro}
+              Available for freelance and in-house productions in Mumbai and across India.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <a
-                href={siteContent.contact.googleFormUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`mailto:${email}`}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gold text-cinema-black text-body-sm font-switzer font-[400] uppercase tracking-[0.02em] no-underline transition-opacity hover:opacity-85"
                 style={{ borderRadius: "1440px" }}
               >
@@ -77,30 +110,21 @@ export default function ContactSection() {
                   <path d="M3 7h8M11 7L7 3M11 7L7 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
-              <a
-                href={siteContent.resumePdf}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 border border-cinema-white/10 text-stone text-body-sm font-switzer font-[400] uppercase tracking-[0.02em] no-underline hover:border-cinema-white/30 hover:text-cinema-white transition-colors"
-                style={{ borderRadius: "1440px" }}
-              >
-                {siteContent.footer.resumeLabel}
-              </a>
             </div>
 
             <div className="mt-10 space-y-4">
               <a
-                href={`mailto:${siteContent.social.email}`}
+                href={`mailto:${email}`}
                 className="flex items-center gap-3 text-body-sm font-switzer font-[400] text-stone no-underline hover:text-cinema-white transition-colors"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                   <rect x="2" y="4" width="20" height="16" rx="2" />
                   <path d="M22 4L12 13L2 4" />
                 </svg>
-                {siteContent.social.email}
+                {email}
               </a>
               <a
-                href={`https://wa.me/${siteContent.social.phone.replace(/[^0-9]/g, "")}`}
+                href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-body-sm font-switzer font-[400] text-stone no-underline hover:text-cinema-white transition-colors"
@@ -111,7 +135,7 @@ export default function ContactSection() {
                 WhatsApp
               </a>
               <a
-                href={siteContent.social.linkedin}
+                href={linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-body-sm font-switzer font-[400] text-stone no-underline uppercase tracking-[0.02em] hover:text-cinema-white transition-colors"
@@ -122,13 +146,13 @@ export default function ContactSection() {
                 LinkedIn
               </a>
               <a
-                href={siteContent.social.instagram}
+                href={instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-body-sm font-switzer font-[400] text-stone no-underline uppercase tracking-[0.02em] hover:text-cinema-white transition-colors"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z" />
                 </svg>
                 Instagram
               </a>
@@ -143,18 +167,51 @@ export default function ContactSection() {
               <p className="text-body-sm font-switzer font-[300] text-stone leading-[1.6] mb-6">
                 Let&apos;s discuss your next production. Fill out the project brief and I&apos;ll get back to you within 24 hours.
               </p>
-              <a
-                href={siteContent.contact.googleFormUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gold text-cinema-black text-body-sm font-switzer font-[400] uppercase tracking-[0.02em] no-underline transition-opacity hover:opacity-85"
-                style={{ borderRadius: "1440px" }}
-              >
-                Start a Project
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                  <path d="M3 7h8M11 7L7 3M11 7L7 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </a>
+
+              {submitted ? (
+                <div className="text-center py-6">
+                  <p className="text-body font-switzer font-[400] text-gold">Thank you! I&apos;ll get back to you soon.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder="Your name"
+                    value={formState.name}
+                    onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                    className="w-full bg-[rgba(255,255,255,0.05)] border border-cinema-white/10 rounded-lg px-4 py-3 text-body-sm font-switzer text-cinema-white placeholder-cinema-white/30 focus:outline-none focus:border-gold/50 transition-colors"
+                    required
+                  />
+                  <input
+                    type="email"
+                    placeholder="Your email"
+                    value={formState.email}
+                    onChange={(e) => setFormState({ ...formState, email: e.target.value })}
+                    className="w-full bg-[rgba(255,255,255,0.05)] border border-cinema-white/10 rounded-lg px-4 py-3 text-body-sm font-switzer text-cinema-white placeholder-cinema-white/30 focus:outline-none focus:border-gold/50 transition-colors"
+                    required
+                  />
+                  <textarea
+                    placeholder="Tell me about your project"
+                    value={formState.message}
+                    onChange={(e) => setFormState({ ...formState, message: e.target.value })}
+                    rows={4}
+                    className="w-full bg-[rgba(255,255,255,0.05)] border border-cinema-white/10 rounded-lg px-4 py-3 text-body-sm font-switzer text-cinema-white placeholder-cinema-white/30 focus:outline-none focus:border-gold/50 transition-colors resize-none"
+                    required
+                  />
+                  {formError && <p className="text-xs text-red-400">{formError}</p>}
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gold text-cinema-black text-body-sm font-switzer font-[400] uppercase tracking-[0.02em] no-underline transition-opacity hover:opacity-85 disabled:opacity-50 cursor-pointer border-none"
+                    style={{ borderRadius: "1440px" }}
+                  >
+                    {submitting ? "Sending..." : "Send Message"}
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                      <path d="M3 7h8M11 7L7 3M11 7L7 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </div>

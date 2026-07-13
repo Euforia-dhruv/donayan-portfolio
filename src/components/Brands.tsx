@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import brands from "@/data/brands.json";
+import { useBrands } from "@/lib/convex/site-data";
 
 export default function Brands() {
+  const { brands } = useBrands();
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -21,6 +22,10 @@ export default function Brands() {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  if (!brands.length) return null;
+
+  const doubled = [...brands, ...brands];
 
   return (
     <section
@@ -40,8 +45,8 @@ export default function Brands() {
           style={{ background: "linear-gradient(-90deg, #0A0A0A 0%, transparent 100%)" }} />
 
         <div className="flex gap-12 md:gap-16 marquee-animate" style={{ width: "max-content" }}>
-          {[...brands, ...brands].map((brand, i) => (
-            <div key={`${brand.id}-${i}`} className="flex-shrink-0 flex items-center justify-center group">
+          {doubled.map((brand, i) => (
+            <div key={`${brand._id}-${i}`} className="flex-shrink-0 flex items-center justify-center group">
               <span className="text-body-sm font-switzer font-[400] text-cinema-white/25 uppercase tracking-[0.02em] whitespace-nowrap group-hover:text-cinema-white transition-colors duration-500 cursor-default">
                 {brand.name}
               </span>

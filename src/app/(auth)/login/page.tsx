@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,23 +15,24 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const supabase = createClient();
+  const { signIn } = useAuthActions();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (error) {
-      setError(error.message);
+    try {
+      const result = await signIn("password", { email, password });
+      if (result) {
+        router.push(searchParams.get("redirect") || "/admin");
+        router.refresh();
+      }
+    } catch (err: any) {
+      setError(err?.message || "Invalid email or password");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    router.push(searchParams.get("redirect") || "/admin");
-    router.refresh();
   };
 
   return (

@@ -1,13 +1,8 @@
-import mediaMap from "@/data/media-map.json";
-
-const map: Record<string, string> = mediaMap;
-
-export function getMediaUrl(localPath: string): string {
-  if (!localPath) return localPath;
+export function getMediaUrl(path: string | undefined | null): string {
+  if (!path) return "";
   // If already a full URL, return as-is
-  if (localPath.startsWith("http://") || localPath.startsWith("https://")) return localPath;
-  // Check map
-  const normalized = localPath.startsWith("/") ? localPath : "/" + localPath;
-  if (map[normalized]) return map[normalized];
-  return localPath;
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  // For public assets in /public directory
+  if (path.startsWith("/")) return path;
+  return "/" + path;
 }

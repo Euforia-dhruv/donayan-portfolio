@@ -1,3 +1,4 @@
+import { SiteDataProvider } from "@/lib/convex/site-data";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
@@ -10,24 +11,25 @@ import ProductionTimeline from "@/components/ProductionTimeline";
 import Testimonials from "@/components/Testimonials";
 import AboutSection from "@/components/AboutSection";
 import ContactSection from "@/components/ContactSection";
+import Reveal from "@/components/motion/Reveal";
 
 export default function Home() {
   return (
-    <>
+    <SiteDataProvider>
       <Navigation />
-      <main>
+      <main id="main-content">
         <Hero />
-        <Brands />
-        <ProductionWall />
-        <ProductionReels />
-        <FeaturedProductions />
-        <ViralWorkSection />
-        <ProductionTimeline />
-        <Testimonials />
-        <AboutSection />
-        <ContactSection />
+        <Reveal><Brands /></Reveal>
+        <Reveal><ProductionWall /></Reveal>
+        <Reveal><ProductionReels /></Reveal>
+        <Reveal><FeaturedProductions /></Reveal>
+        <Reveal><ViralWorkSection /></Reveal>
+        <Reveal><ProductionTimeline /></Reveal>
+        <Reveal><Testimonials /></Reveal>
+        <Reveal><AboutSection /></Reveal>
+        <Reveal><ContactSection /></Reveal>
       </main>
       <Footer />
-    </>
+    </SiteDataProvider>
   );
 }

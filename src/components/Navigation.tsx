@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 const navItems = [
   { label: "Wall", href: "#wall" },
@@ -12,18 +12,40 @@ const navItems = [
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const lastScrollY = useRef(0);
+  const menuOpenRef = useRef(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
+    menuOpenRef.current = menuOpen;
+  }, [menuOpen]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const sy = window.scrollY;
+      setScrolled(sy > 60);
+      if (menuOpenRef.current) {
+        setHidden(false);
+        return;
+      }
+      if (sy > 200) {
+        setHidden(sy > lastScrollY.current);
+      } else {
+        setHidden(false);
+      }
+      lastScrollY.current = sy;
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [menuOpen]);
 
   useEffect(() => {
@@ -42,9 +64,11 @@ export default function Navigation() {
           if (entry.isIntersecting) setActiveSection(`#${entry.target.id}`);
         }
       },
-      { threshold: 0.3, rootMargin: "-80px 0px 0px 0px" }
+      { threshold: 0.3, rootMargin: "-80px 0px 0px 0px" },
     );
-    const sections = navItems.map((item) => document.getElementById(item.href.slice(1))).filter(Boolean);
+    const sections = navItems
+      .map((item) => document.getElementById(item.href.slice(1)))
+      .filter(Boolean);
     sections.forEach((s) => s && observer.observe(s));
     return () => observer.disconnect();
   }, []);
@@ -58,23 +82,32 @@ export default function Navigation() {
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
       }
     },
-    []
+    [],
   );
+
+  const linkClass = (active: boolean) =>
+    `relative font-switzer text-body-sm font-[400] no-underline transition-colors after:absolute after:bottom-[-6px] after:left-0 after:h-px after:w-full after:rounded-full after:bg-gold after:content-[''] after:transition-transform after:duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black ${
+      active
+        ? "text-cinema-white after:scale-x-100"
+        : "text-cinema-white/50 after:scale-x-0 hover:text-cinema-white"
+    }`;
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
+        hidden ? "-translate-y-full" : "translate-y-0"
+      } ${
+        scrolled || menuOpen
           ? "bg-cinema-black/80 backdrop-blur-xl border-b border-cinema-white/5"
           : "bg-transparent"
       }`}
       role="navigation"
       aria-label="Main navigation"
     >
-      <div className="max-w-[1400px] mx-auto px-8 md:px-10 flex items-center justify-between h-20 md:h-24">
+      <div className="mx-auto flex h-20 max-w-[1400px] items-center justify-between px-8 md:h-24 md:px-10">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="bg-transparent border-none p-0 cursor-pointer shrink-0 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cinema-black rounded-lg"
+          className="shrink-0 cursor-pointer border-none bg-transparent p-0 text-cinema-white outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black rounded-lg"
           aria-label="Donayan Sahdev — Scroll to top"
         >
           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="text-cinema-white" aria-hidden="true">
@@ -89,11 +122,7 @@ export default function Navigation() {
             <a
               key={item.label}
               href={item.href}
-              className={`text-body-sm font-switzer font-[400] no-underline transition-colors focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cinema-black rounded-sm hidden md:inline ${
-                activeSection === item.href
-                  ? "text-cinema-white"
-                  : "text-cinema-white/50 hover:text-cinema-white"
-              }`}
+              className={`${linkClass(activeSection === item.href)} hidden md:inline`}
               role="listitem"
             >
               {item.label}
@@ -102,8 +131,13 @@ export default function Navigation() {
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setMenuOpen(!menuOpen); } }}
-            className="bg-gold text-cinema-black font-switzer font-[400] no-underline border-none cursor-pointer transition-all hover:opacity-85 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cinema-black"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setMenuOpen(!menuOpen);
+              }
+            }}
+            className="cursor-pointer border-none bg-gold font-switzer text-cinema-black transition-all hover:opacity-85 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"
             style={{ fontSize: "14px", padding: "10px 22px", borderRadius: "1440px", letterSpacing: "0.03em" }}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
@@ -114,35 +148,38 @@ export default function Navigation() {
         </div>
       </div>
 
-      {menuOpen && (
-        <div
-          id="mobile-menu"
-          className="fixed inset-0 z-40 bg-cinema-black flex items-center justify-center"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Mobile navigation"
-        >
-          <div className="flex flex-col items-center gap-10" role="list">
-            {navItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className={`text-[clamp(36px,6vw,64px)] font-switzer font-[300] no-underline tracking-[-0.02em] focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cinema-black rounded-sm transition-colors ${
-                  activeSection === item.href
-                    ? "text-gold"
-                    : "text-cinema-white hover:text-gold"
-                }`}
-                onClick={() => setMenuOpen(false)}
-                onKeyDown={(e) => handleKeyDown(e, item.href)}
-                role="listitem"
-                tabIndex={0}
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
+      <div
+        id="mobile-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mobile navigation"
+        aria-hidden={!menuOpen}
+        className={`fixed inset-0 z-40 flex items-center justify-center bg-cinema-black transition-all duration-300 ${
+          menuOpen
+            ? "pointer-events-auto opacity-100 scale-100"
+            : "pointer-events-none scale-95 opacity-0"
+        }`}
+      >
+        <div className="flex flex-col items-center gap-10" role="list">
+          {navItems.map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              onClick={() => setMenuOpen(false)}
+              onKeyDown={(e) => handleKeyDown(e, item.href)}
+              role="listitem"
+              tabIndex={menuOpen ? 0 : -1}
+              className={`text-[clamp(36px,6vw,64px)] font-switzer font-[300] no-underline tracking-[-0.02em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black rounded-sm ${
+                activeSection === item.href
+                  ? "text-gold"
+                  : "text-cinema-white hover:text-gold"
+              }`}
+            >
+              {item.label}
+            </a>
+          ))}
         </div>
-      )}
+      </div>
     </nav>
   );
 }

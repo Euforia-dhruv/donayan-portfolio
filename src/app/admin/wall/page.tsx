@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,86 +9,72 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
 import { Plus, Pencil, Trash2, Search, GripVertical } from "lucide-react";
 import { toast } from "sonner";
-import { formatDate, slugify } from "@/lib/utils";
-
-interface WallItem {
-  id: string;
-  title: string;
-  description: string | null;
-  image_url: string;
-  category: string;
-  orientation: "portrait" | "landscape" | "square";
-  sort_order: number;
-  created_at: string;
-}
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
 
 export default function WallPage() {
-  const [items, setItems] = useState<WallItem[]>([]);
+  const items = useQuery(api.wall.list, {}) ?? [];
+  const create = useMutation(api.wall.create);
+  const update = useMutation(api.wall.update);
+  const remove = useMutation(api.wall.remove);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editItem, setEditItem] = useState<WallItem | null>(null);
-  const [form, setForm] = useState<{ title: string; description: string; image_url: string; category: string; orientation: "portrait" | "landscape" | "square" }>({ title: "", description: "", image_url: "", category: "", orientation: "landscape" });
+  const [editItem, setEditItem] = useState<any>(null);
+  const [form, setForm] = useState<{ video: string; featured: boolean; published: boolean }>({ video: "", featured: false, published: true });
   const [saving, setSaving] = useState(false);
-  const supabase = createClient();
 
-  const fetchData = async () => {
-    let query = supabase.from("wall_items").select("*").order("sort_order", { ascending: true });
-    if (search) query = query.ilike("title", `%${search}%`);
-    const { data, error } = await query;
-    if (error) toast.error(error.message);
-    else setItems(data ?? []);
-    setLoading(false);
-  };
+  useEffect(() => { if (items !== undefined) setLoading(false); }, [items]);
 
-  useEffect(() => { fetchData(); }, [search]);
+  const filtered = search
+    ? items.filter((i: any) => i._id?.includes(search) || String(i.x)?.includes(search))
+    : items;
 
   const openCreate = () => {
     setEditItem(null);
-    setForm({ title: "", description: "", image_url: "", category: "", orientation: "landscape" });
+    setForm({ video: "", featured: false, published: true });
     setDialogOpen(true);
   };
 
-  const openEdit = (item: WallItem) => {
+  const openEdit = (item: any) => {
     setEditItem(item);
-    setForm({ title: item.title, description: item.description ?? "", image_url: item.image_url, category: item.category ?? "", orientation: item.orientation });
+    setForm({ video: item.video ?? "", featured: item.featured, published: item.published });
     setDialogOpen(true);
   };
 
   const save = async () => {
-    if (!form.title.trim() || !form.image_url.trim()) return toast.error("Title and image URL are required");
     setSaving(true);
-    const maxOrder = items.length > 0 ? Math.max(...items.map(i => i.sort_order ?? 0)) : 0;
-    const payload = {
-      title: form.title.trim(),
-      description: form.description.trim() || null,
-      image_url: form.image_url.trim(),
-      category: form.category.trim() || null,
-      orientation: form.orientation,
-      sort_order: editItem?.sort_order ?? maxOrder + 1,
-    };
+    try {
+      const payload: any = {
+        video: form.video.trim() || undefined,
+        featured: form.featured,
+        published: form.published,
+      };
 
-    if (editItem) {
-      const { error } = await supabase.from("wall_items").update(payload).eq("id", editItem.id);
-      if (error) { toast.error(error.message); setSaving(false); return; }
-      toast.success("Wall item updated");
-    } else {
-      const { error } = await supabase.from("wall_items").insert(payload);
-      if (error) { toast.error(error.message); setSaving(false); return; }
-      toast.success("Wall item created");
+      if (editItem) {
+        await update({ id: editItem._id, ...payload });
+        toast.success("Wall item updated");
+      } else {
+        await create(payload);
+        toast.success("Wall item created");
+      }
+      setDialogOpen(false);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save");
     }
-    setDialogOpen(false);
     setSaving(false);
-    fetchData();
   };
 
-  const remove = async (id: string) => {
-    const { error } = await supabase.from("wall_items").delete().eq("id", id);
-    if (error) toast.error(error.message);
-    else { toast.success("Wall item deleted"); fetchData(); }
+  const doRemove = async (id: Id<"wall">) => {
+    try {
+      await remove({ id });
+      toast.success("Wall item deleted");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete");
+    }
   };
 
   return (
@@ -114,29 +99,27 @@ export default function WallPage() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[30px]"></TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Orientation</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead>ID</TableHead>
+                <TableHead>Featured</TableHead>
+                <TableHead>Published</TableHead>
                 <TableHead className="w-[100px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">Loading...</TableCell></TableRow>
-              ) : items.length === 0 ? (
-                <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">No wall items</TableCell></TableRow>
-              ) : items.map((item) => (
-                <TableRow key={item.id}>
+                <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Loading...</TableCell></TableRow>
+              ) : filtered.length === 0 ? (
+                <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">No wall items</TableCell></TableRow>
+              ) : filtered.map((item: any) => (
+                <TableRow key={item._id}>
                   <TableCell><GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" /></TableCell>
-                  <TableCell className="font-medium">{item.title}</TableCell>
-                  <TableCell><span className="text-xs bg-muted px-2 py-0.5 rounded">{item.category || "—"}</span></TableCell>
-                  <TableCell className="text-muted-foreground capitalize">{item.orientation}</TableCell>
-                  <TableCell className="text-muted-foreground text-xs">{formatDate(item.created_at)}</TableCell>
+                  <TableCell className="font-medium text-xs font-mono">{item._id.slice(0, 12)}...</TableCell>
+                  <TableCell>{item.featured ? <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded">Featured</span> : "—"}</TableCell>
+                  <TableCell>{item.published ? <span className="text-xs text-green-500">Yes</span> : "No"}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="icon" onClick={() => openEdit(item)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => remove(item.id)}><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => doRemove(item._id)}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -153,32 +136,17 @@ export default function WallPage() {
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+              <Label htmlFor="video">Video URL</Label>
+              <Input id="video" value={form.video} onChange={(e) => setForm({ ...form, video: e.target.value })} placeholder="https://youtube.com/..." />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="desc">Description</Label>
-              <Textarea id="desc" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="image">Image URL</Label>
-              <Input id="image" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="cat">Category</Label>
-                <Input id="cat" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="orientation">Orientation</Label>
-                <select id="orientation" value={form.orientation} onChange={(e) => setForm({ ...form, orientation: e.target.value as "portrait" | "landscape" | "square" })}
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm">
-                  <option value="landscape">Landscape</option>
-                  <option value="portrait">Portrait</option>
-                  <option value="square">Square</option>
-                </select>
-              </div>
-            </div>
+            <label className="flex items-center gap-2">
+              <input type="checkbox" checked={form.featured} onChange={(e) => setForm({ ...form, featured: e.target.checked })} className="rounded border-gray-300" />
+              <span className="text-sm">Featured</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} className="rounded border-gray-300" />
+              <span className="text-sm">Published</span>
+            </label>
             <Button onClick={save} disabled={saving} className="w-full">
               {saving ? "Saving..." : editItem ? "Update" : "Create"}
             </Button>

@@ -1,44 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FolderKanban, Image, Mail, MessageSquare } from "lucide-react";
-
-interface Stats {
-  projects: number;
-  wallItems: number;
-  media: number;
-  messages: number;
-}
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<Stats>({ projects: 0, wallItems: 0, media: 0, messages: 0 });
-  const supabase = createClient();
+  const projects = useQuery(api.projects.list, {});
+  const wallItems = useQuery(api.wall.list, {});
+  const media = useQuery(api.media.list, {});
+  const messages = useQuery(api.contact.list, {});
 
-  useEffect(() => {
-    async function loadStats() {
-      const [projects, wallItems, media, messages] = await Promise.all([
-        supabase.from("projects").select("*", { count: "exact", head: true }),
-        supabase.from("wall_items").select("*", { count: "exact", head: true }),
-        supabase.from("media").select("*", { count: "exact", head: true }),
-        supabase.from("contact_messages").select("*", { count: "exact", head: true }),
-      ]);
-      setStats({
-        projects: projects.count ?? 0,
-        wallItems: wallItems.count ?? 0,
-        media: media.count ?? 0,
-        messages: messages.count ?? 0,
-      });
-    }
-    loadStats();
-  }, []);
+  const stats = {
+    projects: projects?.length ?? 0,
+    wallItems: wallItems?.length ?? 0,
+    media: media?.length ?? 0,
+    messages: messages?.filter((m: any) => m.status === "unread")?.length ?? 0,
+  };
 
   const cards = [
     { title: "Projects", value: stats.projects, icon: FolderKanban, href: "/admin/projects" },
     { title: "Wall Items", value: stats.wallItems, icon: Image, href: "/admin/wall" },
     { title: "Media Files", value: stats.media, icon: Image, href: "/admin/media" },
-    { title: "Messages", value: stats.messages, icon: MessageSquare, href: "/admin/contact" },
+    { title: "Unread Messages", value: stats.messages, icon: MessageSquare, href: "/admin/contact" },
   ];
 
   return (

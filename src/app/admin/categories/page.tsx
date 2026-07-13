@@ -1,89 +1,75 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
-import { formatDate, truncate } from "@/lib/utils";
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  created_at: string;
-}
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const categories = useQuery(api.categories.list) ?? [];
+  const create = useMutation(api.categories.create);
+  const update = useMutation(api.categories.update);
+  const remove = useMutation(api.categories.remove);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editItem, setEditItem] = useState<Category | null>(null);
-  const [form, setForm] = useState({ name: "", description: "" });
+  const [editItem, setEditItem] = useState<any>(null);
+  const [form, setForm] = useState({ name: "", color: "" });
   const [saving, setSaving] = useState(false);
-  const supabase = createClient();
 
-  const fetchData = async () => {
-    let query = supabase.from("categories").select("*").order("name");
-    if (search) query = query.ilike("name", `%${search}%`);
-    const { data, error } = await query;
-    if (error) toast.error(error.message);
-    else setCategories(data ?? []);
-    setLoading(false);
-  };
+  useEffect(() => { if (categories !== undefined) setLoading(false); }, [categories]);
 
-  useEffect(() => { fetchData(); }, [search]);
+  const filtered = search
+    ? categories.filter((c: any) => c.name?.toLowerCase().includes(search.toLowerCase()))
+    : categories;
 
   const openCreate = () => {
     setEditItem(null);
-    setForm({ name: "", description: "" });
+    setForm({ name: "", color: "" });
     setDialogOpen(true);
   };
 
-  const openEdit = (item: Category) => {
+  const openEdit = (item: any) => {
     setEditItem(item);
-    setForm({ name: item.name, description: item.description ?? "" });
+    setForm({ name: item.name, color: item.color ?? "" });
     setDialogOpen(true);
   };
 
   const save = async () => {
     if (!form.name.trim()) return toast.error("Name is required");
     setSaving(true);
-    const slug = form.name.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
-    const payload = { name: form.name.trim(), slug, description: form.description.trim() || null };
-
-    if (editItem) {
-      const { error } = await supabase.from("categories").update(payload).eq("id", editItem.id);
-      if (error) { toast.error(error.message); setSaving(false); return; }
-      toast.success("Category updated");
-    } else {
-      const { error } = await supabase.from("categories").insert(payload);
-      if (error) { toast.error(error.message); setSaving(false); return; }
-      toast.success("Category created");
+    try {
+      if (editItem) {
+        await update({ id: editItem._id, name: form.name.trim(), color: form.color.trim() || undefined });
+        toast.success("Category updated");
+      } else {
+        await create({ name: form.name.trim(), color: form.color.trim() || undefined });
+        toast.success("Category created");
+      }
+      setDialogOpen(false);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save");
     }
-    setDialogOpen(false);
     setSaving(false);
-    fetchData();
   };
 
-  const remove = async (id: string) => {
-    const { error } = await supabase.from("categories").delete().eq("id", id);
-    if (error) toast.error(error.message);
-    else { toast.success("Category deleted"); fetchData(); }
+  const doRemove = async (id: Id<"categories">) => {
+    try {
+      await remove({ id });
+      toast.success("Category deleted");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete");
+    }
   };
 
   return (
@@ -98,11 +84,9 @@ export default function CategoriesPage() {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input className="pl-9" placeholder="Search categories..." value={search} onChange={(e) => setSearch(e.target.value)} />
-            </div>
+          <div className="relative max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input className="pl-9" placeholder="Search categories..." value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
         </CardHeader>
         <CardContent>
@@ -111,26 +95,31 @@ export default function CategoriesPage() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Slug</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead>Color</TableHead>
                 <TableHead className="w-[100px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Loading...</TableCell></TableRow>
-              ) : categories.length === 0 ? (
-                <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">No categories found</TableCell></TableRow>
-              ) : categories.map((cat) => (
-                <TableRow key={cat.id}>
+                <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground">Loading...</TableCell></TableRow>
+              ) : filtered.length === 0 ? (
+                <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground">No categories found</TableCell></TableRow>
+              ) : filtered.map((cat: any) => (
+                <TableRow key={cat._id}>
                   <TableCell className="font-medium">{cat.name}</TableCell>
                   <TableCell><code className="text-xs bg-muted px-1.5 py-0.5 rounded">{cat.slug}</code></TableCell>
-                  <TableCell className="text-muted-foreground max-w-[300px] truncate">{cat.description || "—"}</TableCell>
-                  <TableCell className="text-muted-foreground">{formatDate(cat.created_at)}</TableCell>
+                  <TableCell>
+                    {cat.color ? (
+                      <span className="inline-flex items-center gap-1.5 text-xs">
+                        <span className="w-3 h-3 rounded-full inline-block" style={{ backgroundColor: cat.color }} />
+                        {cat.color}
+                      </span>
+                    ) : "—"}
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="icon" onClick={() => openEdit(cat)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => remove(cat.id)}><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => doRemove(cat._id)}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -148,11 +137,11 @@ export default function CategoriesPage() {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Photography" />
+              <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Commercials" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="desc">Description (optional)</Label>
-              <Input id="desc" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="A brief description..." />
+              <Label htmlFor="color">Color (hex)</Label>
+              <Input id="color" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} placeholder="#C8A24D" />
             </div>
             <Button onClick={save} disabled={saving} className="w-full">
               {saving ? "Saving..." : editItem ? "Update" : "Create"}

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,9 +19,9 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { AuthProvider, useAuth } from "@/components/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { useState } from "react";
+import { useConvexAuth, useAuthActions } from "@convex-dev/auth/react";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -38,13 +38,29 @@ const navItems = [
 ];
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
-  return <AuthProvider><AdminShellInner>{children}</AdminShellInner></AuthProvider>;
-}
-
-function AdminShellInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user, signOut } = useAuth();
+  const router = useRouter();
+  const { isAuthenticated, isLoading } = useConvexAuth();
+  const { signOut } = useAuthActions();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/login");
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    router.push("/login");
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -96,11 +112,8 @@ function AdminShellInner({ children }: { children: React.ReactNode }) {
             })}
           </nav>
 
-          <div className="border-t p-3 space-y-2">
-            <div className="px-3 py-2 text-xs text-muted-foreground truncate">
-              {user?.email}
-            </div>
-            <Button variant="ghost" className="w-full justify-start text-muted-foreground" onClick={signOut}>
+          <div className="border-t p-3">
+            <Button variant="ghost" className="w-full justify-start text-muted-foreground" onClick={handleSignOut}>
               <LogOut className="mr-2 h-4 w-4" />
               Sign out
             </Button>

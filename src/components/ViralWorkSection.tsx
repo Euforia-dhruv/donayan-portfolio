@@ -1,53 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-const viralCampaigns = [
-  {
-    id: "viral-1",
-    brand: "Lakmé India",
-    year: "2023",
-    role: "Director's Assistant",
-    description: "12-shoot DIY campaign — one of Lakmé's most-viewed social campaigns with million+ reach across platforms.",
-    platform: "Instagram Reels",
-    thumbnail: null,
-    url: "https://www.instagram.com/reel/C-MkhP6ykXP/",
-  },
-  {
-    id: "viral-2",
-    brand: "Sprite",
-    year: "2024",
-    role: "Director's Assistant",
-    description: "'Heat Happens' campaign — high-engagement commercial driving significant brand conversation during summer season.",
-    platform: "Instagram Reel",
-    thumbnail: null,
-    url: "https://www.instagram.com/reel/C7RB6gGoVDQ/",
-  },
-  {
-    id: "viral-3",
-    brand: "Tanishq",
-    year: "2024",
-    role: "Director's Assistant",
-    description: "Rivaah bridal collection featuring Nayanthara — celebrity-driven campaign with massive social traction.",
-    platform: "Instagram Campaign",
-    thumbnail: null,
-    url: "https://www.instagram.com/p/C6BbgzXoyLR/",
-  },
-  {
-    id: "viral-4",
-    brand: "Dove",
-    year: "2024",
-    role: "Director's Assistant",
-    description: "'Stop Beauty Test' — empowering social campaign that sparked meaningful conversation across platforms.",
-    platform: "Instagram Reel",
-    thumbnail: null,
-    url: "https://www.instagram.com/reel/C4h8FkuN7Li/",
-  },
-];
+import { useProjects } from "@/lib/convex/site-data";
+import { getPlatformLabel } from "@/lib/video-utils";
 
 export default function ViralWorkSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
+  const { projects } = useProjects();
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -59,6 +19,8 @@ export default function ViralWorkSection() {
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
+
+  const viralCampaigns = (projects || []).filter((p: any) => (p.category || "").toLowerCase() === "viral");
 
   return (
     <section
@@ -86,10 +48,10 @@ export default function ViralWorkSection() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-5 md:gap-6">
-          {viralCampaigns.map((campaign, i) => (
+          {viralCampaigns.map((campaign: any, i: number) => (
             <a
-              key={campaign.id}
-              href={campaign.url}
+              key={campaign._id}
+              href={campaign.externalUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="group block no-underline"
@@ -128,7 +90,7 @@ export default function ViralWorkSection() {
                     </div>
                     <div className="flex-shrink-0">
                       <span className="text-caption font-switzer font-[400] text-cinema-white/40 uppercase tracking-[0.02em] border border-cinema-white/10 px-3 py-1">
-                        {campaign.platform}
+                        {getPlatformLabel(campaign.externalUrl || "")}
                       </span>
                     </div>
                   </div>

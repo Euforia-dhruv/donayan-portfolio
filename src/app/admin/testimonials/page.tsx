@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,84 +12,76 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Pencil, Trash2, Search, Star } from "lucide-react";
 import { toast } from "sonner";
-import { formatDate } from "@/lib/utils";
-
-interface Testimonial {
-  id: string;
-  name: string;
-  role: string | null;
-  company: string | null;
-  content: string;
-  avatar_url: string | null;
-  rating: number;
-  featured: boolean;
-  created_at: string;
-}
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
 
 export default function TestimonialsPage() {
-  const [items, setItems] = useState<Testimonial[]>([]);
+  const items = useQuery(api.testimonials.list, {}) ?? [];
+  const create = useMutation(api.testimonials.create);
+  const update = useMutation(api.testimonials.update);
+  const remove = useMutation(api.testimonials.remove);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editItem, setEditItem] = useState<Testimonial | null>(null);
-  const [form, setForm] = useState({ name: "", role: "", company: "", content: "", avatar_url: "", rating: 5, featured: false });
+  const [editItem, setEditItem] = useState<any>(null);
+  const [form, setForm] = useState({ name: "", company: "", quote: "", featured: false });
   const [saving, setSaving] = useState(false);
-  const supabase = createClient();
 
-  const fetchData = async () => {
-    let query = supabase.from("testimonials").select("*").order("created_at", { ascending: false });
-    if (search) query = query.ilike("name", `%${search}%`);
-    const { data, error } = await query;
-    if (error) toast.error(error.message);
-    else setItems(data ?? []);
-    setLoading(false);
-  };
+  useEffect(() => { if (items !== undefined) setLoading(false); }, [items]);
 
-  useEffect(() => { fetchData(); }, [search]);
+  const filtered = search
+    ? items.filter((i: any) => i.name?.toLowerCase().includes(search.toLowerCase()))
+    : items;
 
   const openCreate = () => {
     setEditItem(null);
-    setForm({ name: "", role: "", company: "", content: "", avatar_url: "", rating: 5, featured: false });
+    setForm({ name: "", company: "", quote: "", featured: false });
     setDialogOpen(true);
   };
 
-  const openEdit = (item: Testimonial) => {
+  const openEdit = (item: any) => {
     setEditItem(item);
-    setForm({ name: item.name, role: item.role ?? "", company: item.company ?? "", content: item.content, avatar_url: item.avatar_url ?? "", rating: item.rating, featured: item.featured });
+    setForm({ name: item.name, company: item.company ?? "", quote: item.quote, featured: item.featured });
     setDialogOpen(true);
   };
 
   const save = async () => {
-    if (!form.name.trim() || !form.content.trim()) return toast.error("Name and content are required");
+    if (!form.name.trim() || !form.quote.trim()) return toast.error("Name and quote are required");
     setSaving(true);
-    const payload = {
-      name: form.name.trim(),
-      role: form.role.trim() || null,
-      company: form.company.trim() || null,
-      content: form.content.trim(),
-      avatar_url: form.avatar_url.trim() || null,
-      rating: form.rating,
-      featured: form.featured,
-    };
-
-    if (editItem) {
-      const { error } = await supabase.from("testimonials").update(payload).eq("id", editItem.id);
-      if (error) { toast.error(error.message); setSaving(false); return; }
-      toast.success("Testimonial updated");
-    } else {
-      const { error } = await supabase.from("testimonials").insert(payload);
-      if (error) { toast.error(error.message); setSaving(false); return; }
-      toast.success("Testimonial created");
+    try {
+      if (editItem) {
+        await update({
+          id: editItem._id,
+          name: form.name.trim(),
+          company: form.company.trim() || undefined,
+          quote: form.quote.trim(),
+          featured: form.featured,
+        });
+        toast.success("Testimonial updated");
+      } else {
+        await create({
+          name: form.name.trim(),
+          company: form.company.trim() || undefined,
+          quote: form.quote.trim(),
+          featured: form.featured,
+        });
+        toast.success("Testimonial created");
+      }
+      setDialogOpen(false);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save");
     }
-    setDialogOpen(false);
     setSaving(false);
-    fetchData();
   };
 
-  const remove = async (id: string) => {
-    const { error } = await supabase.from("testimonials").delete().eq("id", id);
-    if (error) toast.error(error.message);
-    else { toast.success("Testimonial deleted"); fetchData(); }
+  const doRemove = async (id: Id<"testimonials">) => {
+    try {
+      await remove({ id });
+      toast.success("Testimonial deleted");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete");
+    }
   };
 
   return (
@@ -116,30 +107,26 @@ export default function TestimonialsPage() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Company</TableHead>
-                <TableHead>Rating</TableHead>
                 <TableHead>Preview</TableHead>
                 <TableHead>Featured</TableHead>
-                <TableHead>Created</TableHead>
                 <TableHead className="w-[100px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground">Loading...</TableCell></TableRow>
-              ) : items.length === 0 ? (
-                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground">No testimonials</TableCell></TableRow>
-              ) : items.map((item) => (
-                <TableRow key={item.id}>
+                <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Loading...</TableCell></TableRow>
+              ) : filtered.length === 0 ? (
+                <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">No testimonials</TableCell></TableRow>
+              ) : filtered.map((item: any) => (
+                <TableRow key={item._id}>
                   <TableCell className="font-medium">{item.name}</TableCell>
                   <TableCell className="text-muted-foreground text-xs">{item.company || "—"}</TableCell>
-                  <TableCell>{'★'.repeat(item.rating)}{'☆'.repeat(5 - item.rating)}</TableCell>
-                  <TableCell className="max-w-[200px] truncate text-muted-foreground text-xs">{item.content}</TableCell>
+                  <TableCell className="max-w-[200px] truncate text-muted-foreground text-xs">{item.quote}</TableCell>
                   <TableCell>{item.featured ? <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" /> : "—"}</TableCell>
-                  <TableCell className="text-muted-foreground text-xs">{formatDate(item.created_at)}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="icon" onClick={() => openEdit(item)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => remove(item.id)}><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => doRemove(item._id)}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -161,30 +148,13 @@ export default function TestimonialsPage() {
                 <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Input id="role" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
                 <Label htmlFor="company">Company</Label>
                 <Input id="company" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="rating">Rating</Label>
-                <select id="rating" value={form.rating} onChange={(e) => setForm({ ...form, rating: parseInt(e.target.value) })}
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm">
-                  {[1, 2, 3, 4, 5].map(r => <option key={r} value={r}>{'★'.repeat(r)}{'☆'.repeat(5 - r)}</option>)}
-                </select>
-              </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="content">Content</Label>
-              <Textarea id="content" value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={4} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="avatar">Avatar URL</Label>
-              <Input id="avatar" value={form.avatar_url} onChange={(e) => setForm({ ...form, avatar_url: e.target.value })} />
+              <Label htmlFor="quote">Quote</Label>
+              <Textarea id="quote" value={form.quote} onChange={(e) => setForm({ ...form, quote: e.target.value })} rows={4} />
             </div>
             <label className="flex items-center gap-2">
               <input type="checkbox" checked={form.featured} onChange={(e) => setForm({ ...form, featured: e.target.checked })} className="rounded border-gray-300" />

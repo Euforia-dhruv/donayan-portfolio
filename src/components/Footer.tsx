@@ -1,6 +1,12 @@
-import siteContent from "@/data/site-content.json";
+"use client";
+
+import { useSettings } from "@/lib/convex/site-data";
 
 export default function Footer() {
+  const { settings } = useSettings();
+  const instagram = settings?.instagram || "https://www.instagram.com/donayan_";
+  const linkedin = settings?.linkedin || "https://linkedin.com/in/donayansahdev";
+
   return (
     <footer className="bg-cinema-black border-t border-cinema-white/5 py-8 md:py-10" role="contentinfo">
       <div className="max-w-[1400px] mx-auto px-8 md:px-10">
@@ -10,23 +16,22 @@ export default function Footer() {
               Donayan Sahdev
             </h3>
             <p className="mt-2 text-body-sm font-switzer font-[400] text-cinema-white/40">
-              {siteContent.tagline}
+              Production &middot; Commercials &middot; Brand Films &middot; Music Videos
             </p>
           </div>
 
           <div className="flex gap-6 text-body-sm font-switzer font-[400] text-cinema-white/40 uppercase tracking-[0.02em]">
-            <a href={siteContent.social.instagram} target="_blank" rel="noopener noreferrer" className="no-underline text-inherit hover:text-gold transition-colors" aria-label="Instagram">Instagram</a>
-            <a href={siteContent.social.linkedin} target="_blank" rel="noopener noreferrer" className="no-underline text-inherit hover:text-gold transition-colors" aria-label="LinkedIn">LinkedIn</a>
-            <a href={siteContent.resumePdf} target="_blank" rel="noopener noreferrer" className="no-underline text-inherit hover:text-gold transition-colors" aria-label="Download resume">Resume</a>
+            <a href={instagram} target="_blank" rel="noopener noreferrer" className="no-underline text-inherit hover:text-gold transition-colors" aria-label="Instagram">Instagram</a>
+            <a href={linkedin} target="_blank" rel="noopener noreferrer" className="no-underline text-inherit hover:text-gold transition-colors" aria-label="LinkedIn">LinkedIn</a>
           </div>
         </div>
 
         <div className="mt-10 pt-6 border-t border-cinema-white/5 flex flex-col md:flex-row justify-between gap-4">
           <p className="text-caption font-switzer font-[400] text-cinema-white/20">
-            {siteContent.footer.copyright}
+            &copy; 2026 Donayan Sahdev. All rights reserved.
           </p>
           <p className="text-caption font-switzer font-[400] text-cinema-white/20">
-            {siteContent.contact.location}
+            Mumbai, India
           </p>
         </div>
       </div>

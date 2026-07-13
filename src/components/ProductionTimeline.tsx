@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useMemo } from "react";
-import experience from "@/data/experience.json";
-import productionHouses from "@/data/production-houses.json";
-import archiveData from "@/data/archive.json";
-
-const phMap = new Map(productionHouses.map((ph) => [ph.id, ph.name]));
-const phTypeMap = new Map(productionHouses.map((ph) => [ph.id, ph.type]));
+import { useTimeline, useProjects } from "@/lib/convex/site-data";
 
 const houseBrandMap: Record<string, string[]> = {
   "freelance": ["Pink Flower", "Armani Exchange", "Sprite", "Centrum", "Fossil", "Tanishq", "Godrej Capital", "IDÉE", "Kinder", "Pond's", "Lifestyle", "Artkalaa", "Just Be", "OOOL", "Kitser", "Deva's Khayal", "Murgi", "Pathan Brothers", "The Bubbling Fish & Nirala"],
@@ -17,17 +12,26 @@ const houseBrandMap: Record<string, string[]> = {
 };
 
 function formatDate(dateStr: string) {
+  if (!dateStr) return "";
   const [year, month] = dateStr.split("-");
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   return `${months[parseInt(month) - 1]} ${year}`;
 }
 
-function ThumbnailRow({ brands }: { brands: string[] }) {
-  const thumbs = useMemo(() => brands.map((b) => { const e = archiveData.find((a) => a.brand.toLowerCase() === b.toLowerCase() && a.thumbnail); return e ? { brand: b, thumb: e.thumbnail } : null; }).filter(Boolean) as { brand: string; thumb: string }[], [brands]);
+function ThumbnailRow({ brands, projects }: { brands: string[]; projects: any[] }) {
+  const thumbs = useMemo(() => {
+    const result: { brand: string; thumb: string }[] = [];
+    for (const b of brands) {
+      const p = projects.find((p) => (p.brand || "").toLowerCase() === b.toLowerCase() && p.thumbnail);
+      if (p) result.push({ brand: b, thumb: p.thumbnail });
+    }
+    return result.slice(0, 5);
+  }, [brands, projects]);
+
   if (thumbs.length === 0) return null;
   return (
     <div className="flex flex-wrap gap-2 mt-4">
-      {thumbs.slice(0, 5).map((t, i) => (
+      {thumbs.map((t, i) => (
         <div key={i} className="w-14 h-14 md:w-16 md:h-16 overflow-hidden border border-cinema-white/6">
           <img src={t.thumb} alt={t.brand} className="w-full h-full object-cover" loading="lazy" />
         </div>
@@ -36,7 +40,7 @@ function ThumbnailRow({ brands }: { brands: string[] }) {
   );
 }
 
-function TimelineEntry({ entry, index }: { entry: typeof experience[0]; index: number }) {
+function TimelineEntry({ entry, index, projects }: { entry: any; index: number; projects: any[] }) {
   const brands = houseBrandMap[entry.productionHouseId] || [];
   return (
     <div
@@ -51,21 +55,23 @@ function TimelineEntry({ entry, index }: { entry: typeof experience[0]; index: n
           </span>
           <span className="hidden md:block text-cinema-white/20" aria-hidden="true">/</span>
           <span className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em]">
-            {phMap.get(entry.productionHouseId) || entry.productionHouseId}
+            {entry.company}
           </span>
-          <span className="text-caption font-switzer font-[400] text-gold/60 uppercase tracking-[0.02em]">
-            {phTypeMap.get(entry.productionHouseId) || ""}
-          </span>
+          {entry.employmentType && (
+            <span className="text-caption font-switzer font-[400] text-gold/60 uppercase tracking-[0.02em]">
+              {entry.employmentType}
+            </span>
+          )}
         </div>
         <h3 className="text-heading-sm md:text-heading font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.02em]">
-          {entry.roleTitle}
+          {entry.roleTitle || entry.position}
         </h3>
         {entry.description && (
           <p className="mt-2 text-body-sm font-switzer font-[300] text-stone leading-[1.5] max-w-xl">
             {entry.description}
           </p>
         )}
-        <ThumbnailRow brands={brands} />
+        <ThumbnailRow brands={brands} projects={projects} />
         {brands.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-3">
             {brands.map((b) => (
@@ -82,6 +88,8 @@ function TimelineEntry({ entry, index }: { entry: typeof experience[0]; index: n
 
 export default function ProductionTimeline() {
   const sectionRef = useRef<HTMLElement>(null);
+  const { timeline } = useTimeline();
+  const { projects } = useProjects();
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -94,11 +102,12 @@ export default function ProductionTimeline() {
     return () => observer.disconnect();
   }, []);
 
-  const freelance = experience.filter((e) => e.employmentType === "Freelance").sort((a, b) => a.displayOrder - b.displayOrder);
-  const inHouse = experience.filter((e) => e.employmentType === "In-House").sort((a, b) => a.displayOrder - b.displayOrder);
-  const other = experience.filter((e) => e.employmentType !== "Freelance" && e.employmentType !== "In-House").sort((a, b) => a.displayOrder - b.displayOrder);
+  const sorted = [...(timeline || [])].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+  const freelance = sorted.filter((e) => e.employmentType === "Freelance");
+  const inHouse = sorted.filter((e) => e.employmentType === "In-House");
+  const other = sorted.filter((e) => e.employmentType !== "Freelance" && e.employmentType !== "In-House");
 
-  const SectionBlock = ({ title, entries }: { title: string; entries: typeof experience }) => {
+  const SectionBlock = ({ title, entries }: { title: string; entries: any[] }) => {
     if (entries.length === 0) return null;
     return (
       <div className="mb-14 md:mb-16">
@@ -108,7 +117,7 @@ export default function ProductionTimeline() {
         <div className="relative max-w-4xl">
           <div className="absolute left-[7px] md:left-[11px] top-0 bottom-0 w-px bg-cinema-white/8" aria-hidden="true" />
           {entries.map((entry, i) => (
-            <TimelineEntry key={entry.id} entry={entry} index={i} />
+            <TimelineEntry key={entry._id} entry={entry} index={i} projects={projects || []} />
           ))}
         </div>
       </div>

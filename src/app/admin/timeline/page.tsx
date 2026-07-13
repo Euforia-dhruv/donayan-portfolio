@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,83 +12,104 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Pencil, Trash2, Search, GripVertical } from "lucide-react";
 import { toast } from "sonner";
-import { formatDate } from "@/lib/utils";
-
-interface TimelineEntry {
-  id: string;
-  title: string;
-  subtitle: string | null;
-  date: string;
-  description: string | null;
-  media_url: string | null;
-  sort_order: number;
-  created_at: string;
-}
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
 
 export default function TimelinePage() {
-  const [items, setItems] = useState<TimelineEntry[]>([]);
+  const items = useQuery(api.timeline.list) ?? [];
+  const create = useMutation(api.timeline.create);
+  const update = useMutation(api.timeline.update);
+  const remove = useMutation(api.timeline.remove);
+  const reorder = useMutation(api.timeline.reorder);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editItem, setEditItem] = useState<TimelineEntry | null>(null);
-  const [form, setForm] = useState({ title: "", subtitle: "", date: "", description: "", media_url: "" });
+  const [editItem, setEditItem] = useState<any>(null);
+  const [form, setForm] = useState({
+    company: "", position: "", startDate: "", endDate: "", description: "",
+    skills: "", location: "", images: "", tags: "", associated: "",
+  });
   const [saving, setSaving] = useState(false);
-  const supabase = createClient();
 
-  const fetchData = async () => {
-    let query = supabase.from("timeline_entries").select("*").order("sort_order", { ascending: true });
-    if (search) query = query.ilike("title", `%${search}%`);
-    const { data, error } = await query;
-    if (error) toast.error(error.message);
-    else setItems(data ?? []);
-    setLoading(false);
-  };
+  useEffect(() => { if (items !== undefined) setLoading(false); }, [items]);
 
-  useEffect(() => { fetchData(); }, [search]);
+  const filtered = search
+    ? items.filter((i: any) => i.company?.toLowerCase().includes(search.toLowerCase()))
+    : items;
 
   const openCreate = () => {
     setEditItem(null);
-    setForm({ title: "", subtitle: "", date: "", description: "", media_url: "" });
+    setForm({ company: "", position: "", startDate: "", endDate: "", description: "", skills: "", location: "", images: "", tags: "", associated: "" });
     setDialogOpen(true);
   };
 
-  const openEdit = (item: TimelineEntry) => {
+  const openEdit = (item: any) => {
     setEditItem(item);
-    setForm({ title: item.title, subtitle: item.subtitle ?? "", date: item.date, description: item.description ?? "", media_url: item.media_url ?? "" });
+    setForm({
+      company: item.company, position: item.position,
+      startDate: item.startDate, endDate: item.endDate ?? "",
+      description: item.description ?? "", skills: (item.skills ?? []).join(", "),
+      location: item.location ?? "",
+      images: (item.images ?? []).join(", "),
+      tags: (item.tags ?? []).join(", "),
+      associated: (item.associated ?? []).join(", "),
+    });
     setDialogOpen(true);
   };
 
   const save = async () => {
-    if (!form.title.trim() || !form.date.trim()) return toast.error("Title and date are required");
+    if (!form.company.trim() || !form.position.trim()) return toast.error("Company and position are required");
     setSaving(true);
-    const maxOrder = items.length > 0 ? Math.max(...items.map(i => i.sort_order ?? 0)) : 0;
-    const payload = {
-      title: form.title.trim(),
-      subtitle: form.subtitle.trim() || null,
-      date: form.date,
-      description: form.description.trim() || null,
-      media_url: form.media_url.trim() || null,
-      sort_order: editItem?.sort_order ?? maxOrder + 1,
-    };
+    try {
+      const payload: any = {
+        company: form.company.trim(),
+        position: form.position.trim(),
+        startDate: form.startDate,
+        endDate: form.endDate.trim() || undefined,
+        description: form.description.trim() || undefined,
+        skills: form.skills.split(",").map((s: string) => s.trim()).filter(Boolean),
+        location: form.location.trim() || undefined,
+        images: form.images.split(",").map((s: string) => s.trim()).filter(Boolean),
+        tags: form.tags.split(",").map((s: string) => s.trim()).filter(Boolean),
+        associated: form.associated.split(",").map((s: string) => s.trim()).filter(Boolean),
+      };
 
-    if (editItem) {
-      const { error } = await supabase.from("timeline_entries").update(payload).eq("id", editItem.id);
-      if (error) { toast.error(error.message); setSaving(false); return; }
-      toast.success("Timeline entry updated");
-    } else {
-      const { error } = await supabase.from("timeline_entries").insert(payload);
-      if (error) { toast.error(error.message); setSaving(false); return; }
-      toast.success("Timeline entry created");
+      if (editItem) {
+        await update({ id: editItem._id, ...payload });
+        toast.success("Timeline entry updated");
+      } else {
+        await create(payload);
+        toast.success("Timeline entry created");
+      }
+      setDialogOpen(false);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save");
     }
-    setDialogOpen(false);
     setSaving(false);
-    fetchData();
   };
 
-  const remove = async (id: string) => {
-    const { error } = await supabase.from("timeline_entries").delete().eq("id", id);
-    if (error) toast.error(error.message);
-    else { toast.success("Timeline entry deleted"); fetchData(); }
+  const move = async (index: number, dir: -1 | 1) => {
+    const target = index + dir;
+    if (target < 0 || target >= filtered.length) return;
+    const reordered = [...filtered];
+    const [moved] = reordered.splice(index, 1);
+    reordered.splice(target, 0, moved);
+    try {
+      await reorder({ ids: reordered.map((i: any) => i._id) });
+      toast.success("Reordered");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to reorder");
+    }
+  };
+
+  const doRemove = async (id: Id<"timeline">) => {
+    try {
+      await remove({ id });
+      toast.success("Timeline entry deleted");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete");
+    }
   };
 
   return (
@@ -114,29 +134,31 @@ export default function TimelinePage() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[30px]"></TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Subtitle</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead>Company</TableHead>
+                <TableHead>Position</TableHead>
+                <TableHead>Start</TableHead>
+                <TableHead>End</TableHead>
                 <TableHead className="w-[100px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">Loading...</TableCell></TableRow>
-              ) : items.length === 0 ? (
+              ) : filtered.length === 0 ? (
                 <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">No timeline entries</TableCell></TableRow>
-              ) : items.map((item) => (
-                <TableRow key={item.id}>
+              ) :                 filtered.map((item: any, index: number) => (
+                <TableRow key={item._id}>
                   <TableCell><GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" /></TableCell>
-                  <TableCell className="font-medium">{item.title}</TableCell>
-                  <TableCell className="text-muted-foreground text-xs">{item.date}</TableCell>
-                  <TableCell className="text-muted-foreground max-w-[200px] truncate">{item.subtitle || "—"}</TableCell>
-                  <TableCell className="text-muted-foreground text-xs">{formatDate(item.created_at)}</TableCell>
+                  <TableCell className="font-medium">{item.company}</TableCell>
+                  <TableCell className="text-muted-foreground">{item.position}</TableCell>
+                  <TableCell className="text-muted-foreground text-xs">{item.startDate}</TableCell>
+                  <TableCell className="text-muted-foreground text-xs">{item.endDate || "Present"}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
+                      <Button variant="ghost" size="icon" onClick={() => move(index, -1)} disabled={index === 0} aria-label="Move up"><span className="text-sm">↑</span></Button>
+                      <Button variant="ghost" size="icon" onClick={() => move(index, 1)} disabled={index === filtered.length - 1} aria-label="Move down"><span className="text-sm">↓</span></Button>
                       <Button variant="ghost" size="icon" onClick={() => openEdit(item)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => remove(item.id)}><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => doRemove(item._id)}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -152,27 +174,49 @@ export default function TimelinePage() {
             <DialogTitle>{editItem ? "Edit Timeline Entry" : "Add Timeline Entry"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Project Launch" />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="company">Company</Label>
+                <Input id="company" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} placeholder="Twism" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="position">Position</Label>
+                <Input id="position" value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} placeholder="Director's Assistant" />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="subtitle">Subtitle</Label>
-                <Input id="subtitle" value={form.subtitle} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} placeholder="Role / client" />
+                <Label htmlFor="startDate">Start Date</Label>
+                <Input id="startDate" type="text" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} placeholder="2024-01" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="date">Date</Label>
-                <Input id="date" type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
+                <Label htmlFor="endDate">End Date</Label>
+                <Input id="endDate" type="text" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} placeholder="2024-06 or leave empty" />
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="location">Location</Label>
+              <Input id="location" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Mumbai, India" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="desc">Description</Label>
               <Textarea id="desc" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="media">Media URL (optional)</Label>
-              <Input id="media" value={form.media_url} onChange={(e) => setForm({ ...form, media_url: e.target.value })} placeholder="https://..." />
+              <Label htmlFor="skills">Skills (comma-separated)</Label>
+              <Input id="skills" value={form.skills} onChange={(e) => setForm({ ...form, skills: e.target.value })} placeholder="production, coordination" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="tags">Tags (comma-separated)</Label>
+              <Input id="tags" value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="advertising, fashion" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="associated">Associated (companies/projects, comma-separated)</Label>
+              <Input id="associated" value={form.associated} onChange={(e) => setForm({ ...form, associated: e.target.value })} placeholder="Brand X, Project Y" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="images">Image URLs (comma-separated)</Label>
+              <Input id="images" value={form.images} onChange={(e) => setForm({ ...form, images: e.target.value })} placeholder="https://.../img.jpg" />
             </div>
             <Button onClick={save} disabled={saving} className="w-full">
               {saving ? "Saving..." : editItem ? "Update" : "Create"}

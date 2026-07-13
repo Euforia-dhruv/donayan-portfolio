@@ -1,10 +1,8 @@
 "use client";
 
 import { useRef, useEffect, useState, useMemo } from "react";
-import archive from "@/data/archive.json";
-import videoEntries from "@/data/video-entries.json";
+import { useProjects } from "@/lib/convex/site-data";
 import { getYouTubeThumbnail, getYouTubeId, getPlatformLabel } from "@/lib/video-utils";
-import { getMediaUrl } from "@/lib/media";
 
 const COLLAB_URLS = new Set([
   "https://www.instagram.com/reel/C9Hady1yVDJ/",
@@ -13,7 +11,16 @@ const COLLAB_URLS = new Set([
   "https://www.instagram.com/p/Cz-2Mi0C6Bg/",
 ]);
 
-const VIRAL_IDS = new Set(["archive-1", "archive-2", "archive-3", "archive-5", "archive-6", "archive-7", "archive-11", "archive-12"]);
+const VIRAL_TITLES = new Set([
+  "Pronamel Active Shield",
+  "Centrum Claims",
+  "The Bear House",
+  "Sprite Heat Happens",
+  "Fossil SS'25",
+  "Kinder Print Shoot",
+  "IDEE Campaign",
+  "Pathan Brothers",
+]);
 
 const filters = [
   { key: "all", label: "All" },
@@ -26,58 +33,16 @@ const filters = [
   { key: "viral", label: "Viral" },
 ];
 
-function normalize(str: string): string {
-  return str.toLowerCase().trim().normalize("NFD").replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ").trim();
-}
-
-function extractCode(url: string): string | null {
-  if (!url) return null;
-  const ig = url.match(/instagram\.com\/(?:[a-zA-Z0-9_.-]+\/)?(?:p|reel|tv)\/([a-zA-Z0-9_-]+)/);
-  if (ig) return `ig:${ig[1]}`;
-  const yt = getYouTubeId(url);
-  if (yt) return `yt:${yt}`;
-  return null;
-}
-
-const brandAliases: Record<string, string> = {
-  "pathan brothers": "pathan bros",
-  "idée": "idee",
-  "pond's": "ponds",
-  "oool": "oool digital",
-  "deva's khayal": "deva",
-  "the bubbling fish & nirala": "the bubbling fish",
-};
-
-const videoByCode = new Map<string, any>();
-const videoByBrand = new Map<string, any>();
-for (const ve of videoEntries) {
-  const code = extractCode(ve.url);
-  if (code) videoByCode.set(code, ve);
-  if (ve.title) {
-    videoByBrand.set(normalize(ve.title), ve);
-  }
-}
-
-function getVideoForArchive(item: any): any {
-  const code = extractCode(item.url);
-  if (code && videoByCode.has(code)) return videoByCode.get(code);
-  let brand = normalize(item.brand);
-  if (brandAliases[brand]) brand = brandAliases[brand];
-  if (videoByBrand.has(brand)) return videoByBrand.get(brand);
-  for (const [key, ve] of videoByBrand) {
-    if (brand.includes(key) || key.includes(brand)) return ve;
-  }
-  return undefined;
-}
-
-function getItemFilterKey(item: typeof archive[0]): string[] {
+function getItemFilterKeys(p: any): string[] {
   const keys: string[] = [];
-  const isIG = item.url?.includes("instagram.com");
-  const isReel = item.url?.includes("/reel/");
+  const url = p.externalUrl || "";
+  const isIG = url.includes("instagram.com");
+  const isReel = url.includes("/reel/");
   const isPost = isIG && !isReel;
-  const isYT = item.url?.includes("youtube") || item.url?.includes("youtu.be");
-  const cat = (item.category || "").toLowerCase();
-  const ve = getVideoForArchive(item);
+  const isYT = url.includes("youtube") || url.includes("youtu.be");
+  const cat = (p.category || "").toLowerCase();
+  const hasVideo = (p.videos && p.videos.length > 0) || isYT || isIG;
+  const hasThumb = !!p.thumbnail || !!getYouTubeThumbnail(url);
 
   if (cat.includes("commercial") || cat.includes("fashion") || cat.includes("celebrity")) keys.push("commercials");
   if (cat.includes("music")) keys.push("music-videos");
@@ -96,74 +61,22 @@ function getItemFilterKey(item: typeof archive[0]): string[] {
     else if (cat.includes("brand")) keys.push("brand-films");
     else keys.push("commercials");
   }
-  if (item.url && COLLAB_URLS.has(item.url)) keys.push("collaborations");
-  if (item.featured || VIRAL_IDS.has(item.id)) keys.push("viral");
-  if (ve?.hasMp4 || ve?.images || ve?.hasImage || ve?.src || item.thumbnail || getYouTubeThumbnail(item.url)) keys.push("all");
+  if (url && COLLAB_URLS.has(url)) keys.push("collaborations");
+  if (p.featured || VIRAL_TITLES.has(p.title)) keys.push("viral");
+  if (hasThumb || hasVideo) keys.push("all");
   return keys;
 }
 
 function ArchiveCard({ item, index }: { item: any; index: number }) {
   const [hovered, setHovered] = useState(false);
   const [imgError, setImgError] = useState(false);
-  const [videoFailed, setVideoFailed] = useState(false);
-  const ve = getVideoForArchive(item);
-  const thumb = item.thumbnail || getYouTubeThumbnail(item.url) || "";
-  const hasMp4 = ve?.hasMp4 && ve?.videoUrl;
-  const hasImages = Array.isArray(ve?.images) && ve.images.length > 0;
-  const hasSrc = !!ve?.src;
-  const hasImage = ve?.hasImage;
-  const isCollab = item.url && COLLAB_URLS.has(item.url);
-  const isViral = item.featured || VIRAL_IDS.has(item.id);
+  const url = item.externalUrl || "";
+  const thumb = item.thumbnail || getYouTubeThumbnail(url) || "";
+  const isCollab = url && COLLAB_URLS.has(url);
+  const isViral = item.featured || VIRAL_TITLES.has(item.title);
+  const isVideo = (item.videos && item.videos.length > 0) || url.includes("youtube") || url.includes("instagram");
 
-  if (!thumb && !hasMp4 && !hasImages && !hasSrc && !hasImage) return null;
-
-  const mediaContent = () => {
-    if (thumb && !imgError) {
-      return (
-        <img src={thumb} alt={item.title} className="w-full h-full object-cover"
-          loading="lazy" onError={() => setImgError(true)}
-          style={{ transition: "transform 0.6s cubic-bezier(0.25,0.1,0.25,1)", transform: hovered ? "scale(1.04)" : "scale(1)" }}
-        />
-      );
-    }
-    if (hasMp4 && !videoFailed) {
-      return (
-        <video muted loop playsInline autoPlay preload="metadata" className="w-full h-full object-cover"
-          onError={() => setVideoFailed(true)}
-        >
-          <source src={`/api/video?url=${encodeURIComponent(ve.videoUrl)}`} type="video/mp4" />
-        </video>
-      );
-    }
-    if (hasImages && ve.images && !imgError) {
-      return (
-        <img src={getMediaUrl(`/assets/archive/${ve.images[0]}`)} alt={item.title} className="w-full h-full object-cover"
-          loading="lazy" onError={() => setImgError(true)}
-          style={{ transition: "transform 0.6s cubic-bezier(0.25,0.1,0.25,1)", transform: hovered ? "scale(1.04)" : "scale(1)" }}
-        />
-      );
-    }
-    if (hasSrc && !imgError) {
-      return (
-        <img src={getMediaUrl(ve.src)} alt={item.title} className="w-full h-full object-cover"
-          loading="lazy" onError={() => setImgError(true)}
-          style={{ transition: "transform 0.6s cubic-bezier(0.25,0.1,0.25,1)", transform: hovered ? "scale(1.04)" : "scale(1)" }}
-        />
-      );
-    }
-    if (hasImage && !imgError) {
-      return (
-        <img src={getMediaUrl(`/assets/archive/${ve.id}.jpg`)} alt={item.title} className="w-full h-full object-cover"
-          loading="lazy" onError={() => setImgError(true)}
-          style={{ transition: "transform 0.6s cubic-bezier(0.25,0.1,0.25,1)", transform: hovered ? "scale(1.04)" : "scale(1)" }}
-        />
-      );
-    }
-    return null;
-  };
-
-  const media = mediaContent();
-  if (!media) return null;
+  if (!thumb && !isVideo) return null;
 
   return (
     <div className="break-inside-avoid mb-5" style={{
@@ -181,12 +94,26 @@ function ArchiveCard({ item, index }: { item: any; index: number }) {
         }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        onClick={() => {
-          if (item.url) window.open(item.url, "_blank", "noopener,noreferrer");
-          else if (item.documents?.[0]?.path) window.open(item.documents[0].path, "_blank");
-        }}
+        onClick={() => { if (url) window.open(url, "_blank", "noopener,noreferrer"); }}
       >
-        {media}
+        {thumb && !imgError ? (
+          <img src={thumb} alt={item.title} className="w-full h-full object-cover"
+            loading="lazy" onError={() => setImgError(true)}
+            style={{ transition: "transform 0.6s cubic-bezier(0.25,0.1,0.25,1)", transform: hovered ? "scale(1.04)" : "scale(1)", minHeight: "200px" }}
+          />
+        ) : isVideo ? (
+          <div className="w-full h-full flex items-center justify-center" style={{ minHeight: "200px", background: "linear-gradient(135deg,#1a1a1a,#0d0d0d)" }}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="white" opacity="0.5" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+          </div>
+        ) : null}
+
+        {isVideo && thumb && !imgError && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ opacity: hovered ? 0 : 0.85, transition: "opacity 0.4s ease" }}>
+            <div className="flex items-center justify-center rounded-full" style={{ width: "48px", height: "48px", background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.3)" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+            </div>
+          </div>
+        )}
 
         <div className="absolute inset-0 pointer-events-none transition-opacity duration-400"
           style={{
@@ -198,11 +125,7 @@ function ArchiveCard({ item, index }: { item: any; index: number }) {
         />
 
         <div className="absolute bottom-0 left-0 right-0 pointer-events-none p-5"
-          style={{
-            opacity: hovered ? 1 : 0.9,
-            transform: hovered ? "translateY(0)" : "translateY(0)",
-            transition: "opacity 0.4s ease, transform 0.4s ease",
-          }}
+          style={{ opacity: hovered ? 1 : 0.9, transition: "opacity 0.4s ease, transform 0.4s ease" }}
         >
           <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
             {item.year && (
@@ -210,14 +133,14 @@ function ArchiveCard({ item, index }: { item: any; index: number }) {
                 {item.year}
               </span>
             )}
-            {item.url && (
+            {url && (
               <span className="text-caption font-switzer font-[400] text-cinema-white/40 uppercase tracking-[0.02em]">
-                {getPlatformLabel(item.url)}
+                {getPlatformLabel(url)}
               </span>
             )}
           </div>
           <h3 className="text-body-sm md:text-body font-switzer font-[400] text-cinema-white leading-[1.15]">
-            {item.brand}
+            {item.brand || item.title}
           </h3>
           {item.role && (
             <p className="text-caption font-switzer font-[400] text-cinema-white/50 mt-0.5">
@@ -246,6 +169,7 @@ function ArchiveCard({ item, index }: { item: any; index: number }) {
 export default function FeaturedProductions() {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeFilter, setActiveFilter] = useState("all");
+  const { projects } = useProjects();
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -259,12 +183,12 @@ export default function FeaturedProductions() {
   }, []);
 
   const items = useMemo(() => {
-    return archive.filter((item: any) => {
-      const keys = getItemFilterKey(item);
+    return (projects || []).filter((item: any) => {
+      const keys = getItemFilterKeys(item);
       if (activeFilter === "all") return keys.includes("all");
       return keys.includes(activeFilter);
     });
-  }, [activeFilter]);
+  }, [projects, activeFilter]);
 
   return (
     <section id="featured" ref={sectionRef} className="relative py-20 overflow-hidden reveal bg-cinema-black">
@@ -303,7 +227,7 @@ export default function FeaturedProductions() {
 
         <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5">
           {items.map((item: any, i: number) => (
-            <ArchiveCard key={item.id} item={item} index={i} />
+            <ArchiveCard key={item._id} item={item} index={i} />
           ))}
         </div>
       </div>

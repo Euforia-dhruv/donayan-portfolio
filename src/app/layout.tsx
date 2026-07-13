@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ConvexClientProvider } from "@/lib/convex/provider";
 
 export const metadata: Metadata = {
   title: "Donayan Sahdev — Freelance Director's Assistant & Creative Producer",
@@ -72,7 +73,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="bg-cinema-black text-cinema-white font-switzer antialiased">
-        {children}
+        <a href="#main-content" className="skip-link">Skip to content</a>
+        <ConvexClientProvider>{children}</ConvexClientProvider>
       </body>
     </html>
   );

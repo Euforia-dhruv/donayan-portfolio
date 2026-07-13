@@ -2,9 +2,11 @@
 
 import { useRef, useEffect } from "react";
 import { getMediaUrl } from "@/lib/media";
-import siteContent from "@/data/site-content.json";
+import { useAbout, useSettings } from "@/lib/convex/site-data";
 
 export default function AboutSection() {
+  const { about } = useAbout();
+  const { settings } = useSettings();
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -13,15 +15,26 @@ export default function AboutSection() {
     observer.observe(el); return () => observer.disconnect();
   }, []);
 
+  const title = settings?.seoTitle || settings?.siteTitle || "Bridging creative vision and production execution.";
+  const bio = about?.bio || "";
+  const paragraphs = bio.split("\n\n").filter(Boolean);
+
+  const stats = [
+    { value: "60+", label: "Commercial Productions" },
+    { value: "28+", label: "Brands" },
+    { value: "5+", label: "Years in Production" },
+    { value: "Mumbai", label: "India" },
+  ];
+
   return (
     <section id="about" ref={sectionRef} className="relative py-20 overflow-hidden reveal bg-cinema-black border-t border-cinema-white/8">
       <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-16">
           <div className="lg:col-span-3">
             <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-4 reveal reveal-delay-1">About</p>
-            <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] max-w-2xl mb-8 reveal reveal-delay-2">{siteContent.about.title}</h2>
+            <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] max-w-2xl mb-8 reveal reveal-delay-2">{title}</h2>
             <div className="space-y-4 reveal reveal-delay-3">
-              {siteContent.about.body.split("\n\n").map((para, i) => (
+              {paragraphs.map((para, i) => (
                 <p key={i} className="text-body md:text-subheading font-switzer font-[300] text-stone leading-[1.6] max-w-2xl tracking-[-0.01em]">{para}</p>
               ))}
             </div>
@@ -37,7 +50,7 @@ export default function AboutSection() {
             </div>
 
             <div className="grid grid-cols-2 gap-6 reveal reveal-delay-5">
-              {siteContent.about.stats.map((stat, i) => (
+              {stats.map((stat, i) => (
                 <div key={i}>
                   <p className="text-heading-sm font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.02em]">{stat.value}</p>
                   <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mt-1">{stat.label}</p>

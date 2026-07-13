@@ -1,52 +1,50 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Mail, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { formatDate, truncate } from "@/lib/utils";
-
-interface Message {
-  id: string;
-  name: string;
-  email: string;
-  message: string;
-  read: boolean;
-  created_at: string;
-}
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
 
 export default function ContactPage() {
-  const [items, setItems] = useState<Message[]>([]);
+  const items = useQuery(api.contact.list, {}) ?? [];
+  const markRead = useMutation(api.contact.markRead);
+  const remove = useMutation(api.contact.remove);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<Message | null>(null);
-  const supabase = createClient();
+  const [selected, setSelected] = useState<any>(null);
 
-  const fetchData = async () => {
-    let query = supabase.from("contact_messages").select("*").order("created_at", { ascending: false });
-    if (search) query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%`);
-    const { data, error } = await query;
-    if (error) toast.error(error.message);
-    else setItems(data ?? []);
-    setLoading(false);
+  useEffect(() => { if (items !== undefined) setLoading(false); }, [items]);
+
+  const filtered = search
+    ? items.filter(
+        (m: any) =>
+          m.name?.toLowerCase().includes(search.toLowerCase()) ||
+          m.email?.toLowerCase().includes(search.toLowerCase())
+      )
+    : items;
+
+  const handleMarkRead = async (id: Id<"contactMessages">) => {
+    try {
+      await markRead({ id });
+    } catch (err: any) {
+      toast.error(err.message);
+    }
   };
 
-  useEffect(() => { fetchData(); }, [search]);
-
-  const markRead = async (id: string) => {
-    const { error } = await supabase.from("contact_messages").update({ read: true }).eq("id", id);
-    if (!error) fetchData();
-  };
-
-  const remove = async (id: string) => {
-    const { error } = await supabase.from("contact_messages").delete().eq("id", id);
-    if (error) toast.error(error.message);
-    else { toast.success("Message deleted"); fetchData(); if (selected?.id === id) setSelected(null); }
+  const doRemove = async (id: Id<"contactMessages">) => {
+    try {
+      await remove({ id });
+      toast.success("Message deleted");
+      if (selected?._id === id) setSelected(null);
+    } catch (err: any) {
+      toast.error(err.message);
+    }
   };
 
   return (
@@ -70,34 +68,32 @@ export default function ContactPage() {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Message</TableHead>
+                  <TableHead>Subject</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
                   <TableHead className="w-[80px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
-                  <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">Loading...</TableCell></TableRow>
-                ) : items.length === 0 ? (
-                  <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">No messages</TableCell></TableRow>
-                ) : items.map((item) => (
+                  <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Loading...</TableCell></TableRow>
+                ) : filtered.length === 0 ? (
+                  <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">No messages</TableCell></TableRow>
+                ) : filtered.map((item: any) => (
                   <TableRow
-                    key={item.id}
-                    className={`cursor-pointer ${!item.read ? "font-semibold" : ""}`}
-                    onClick={() => { setSelected(item); if (!item.read) markRead(item.id); }}
+                    key={item._id}
+                    className={`cursor-pointer ${item.status === "unread" ? "font-semibold" : ""}`}
+                    onClick={() => { setSelected(item); if (item.status === "unread") handleMarkRead(item._id); }}
                   >
                     <TableCell>{item.name}</TableCell>
                     <TableCell className="text-xs">{item.email}</TableCell>
-                    <TableCell className="max-w-[200px] truncate text-muted-foreground">{truncate(item.message, 60)}</TableCell>
+                    <TableCell className="max-w-[200px] truncate text-muted-foreground text-xs">{item.subject || "—"}</TableCell>
                     <TableCell>
-                      {item.read
+                      {item.status === "read"
                         ? <span className="text-xs text-muted-foreground">Read</span>
                         : <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded">New</span>}
                     </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">{formatDate(item.created_at)}</TableCell>
                     <TableCell>
-                      <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); remove(item.id); }}><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); doRemove(item._id); }}><Trash2 className="h-4 w-4" /></Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -111,9 +107,12 @@ export default function ContactPage() {
             <CardHeader>
               <CardTitle>{selected.name}</CardTitle>
               <p className="text-sm text-muted-foreground">{selected.email}</p>
-              <p className="text-xs text-muted-foreground">{formatDate(selected.created_at)}</p>
+              {selected.phone && <p className="text-xs text-muted-foreground">{selected.phone}</p>}
             </CardHeader>
             <CardContent>
+              {selected.subject && (
+                <p className="text-sm font-medium mb-2">{selected.subject}</p>
+              )}
               <p className="text-sm whitespace-pre-wrap">{selected.message}</p>
               <Button variant="outline" size="sm" className="mt-4" asChild>
                 <a href={`mailto:${selected.email}`}><Mail className="mr-2 h-4 w-4" />Reply</a>
