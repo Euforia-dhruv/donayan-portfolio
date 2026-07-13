@@ -80,11 +80,21 @@ for (const pdfAbs of pdfs) {
   manifest.push({ pdf: pdfServed, cover: coverServed, name: base });
 }
 
-fs.writeFileSync(
-  path.join(ROOT, "src/lib/pdf-manifest.json"),
-  JSON.stringify(manifest, null, 2),
-);
-console.log(`\n[pdf] wrote src/lib/pdf-manifest.json (${manifest.length} entries)`);
+const manifestPath = path.join(ROOT, "src/lib/pdf-manifest.json");
+if (pdfs.length === 0) {
+  // During a deploy, .vercelignore prunes the large PDF binaries before the
+  // build runs, so no PDFs are visible here. Keep the committed manifest
+  // (generated from source) instead of overwriting it with an empty list.
+  if (fs.existsSync(manifestPath) && JSON.parse(fs.readFileSync(manifestPath, "utf8")).length > 0) {
+    console.log(`\n[pdf] no PDFs visible at build time — kept existing ${manifestPath}`);
+  } else {
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+    console.log(`\n[pdf] wrote src/lib/pdf-manifest.json (${manifest.length} entries)`);
+  }
+} else {
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+  console.log(`\n[pdf] wrote src/lib/pdf-manifest.json (${manifest.length} entries)`);
+}
 
 if (failed) {
   console.error("\n✗ Build aborted: missing wall assets (see above).");

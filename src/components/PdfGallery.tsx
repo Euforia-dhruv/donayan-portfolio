@@ -41,7 +41,7 @@ export default function PdfGallery() {
           {pdfs.map((d) => (
             <a
               key={d.pdf}
-              href={encodeURI(d.pdf)}
+              href={encodeURI(d.cover ?? d.pdf)}
               target="_blank"
               rel="noopener noreferrer"
               className="group relative block overflow-hidden rounded-2xl bg-charcoal outline-none transition-transform duration-500 ease-out hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-gold"
@@ -49,7 +49,7 @@ export default function PdfGallery() {
                 aspectRatio: "3 / 4",
                 boxShadow: "0 4px 14px rgba(0,0,0,0.25)",
               }}
-              aria-label={`${d.name} — open PDF`}
+              aria-label={`${d.name} — view cover`}
             >
               {d.cover ? (
                 <img

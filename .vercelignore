@@ -4,3 +4,7 @@ yup.md
 yup.md.md
 Donayan*.md
 Donayan*.pdf
+
+# Large PDF binaries are not served by the live site (only their PNG covers are).
+# They remain in the repo for local build/cover generation but are excluded from the deploy.
+public/assets/docs/**/*.pdf
