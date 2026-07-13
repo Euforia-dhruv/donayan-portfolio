@@ -20,8 +20,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center bg-cinema-black overflow-hidden">
-      {/* Background image with parallax + overlays */}
+    <section className="relative min-h-screen flex items-center bg-cinema-black overflow-hidden" aria-label="Hero">
       <div
         ref={bgRef}
         className="absolute inset-0 will-change-transform"
@@ -29,29 +28,23 @@ export default function Hero() {
       >
         <img
           src={getMediaUrl("/hero-bg.jpg")}
-          alt=""
+          alt="On set production — director's monitor view"
           className="w-full h-full object-cover object-[center_40%]"
-          style={{
-            filter: "brightness(0.78) contrast(1.3) saturate(1.05)",
-          }}
-          loading="lazy"
+          style={{ filter: "brightness(0.78) contrast(1.3) saturate(1.05)" }}
+          loading="eager"
+          fetchPriority="high"
         />
-        {/* Stronger left gradient overlay */}
         <div
           className="absolute inset-0"
           style={{
-            background:
-              "linear-gradient(90deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.45) 35%, rgba(0,0,0,.12) 65%, transparent 100%)",
+            background: "linear-gradient(90deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.45) 35%, rgba(0,0,0,.12) 65%, transparent 100%)",
           }}
         />
       </div>
 
-      {/* Content */}
       <div className="relative z-10 w-full max-w-[1400px] mx-auto px-8 md:px-10 pt-20 pb-16">
         <div className="flex flex-col md:flex-row md:items-center gap-16 md:gap-20">
-          {/* Left text */}
-          <div className="flex-1" style={{ maxWidth: "500px" }}>
-            {/* Eyebrow */}
+          <div className="flex-1" style={{ maxWidth: "520px" }}>
             <p
               className="font-switzer font-[400] uppercase tracking-[0.12em]"
               style={{
@@ -62,10 +55,9 @@ export default function Hero() {
                 transform: "translateY(16px)",
               }}
             >
-              Director&apos;s Assistant · Associate Producer
+              Freelance
             </p>
 
-            {/* Name */}
             <h1
               className="font-switzer font-[500] tracking-[-0.03em]"
               style={{
@@ -83,28 +75,42 @@ export default function Hero() {
               Sahdev
             </h1>
 
-            {/* Subtitle */}
             <p
-              className="font-switzer font-[300] leading-[1.5]"
+              className="font-switzer font-[300] leading-[1.3]"
               style={{
-                fontSize: "clamp(15px, 1.15vw, 18px)",
-                color: "rgba(245,245,242,0.88)",
-                marginTop: "56px",
+                fontSize: "clamp(18px, 1.5vw, 24px)",
+                color: "rgba(245,245,242,0.9)",
+                marginTop: "20px",
                 opacity: 0,
-                animation: "heroFade 0.8s cubic-bezier(0.25,0.1,0.25,1) 0.24s forwards",
+                animation: "heroFade 0.8s cubic-bezier(0.25,0.1,0.25,1) 0.22s forwards",
                 transform: "translateY(16px)",
               }}
             >
-              Commercial Advertising · Fashion · Celebrity Campaigns · Music Videos
+              Freelance Director&apos;s Assistant
+              <br />
+              Creative Producer
             </p>
 
-            {/* Description */}
+            <p
+              className="font-switzer font-[300] leading-[1.5]"
+              style={{
+                fontSize: "clamp(14px, 1vw, 16px)",
+                color: "rgba(245,245,242,0.55)",
+                marginTop: "28px",
+                opacity: 0,
+                animation: "heroFade 0.8s cubic-bezier(0.25,0.1,0.25,1) 0.28s forwards",
+                transform: "translateY(16px)",
+              }}
+            >
+              Production · Commercials · Brand Films · Music Videos
+            </p>
+
             <p
               className="font-switzer font-[300] leading-[1.7]"
               style={{
                 fontSize: "clamp(15px, 1vw, 16px)",
                 color: "rgba(245,245,242,0.5)",
-                marginTop: "28px",
+                marginTop: "20px",
                 opacity: 0,
                 animation: "heroFade 0.8s cubic-bezier(0.25,0.1,0.25,1) 0.32s forwards",
                 transform: "translateY(16px)",
@@ -115,10 +121,9 @@ export default function Hero() {
               India&apos;s leading brands, agencies, and artists.
             </p>
 
-            {/* CTA — gold button */}
             <div
               style={{
-                marginTop: "74px",
+                marginTop: "52px",
                 opacity: 0,
                 animation: "heroFade 0.8s cubic-bezier(0.25,0.1,0.25,1) 0.4s forwards",
                 transform: "translateY(16px)",
@@ -147,13 +152,12 @@ export default function Hero() {
                 }}
               >
                 Explore Production Log
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-[#0A0A0A]">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-[#0A0A0A]" aria-hidden="true">
                   <path d="M3 7h8M11 7L7 3M11 7L7 11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
             </div>
 
-            {/* Stats */}
             <div
               className="flex gap-12 md:gap-16"
               style={{
@@ -177,11 +181,9 @@ export default function Hero() {
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
-      {/* Available For */}
       <div
         className="absolute z-10"
         style={{
@@ -209,7 +211,6 @@ export default function Hero() {
         </p>
       </div>
 
-      {/* Scroll */}
       <div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
         style={{
@@ -218,7 +219,7 @@ export default function Hero() {
         }}
       >
         <span className="font-switzer font-[400] uppercase" style={{ fontSize: "9px", letterSpacing: "0.1em", color: "rgba(245,245,242,0.3)" }}>Scroll</span>
-        <svg width="10" height="16" viewBox="0 0 10 16" fill="none" style={{ color: "rgba(245,245,242,0.2)" }}>
+        <svg width="10" height="16" viewBox="0 0 10 16" fill="none" style={{ color: "rgba(245,245,242,0.2)" }} aria-hidden="true">
           <rect x="1" y="1" width="8" height="14" rx="4" stroke="currentColor" strokeWidth="1" />
           <circle cx="5" cy="5.5" r="1.5" fill="currentColor" />
         </svg>

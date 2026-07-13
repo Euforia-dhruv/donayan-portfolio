@@ -1,8 +1,8 @@
 [
-  { "id": "pink-flower", "name": "Pink Flower", "type": "In-House" },
+  { "id": "freelance", "name": "Freelance", "type": "Freelance" },
+  { "id": "pink-flower", "name": "Pink Flower", "type": "Freelance" },
   { "id": "twism", "name": "Twism Design", "type": "In-House" },
   { "id": "the-glitch", "name": "The Glitch (VMLY&R–WPP)", "type": "In-House" },
   { "id": "totality", "name": "Totality Solutions", "type": "In-House" },
-  { "id": "freelance", "name": "Freelance", "type": "Freelance" },
   { "id": "hungama", "name": "Hungama", "type": "Internship" }
 ]

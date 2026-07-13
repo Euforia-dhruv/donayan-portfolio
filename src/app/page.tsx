@@ -5,6 +5,8 @@ import Brands from "@/components/Brands";
 import ProductionWall from "@/components/ProductionWall";
 import ProductionReels from "@/components/ProductionReels";
 import FeaturedProductions from "@/components/FeaturedProductions";
+import ViralWorkSection from "@/components/ViralWorkSection";
+import GireeshSahdevSection from "@/components/GireeshSahdevSection";
 import ProductionTimeline from "@/components/ProductionTimeline";
 import Testimonials from "@/components/Testimonials";
 import AboutSection from "@/components/AboutSection";
@@ -20,6 +22,8 @@ export default function Home() {
         <ProductionWall />
         <ProductionReels />
         <FeaturedProductions />
+        <ViralWorkSection />
+        <GireeshSahdevSection />
         <ProductionTimeline />
         <Testimonials />
         <AboutSection />

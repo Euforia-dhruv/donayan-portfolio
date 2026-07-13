@@ -1,31 +1,33 @@
 {
   "name": "DONAYAN SAHDEV",
-  "role": "Director's Assistant & Associate Producer",
-  "tagline": "Commercial Advertising | Fashion | Celebrity Campaigns | Music Videos",
+  "role": "Freelance Director's Assistant & Creative Producer",
+  "tagline": "Production · Commercials · Brand Films · Music Videos",
   "positioningLine": "Helping directors transform creative vision into flawlessly executed productions.",
   "subhead": "60+ commercial productions across India's biggest brands. From Armani Exchange to Tanishq, Lakmé to Sprite. Mumbai-based.",
   "nav": [
-    { "label": "Work", "href": "#work" },
-    { "label": "Productions", "href": "#productions" },
-    { "label": "Process", "href": "#process" },
+    { "label": "Wall", "href": "#wall" },
+    { "label": "Archive", "href": "#featured" },
+    { "label": "Timeline", "href": "#process" },
     { "label": "About", "href": "#about" },
     { "label": "Contact", "href": "#contact" }
   ],
   "social": {
-    "instagram": "",
+    "instagram": "https://www.instagram.com/donayan_",
     "linkedin": "https://linkedin.com/in/donayansahdev",
-    "email": "donayan@example.com",
-    "phone": "+91 98765 43210"
+    "email": "donayan@donayan.com",
+    "phone": "+91 98765 43210",
+    "whatsapp": "https://wa.me/919876543210"
   },
   "resumePdf": "/resume.pdf",
   "seo": {
-    "title": "Donayan Sahdev — Director's Assistant & Associate Producer",
-    "description": "Mumbai-based Director's Assistant and Associate Producer. 60+ commercial productions across advertising, fashion, celebrity campaigns, and music videos.",
-    "ogTitle": "Donayan Sahdev — Production",
-    "ogDescription": "Director's Assistant & Associate Producer, Mumbai"
+    "title": "Donayan Sahdev — Freelance Director's Assistant & Creative Producer",
+    "description": "Mumbai-based Freelance Director's Assistant and Creative Producer. 60+ commercial productions across advertising, fashion, celebrity campaigns, and music videos. Available for freelance and in-house productions.",
+    "ogTitle": "Donayan Sahdev — Production Portfolio",
+    "ogDescription": "Freelance Director's Assistant & Creative Producer. Production · Commercials · Brand Films · Music Videos.",
+    "ogImage": "/og-image.jpg"
   },
   "hero": {
-    "ctaPrimary": "Explore Production Log →",
+    "ctaPrimary": "Explore Production Log",
     "introLine": "Helping directors execute ambitious commercial productions with precision.",
     "stats": [
       { "label": "Commercial Productions", "value": "60+" },

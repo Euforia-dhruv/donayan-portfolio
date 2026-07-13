@@ -2,7 +2,7 @@ import siteContent from "@/data/site-content.json";
 
 export default function Footer() {
   return (
-    <footer className="bg-cinema-black border-t border-cinema-white/5 py-8 md:py-10">
+    <footer className="bg-cinema-black border-t border-cinema-white/5 py-8 md:py-10" role="contentinfo">
       <div className="max-w-[1400px] mx-auto px-8 md:px-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div>
@@ -15,9 +15,9 @@ export default function Footer() {
           </div>
 
           <div className="flex gap-6 text-body-sm font-switzer font-[400] text-cinema-white/40 uppercase tracking-[0.02em]">
-            <a href={siteContent.social.instagram} target="_blank" rel="noopener noreferrer" className="no-underline text-inherit hover:text-gold transition-colors">Instagram</a>
-            <a href={siteContent.social.linkedin} target="_blank" rel="noopener noreferrer" className="no-underline text-inherit hover:text-gold transition-colors">LinkedIn</a>
-            <a href={siteContent.resumePdf} target="_blank" rel="noopener noreferrer" className="no-underline text-inherit hover:text-gold transition-colors">Resume</a>
+            <a href={siteContent.social.instagram} target="_blank" rel="noopener noreferrer" className="no-underline text-inherit hover:text-gold transition-colors" aria-label="Instagram">Instagram</a>
+            <a href={siteContent.social.linkedin} target="_blank" rel="noopener noreferrer" className="no-underline text-inherit hover:text-gold transition-colors" aria-label="LinkedIn">LinkedIn</a>
+            <a href={siteContent.resumePdf} target="_blank" rel="noopener noreferrer" className="no-underline text-inherit hover:text-gold transition-colors" aria-label="Download resume">Resume</a>
           </div>
         </div>
 
