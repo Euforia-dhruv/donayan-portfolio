@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { getMediaUrl } from "@/lib/media";
 import siteContent from "@/data/site-content.json";
 
 export default function ContactSection() {
@@ -35,7 +36,7 @@ export default function ContactSection() {
         className="absolute inset-0"
         style={{
           zIndex: 0,
-          backgroundImage: "url('/assets/images/thank-you.png')",
+          backgroundImage: `url(${getMediaUrl("/assets/images/thank-you.png")})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",

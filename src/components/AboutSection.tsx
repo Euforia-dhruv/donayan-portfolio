@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import { getMediaUrl } from "@/lib/media";
 import siteContent from "@/data/site-content.json";
 
 export default function AboutSection() {
@@ -28,7 +29,7 @@ export default function AboutSection() {
 
           <div className="lg:col-span-2 flex flex-col justify-start">
             <div className="relative aspect-[4/3] overflow-hidden mb-8 reveal reveal-delay-4">
-              <img src="/hero-bg.jpg" alt="On set production" className="w-full h-full object-cover" loading="lazy" />
+              <img src={getMediaUrl("/hero-bg.jpg")} alt="On set production" className="w-full h-full object-cover" loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/50 to-transparent" />
               <div className="absolute bottom-3 left-3">
                 <span className="text-caption font-switzer font-[400] text-cinema-white/60 uppercase tracking-[0.02em]">On Set · Director's Monitor</span>

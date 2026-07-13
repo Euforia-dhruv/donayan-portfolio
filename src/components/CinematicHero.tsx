@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { getMediaUrl } from "@/lib/media";
 
 const MUTED_GOLD = "#C8A24D";
 const OFF_WHITE = "#F5F5F2";
@@ -39,7 +40,7 @@ export default function CinematicHero() {
         style={{ transition: "transform 0.1s linear" }}
       >
         <img
-          src="/hero-bg.jpg"
+          src={getMediaUrl("/hero-bg.jpg")}
           alt=""
           className="w-full h-full object-cover object-[center_40%]"
           style={{

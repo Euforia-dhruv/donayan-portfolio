@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getYouTubeThumbnail, getYouTubeId } from "@/lib/video-utils";
+import { getMediaUrl } from "@/lib/media";
 import videoEntries from "@/data/video-entries.json";
 import archiveData from "@/data/archive.json";
 
@@ -122,26 +123,26 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
       if (validImages.length === 0) return <MediaUnavailable />;
       if (validImages.length === 1) {
         return (
-          <img src={`/assets/archive/${validImages[0]}`} alt="" className="w-full h-full object-contain"
+          <img src={getMediaUrl(`/assets/archive/${validImages[0]}`)} alt="" className="w-full h-full object-contain"
             onError={() => setImgErrors((prev) => new Set(prev).add(validImages[0]))} />
         );
       }
       return (
         <div className="w-full h-full grid gap-[2px]" style={{ gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr 1fr" }}>
           <div style={{ gridColumn: "1 / 3", gridRow: "1 / 2" }} className="w-full h-full">
-            <img src={`/assets/archive/${validImages[0]}`} alt="" className="w-full h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[0]))} />
+            <img src={getMediaUrl(`/assets/archive/${validImages[0]}`)} alt="" className="w-full h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[0]))} />
           </div>
           <div className="w-full h-full">
-            <img src={`/assets/archive/${validImages[1]}`} alt="" className="w-full h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[1]))} />
+            <img src={getMediaUrl(`/assets/archive/${validImages[1]}`)} alt="" className="w-full h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[1]))} />
           </div>
           <div className="w-full h-full">
-            <img src={`/assets/archive/${validImages[2]}`} alt="" className="w-full h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[2]))} />
+            <img src={getMediaUrl(`/assets/archive/${validImages[2]}`)} alt="" className="w-full h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[2]))} />
           </div>
           <div className="w-full h-full">
-            <img src={`/assets/archive/${validImages[3]}`} alt="" className="w-full h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[3]))} />
+            <img src={getMediaUrl(`/assets/archive/${validImages[3]}`)} alt="" className="w-full h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[3]))} />
           </div>
           <div style={{ gridColumn: "1 / 3", gridRow: "3 / 4" }} className="w-full h-full flex justify-center">
-            <img src={`/assets/archive/${validImages[4]}`} alt="" className="h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[4]))} />
+            <img src={getMediaUrl(`/assets/archive/${validImages[4]}`)} alt="" className="h-full object-contain" onError={() => setImgErrors((prev) => new Set(prev).add(validImages[4]))} />
           </div>
         </div>
       );
@@ -149,14 +150,14 @@ function ReelCard({ entry }: { entry: VideoEntry }) {
 
     if (entry.src) {
       return (
-        <img src={entry.src} alt="" className="w-full h-full object-contain"
+        <img src={getMediaUrl(entry.src)} alt="" className="w-full h-full object-contain"
           onError={() => setVideoFailed(true)} />
       );
     }
 
     if (isSingleImage) {
       return (
-        <img src={`/assets/archive/${entry.id}.jpg`} alt="" className="w-full h-full object-contain"
+        <img src={getMediaUrl(`/assets/archive/${entry.id}.jpg`)} alt="" className="w-full h-full object-contain"
           onError={() => setVideoFailed(true)} />
       );
     }

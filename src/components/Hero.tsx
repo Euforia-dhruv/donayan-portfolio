@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { getMediaUrl } from "@/lib/media";
 
 export default function Hero() {
   const bgRef = useRef<HTMLDivElement>(null);
@@ -27,7 +28,7 @@ export default function Hero() {
         style={{ transition: "transform 0.05s linear" }}
       >
         <img
-          src="/hero-bg.jpg"
+          src={getMediaUrl("/hero-bg.jpg")}
           alt=""
           className="w-full h-full object-cover object-[center_40%]"
           style={{

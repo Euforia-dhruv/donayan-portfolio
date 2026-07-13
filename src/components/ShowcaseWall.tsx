@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useMemo, useCallback, useEffect } from "react";
+import { getMediaUrl } from "@/lib/media";
 import {
   getYouTubeAutoplayUrl,
   getYouTubeThumbnail,
@@ -217,7 +218,7 @@ function ShowcaseCard({
       >
         {project.thumbnail && (
           <img
-            src={project.thumbnail}
+            src={getMediaUrl(project.thumbnail)}
             alt={project.title}
             className={`absolute inset-0 w-full h-full object-cover transition-all duration-[350ms] ease-out ${
               imgLoaded ? "opacity-100" : "opacity-0"

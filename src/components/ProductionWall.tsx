@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { getMediaUrl } from "@/lib/media";
 
 interface WallImage {
   id: string;
@@ -155,7 +156,7 @@ export default function ProductionWall() {
                 }}
               >
                 <img
-                  src={card.src}
+                  src={getMediaUrl(card.src)}
                   alt=""
                   className="w-full h-full object-cover"
                   loading="lazy"
