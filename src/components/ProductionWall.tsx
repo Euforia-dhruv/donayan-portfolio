@@ -22,40 +22,8 @@ interface WallItem {
   videoUrl?: string;
 }
 
-interface CardPos {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  rotation: number;
-}
-
 /* ------------------------------------------------------------------ */
-/*  Seeded PRNG                                                       */
-/* ------------------------------------------------------------------ */
-
-function seedRng(seed: number) {
-  let s = Math.abs(seed) % 2147483647 || 1;
-  return () => {
-    s = (s * 16807) % 2147483647;
-    return (s - 1) / 2147483646;
-  };
-}
-
-/* ------------------------------------------------------------------ */
-/*  AABB overlap test                                                  */
-/* ------------------------------------------------------------------ */
-
-function overlap(
-  ax: number, ay: number, aw: number, ah: number,
-  bx: number, by: number, bw: number, bh: number, gap: number,
-) {
-  return ax - gap < bx + bw && ax + aw + gap > bx
-      && ay - gap < by + bh && ay + ah + gap > by;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Wall-card source data + lookup utilities                          */
+/*  Wall-card source data                                              */
 /* ------------------------------------------------------------------ */
 
 const WALL_SRC: { id: string; label: string; src: string; pdf: string | null; w: number; h: number }[] = [
@@ -83,20 +51,21 @@ const WALL_SRC: { id: string; label: string; src: string; pdf: string | null; w:
   { id: "w-artkalaa-2", label: "Artkalaa",         src: "/marketing-pitch/artkalaa 2.png",  pdf: "/Marketing Pitch/Artkalaa Pitch Deck.pdf",              w: 200, h: 200 },
 ];
 
+/* ------------------------------------------------------------------ */
+/*  Brand → cover matching                                             */
+/* ------------------------------------------------------------------ */
+
 function findCoverForBrand(brand: string): string | undefined {
   const words = brand.toLowerCase().replace(/[^a-z0-9\s]/g, "").trim().split(/\s+/).filter(Boolean);
-  if (words.length === 0) return undefined;
+  if (words.length === 0) return;
   for (const c of WALL_SRC) {
     const cWords = c.label.toLowerCase().replace(/[^a-z0-9\s]/g, "").trim().split(/\s+/).filter(Boolean);
     if (words[0] === cWords[0]) return c.src;
     if (cWords[0].startsWith(words[0]) || words[0].startsWith(cWords[0])) {
       if (words[0].length >= 3 || cWords[0].length >= 3) return c.src;
     }
-    const b = words.join("");
-    const cl = cWords.join("");
-    if (cl.includes(b) || b.includes(cl)) return c.src;
+    if (cWords.join("").includes(words.join("")) || words.join("").includes(cWords.join(""))) return c.src;
   }
-  return undefined;
 }
 
 function extractCode(url: string): string | null {
@@ -120,195 +89,64 @@ function getVe(url: string) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Build item list from wall-cards + archive                          */
+/*  Build item list                                                    */
 /* ------------------------------------------------------------------ */
 
 function buildItems(): WallItem[] {
   const items: WallItem[] = [];
-
-  /* wall cards (cover all PDF/document projects) */
   for (const c of WALL_SRC) {
-    items.push({
-      id: c.id,
-      label: c.label,
-      src: c.src,
-      pdf: c.pdf ?? undefined,
-      w: c.w,
-      h: c.h,
-    });
+    items.push({ id: c.id, label: c.label, src: c.src, pdf: c.pdf ?? undefined, w: c.w, h: c.h });
   }
-
   for (const a of archive) {
     const ytThumb = a.thumbnail || getYouTubeThumbnail(a.url);
     if (ytThumb) {
       const ve = getVe(a.url);
-      items.push({
-        id: a.id,
-        label: a.brand || a.title,
-        src: ytThumb,
-        externalUrl: a.url,
-        w: ve?.w || 16,
-        h: ve?.h || 9,
-      });
+      items.push({ id: a.id, label: a.brand || a.title, src: ytThumb, externalUrl: a.url, w: ve?.w || 16, h: ve?.h || 9 });
       continue;
     }
-
     const ve = getVe(a.url);
     if (!ve) {
-      /* PDF-only archive item → brand cover fallback */
       const cover = findCoverForBrand(a.brand || "");
       if (cover && a.documents?.length) {
-        items.push({
-          id: a.id,
-          label: a.brand || a.title,
-          src: cover,
-          pdf: a.documents[0].path,
-          w: 4,
-          h: 3,
-        });
+        items.push({ id: a.id, label: a.brand || a.title, src: cover, pdf: a.documents[0].path, w: 4, h: 3 });
       }
       continue;
     }
-
-    /* Instagram reel with video */
     if (ve.hasMp4 && ve.videoUrl) {
-      items.push({
-        id: a.id,
-        label: a.brand || a.title,
-        src: "",
-        externalUrl: a.url,
-        w: ve.w || 1080,
-        h: ve.h || 1920,
-        isVideo: true,
-        videoUrl: ve.videoUrl,
-      });
+      items.push({ id: a.id, label: a.brand || a.title, src: "", externalUrl: a.url, w: ve.w || 1080, h: ve.h || 1920, isVideo: true, videoUrl: ve.videoUrl });
       continue;
     }
-
-    /* Instagram post with images array */
     if (Array.isArray(ve.images) && ve.images.length > 0) {
-      items.push({
-        id: a.id,
-        label: a.brand || a.title,
-        src: `/assets/archive/${ve.images[0]}`,
-        externalUrl: a.url,
-        w: ve.w || 4,
-        h: ve.h || 3,
-      });
+      items.push({ id: a.id, label: a.brand || a.title, src: `/assets/archive/${ve.images[0]}`, externalUrl: a.url, w: ve.w || 4, h: ve.h || 3 });
       continue;
     }
-
-    /* Instagram post with src path */
     if (ve.hasImage && ve.src) {
-      items.push({
-        id: a.id,
-        label: a.brand || a.title,
-        src: ve.src,
-        externalUrl: a.url,
-        w: ve.w || 4,
-        h: ve.h || 3,
-      });
+      items.push({ id: a.id, label: a.brand || a.title, src: ve.src, externalUrl: a.url, w: ve.w || 4, h: ve.h || 3 });
       continue;
     }
-
-    /* Instagram post with id-based image path */
     if (ve.hasImage) {
-      items.push({
-        id: a.id,
-        label: a.brand || a.title,
-        src: `/assets/archive/${ve.id}.jpg`,
-        externalUrl: a.url,
-        w: ve.w || 4,
-        h: ve.h || 3,
-      });
+      items.push({ id: a.id, label: a.brand || a.title, src: `/assets/archive/${ve.id}.jpg`, externalUrl: a.url, w: ve.w || 4, h: ve.h || 3 });
     }
   }
-
   return items;
 }
 
 /* ------------------------------------------------------------------ */
-/*  Layout algorithm – editorial floating collage                       */
+/*  Rotation helper (deterministic)                                    */
 /* ------------------------------------------------------------------ */
 
-function layoutItems(items: WallItem[], cw: number, isMobile: boolean, isTablet: boolean): { pos: CardPos[]; h: number } {
-  if (cw <= 0 || items.length === 0) return { pos: [], h: 0 };
-  const GAP = isMobile ? 16 : 24;
-  const PAD = isMobile ? 16 : 48;
-  const usable = cw - PAD * 2;
-  const positions: CardPos[] = [];
-  const placed: { x: number; y: number; w: number; h: number }[] = [];
-
-  for (let i = 0; i < items.length; i++) {
-    const it = items[i];
-    const rng = seedRng(it.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0) + i * 137);
-    const aspect = it.w / it.h;
-
-    let tw: number;
-    if (isMobile) {
-      tw = usable;
-    } else if (isTablet) {
-      const mx = usable * 0.5;
-      const mn = usable * 0.15;
-      if (aspect > 1.3) tw = mn + rng() * (mx - mn) * 0.65;
-      else if (aspect < 0.76) tw = mn * 0.7 + rng() * mx * 0.35;
-      else tw = mn + rng() * mx * 0.4;
-    } else {
-      const mx = usable * 0.45;
-      const mn = usable * 0.06;
-      if (aspect > 1.3) tw = mn + rng() * (mx - mn) * 0.6;
-      else if (aspect < 0.76) tw = mn * 0.5 + rng() * (mx - mn) * 0.22;
-      else tw = mn * 0.6 + rng() * (mx - mn) * 0.35;
-    }
-    const th = tw / aspect;
-    const rot = isMobile ? 0 : (rng() - 0.5) * 6;
-
-    if (isMobile) {
-      const top = placed.length === 0 ? PAD : Math.max(...placed.map(p => p.y + p.h)) + GAP;
-      positions.push({ x: PAD, y: top, w: tw, h: th, rotation: rot });
-      placed.push({ x: PAD, y: top, w: tw, h: th });
-      continue;
-    }
-
-    let best: CardPos | null = null;
-    let bestScore = -Infinity;
-
-    for (let a = 0; a < 300; a++) {
-      const x = PAD + rng() * (usable - tw);
-      const cy = placed.length === 0
-        ? PAD
-        : Math.max(...placed.map(p => p.y + p.h)) * (0.15 + rng() * 0.85);
-      const y = PAD + (placed.length === 0 ? 0 : cy + (rng() - 0.5) * th * 0.35);
-      const r = (rng() - 0.5) * 6;
-      if (x < PAD || x + tw > cw - PAD) continue;
-      let hit = false;
-      for (const p of placed) { if (overlap(x, y, tw, th, p.x, p.y, p.w, p.h, GAP)) { hit = true; break; } }
-      if (hit) continue;
-      const edgeDist = Math.min(x - PAD, cw - PAD - (x + tw));
-      const score = y * 0.15 + edgeDist * 0.15 + rng() * 50;
-      if (score > bestScore) { bestScore = score; best = { x, y, w: tw, h: th, rotation: r }; }
-    }
-
-    if (!best) {
-      const top = placed.length === 0 ? PAD : Math.max(...placed.map(p => p.y + p.h)) + GAP;
-      const x = PAD + rng() * (usable - tw) * 0.3;
-      best = { x: Math.max(PAD, x), y: top, w: tw, h: th, rotation: 0 };
-    }
-
-    positions.push(best);
-    placed.push({ x: best.x, y: best.y, w: best.w, h: best.h });
-  }
-
-  const totalH = Math.max(...placed.map(p => p.y + p.h), 0) + PAD + 80;
-  return { pos: positions, h: totalH };
+function getRotation(id: string, i: number): number {
+  let h = 0;
+  const s = (id + String(i)).split("").forEach(c => { h = (h * 31 + c.charCodeAt(0)) % 1000; });
+  return ((h % 7) - 3) * 0.6;
 }
 
 /* ------------------------------------------------------------------ */
 /*  Card component                                                     */
 /* ------------------------------------------------------------------ */
 
-function WallCard({ item, pos, index }: { item: WallItem; pos: CardPos; index: number }) {
-  const [loaded, setLoaded] = useState(false);
+function WallCard({ item, index, total }: { item: WallItem; index: number; total: number }) {
+  const [loaded, setLoaded] = useState(!item.isVideo);
   const [errored, setErrored] = useState(false);
   const [hovered, setHovered] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -328,9 +166,7 @@ function WallCard({ item, pos, index }: { item: WallItem; pos: CardPos; index: n
   }, [item.src, item.isVideo]);
 
   useEffect(() => {
-    if (item.isVideo && videoRef.current) {
-      videoRef.current.play().catch(() => {});
-    }
+    if (item.isVideo && videoRef.current) videoRef.current.play().catch(() => {});
   }, [item.isVideo]);
 
   useEffect(() => {
@@ -346,37 +182,37 @@ function WallCard({ item, pos, index }: { item: WallItem; pos: CardPos; index: n
     window.addEventListener("scroll", handler, { passive: true });
     handler();
     return () => window.removeEventListener("scroll", handler);
-  }, [index, errored, loaded, item.isVideo]);
+  }, [index, errored, loaded]);
 
   if (errored) return null;
 
+  const rotation = getRotation(item.id, index);
+
   const handleClick = () => {
-    if (item.externalUrl) { window.open(item.externalUrl, "_blank", "noopener,noreferrer"); }
-    else if (item.pdf) { window.open(item.pdf, "_blank"); }
+    if (item.externalUrl) window.open(item.externalUrl, "_blank", "noopener,noreferrer");
+    else if (item.pdf) window.open(item.pdf, "_blank");
   };
 
   return (
     <div
       ref={cardRef}
-      className="absolute"
+      className="break-inside-avoid mb-6"
       style={{
-        left: pos.x,
-        top: pos.y,
-        width: pos.w,
-        height: pos.h,
-        transform: `rotate(${pos.rotation}deg) translateY(var(--par-y, 0px))`,
         opacity: 0,
-        animation: `wallIn 0.8s ease ${0.025 + index * 0.035}s forwards`,
+        animation: `wallFadeIn 0.6s ease ${0.02 + index * 0.02}s forwards`,
+        transform: `rotate(${rotation}deg) translateY(var(--par-y, 0px))`,
         willChange: "transform",
-        zIndex: hovered ? 20 : 1,
+        zIndex: hovered ? 10 : 1,
+        transition: "z-index 0s",
       }}
     >
       <div
-        className="relative overflow-hidden cursor-pointer w-full h-full"
+        className="relative overflow-hidden cursor-pointer w-full group"
         style={{
           borderRadius: "14px",
           backgroundColor: "#141414",
-          transform: hovered ? "scale(1.03) rotate(0deg)" : "scale(1)",
+          aspectRatio: `${item.w} / ${item.h}`,
+          transform: hovered ? "scale(1.02) rotate(0deg)" : "scale(1)",
           boxShadow: hovered ? "0 24px 64px rgba(0,0,0,0.6)" : "0 4px 12px rgba(0,0,0,0.25)",
           transition: "transform 0.5s cubic-bezier(0.25,0.1,0.25,1), box-shadow 0.5s ease",
         }}
@@ -388,29 +224,26 @@ function WallCard({ item, pos, index }: { item: WallItem; pos: CardPos; index: n
           <video
             ref={videoRef}
             src={`/api/video?url=${encodeURIComponent(item.videoUrl || "")}`}
-            className="w-full h-full object-cover align-middle"
-            muted
-            loop
-            playsInline
-            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover"
+            muted loop playsInline preload="auto"
             style={{
-              transform: hovered ? "scale(1.06)" : "scale(1)",
+              transform: hovered ? "scale(1.04)" : "scale(1)",
               transition: "transform 0.6s cubic-bezier(0.25,0.1,0.25,1)",
             }}
           />
         ) : (
           <>
             {!loaded && (
-              <div className="w-full h-full bg-[#1a1a1a] animate-pulse" />
+              <div className="absolute inset-0 bg-[#1a1a1a] animate-pulse" />
             )}
             <img
               ref={imgRef}
               src={getMediaUrl(item.src)}
               alt={item.label}
-              className={`w-full h-full object-cover align-middle ${loaded ? "opacity-100" : "opacity-0"}`}
+              className={`absolute inset-0 w-full h-full object-cover ${loaded ? "opacity-100" : "opacity-0"}`}
               style={{
                 transition: "opacity 0.5s ease, transform 0.6s cubic-bezier(0.25,0.1,0.25,1)",
-                transform: hovered ? "scale(1.06)" : "scale(1)",
+                transform: hovered ? "scale(1.04)" : "scale(1)",
               }}
               loading="lazy"
               draggable={false}
@@ -460,42 +293,13 @@ function WallCard({ item, pos, index }: { item: WallItem; pos: CardPos; index: n
 }
 
 /* ------------------------------------------------------------------ */
-/*  Skeleton                                                          */
-/* ------------------------------------------------------------------ */
-
-function Skeleton() {
-  return (
-    <div className="relative" style={{ height: "60vh" }}>
-      {Array.from({ length: 10 }).map((_, i) => (
-        <div
-          key={i}
-          className="absolute bg-[#1a1a1a] animate-pulse"
-          style={{
-            borderRadius: "14px",
-            left: `${6 + (i % 5) * 18}%`,
-            top: `${6 + Math.floor(i / 5) * 40}%`,
-            width: `${10 + (i % 4) * 5}%`,
-            aspectRatio: i % 3 === 0 ? "4/3" : i % 3 === 1 ? "3/4" : "1/1",
-            transform: `rotate(${(i - 2) * 1.5}deg)`,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
 /*  Main section                                                       */
 /* ------------------------------------------------------------------ */
 
 export default function ProductionWall() {
   const [visible, setVisible] = useState(false);
-  const [ready, setReady] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [cw, setCw] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
+  const [items] = useState(() => buildItems());
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -508,33 +312,11 @@ export default function ProductionWall() {
     return () => obs.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (!visible) return;
-    const el = containerRef.current;
-    if (!el) return;
-    const m = () => {
-      setCw(el.clientWidth);
-      setIsMobile(window.innerWidth < 640);
-      setIsTablet(window.innerWidth >= 640 && window.innerWidth < 1024);
-    };
-    m();
-    setTimeout(() => setReady(true), 200);
-    window.addEventListener("resize", m, { passive: true });
-    return () => window.removeEventListener("resize", m);
-  }, [visible]);
-
-  const [items] = useState(() => buildItems());
-
-  const layout = useMemo(
-    () => layoutItems(items, cw, isMobile, isTablet),
-    [items, cw, isMobile, isTablet],
-  );
-
   return (
     <section
       id="wall"
       ref={sectionRef}
-      className="w-full relative overflow-hidden bg-cinema-black"
+      className="w-full relative bg-cinema-black"
       style={{ padding: "clamp(40px, 6vw, 80px) 0" }}
       aria-label="Production Archive Wall"
     >
@@ -556,37 +338,28 @@ export default function ProductionWall() {
           >
             The Wall
           </h2>
-          {ready && (
-            <p className="text-caption font-switzer font-[400] text-stone/60 mt-2">
-              {items.length} projects
-            </p>
-          )}
+          <p className="text-caption font-switzer font-[400] text-stone/60 mt-2">
+            {items.length} projects
+          </p>
         </div>
 
-        {!ready && <Skeleton />}
-
-        {ready && items.length > 0 && (
-          <div
-            ref={containerRef}
-            className="relative"
-            style={{
-              height: layout.h,
-              opacity: visible ? 1 : 0,
-              transition: "opacity 0.6s ease",
-            }}
-          >
-            {items.map((item, i) => {
-              const pos = layout.pos[i];
-              if (!pos) return null;
-              return <WallCard key={item.id} item={item} pos={pos} index={i} />;
-            })}
-          </div>
-        )}
+        <div
+          className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5"
+          style={{
+            opacity: visible ? 1 : 0,
+            transform: visible ? "translateY(0)" : "translateY(20px)",
+            transition: "opacity 0.6s ease, transform 0.6s ease",
+          }}
+        >
+          {items.map((item, i) => (
+            <WallCard key={item.id} item={item} index={i} total={items.length} />
+          ))}
+        </div>
       </div>
 
       <style>{`
-        @keyframes wallIn {
-          from { opacity: 0; transform: translateY(24px) scale(0.95); }
+        @keyframes wallFadeIn {
+          from { opacity: 0; transform: translateY(16px) scale(0.97); }
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
       `}</style>

@@ -22,11 +22,7 @@ export default function Navigation() {
   }, []);
 
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
 
@@ -43,14 +39,11 @@ export default function Navigation() {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveSection(`#${entry.target.id}`);
-          }
+          if (entry.isIntersecting) setActiveSection(`#${entry.target.id}`);
         }
       },
       { threshold: 0.3, rootMargin: "-80px 0px 0px 0px" }
     );
-
     const sections = navItems.map((item) => document.getElementById(item.href.slice(1))).filter(Boolean);
     sections.forEach((s) => s && observer.observe(s));
     return () => observer.disconnect();
@@ -81,44 +74,44 @@ export default function Navigation() {
       <div className="max-w-[1400px] mx-auto px-8 md:px-10 flex items-center justify-between h-20 md:h-24">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="bg-transparent border-none p-0 cursor-pointer no-underline focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cinema-black rounded-lg"
+          className="bg-transparent border-none p-0 cursor-pointer shrink-0 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cinema-black rounded-lg"
           aria-label="Donayan Sahdev — Scroll to top"
         >
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="text-cinema-white" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="text-cinema-white" aria-hidden="true">
             <circle cx="16" cy="16" r="15" stroke="currentColor" strokeWidth="1.5" />
             <path d="M10 16h12M16 10v12" stroke="currentColor" strokeWidth="1.5" />
             <circle cx="16" cy="16" r="5" fill="currentColor" />
           </svg>
         </button>
 
-        <div className="hidden md:flex items-center gap-8" role="list">
+        <div className="flex items-center gap-10" role="list">
           {navItems.map((item) => (
             <a
               key={item.label}
               href={item.href}
-              className={`text-body-sm font-switzer font-[400] no-underline transition-colors focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cinema-black rounded-sm ${
+              className={`text-body-sm font-switzer font-[400] no-underline transition-colors focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cinema-black rounded-sm hidden md:inline ${
                 activeSection === item.href
                   ? "text-cinema-white"
-                  : "text-cinema-white/60 hover:text-cinema-white"
+                  : "text-cinema-white/50 hover:text-cinema-white"
               }`}
               role="listitem"
             >
               {item.label}
             </a>
           ))}
-        </div>
 
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setMenuOpen(!menuOpen); } }}
-          className="bg-gold text-cinema-black font-switzer font-[400] no-underline border-none cursor-pointer transition-opacity hover:opacity-85 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cinema-black"
-          style={{ fontSize: "16px", padding: "12px 24px", borderRadius: "1440px" }}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-menu"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-        >
-          {menuOpen ? "Close" : "Menu"}
-        </button>
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setMenuOpen(!menuOpen); } }}
+            className="bg-gold text-cinema-black font-switzer font-[400] no-underline border-none cursor-pointer transition-all hover:opacity-85 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cinema-black"
+            style={{ fontSize: "14px", padding: "10px 22px", borderRadius: "1440px", letterSpacing: "0.03em" }}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+          >
+            {menuOpen ? "Close" : "Menu"}
+          </button>
+        </div>
       </div>
 
       {menuOpen && (
@@ -134,7 +127,7 @@ export default function Navigation() {
               <a
                 key={item.label}
                 href={item.href}
-                className={`text-heading font-switzer font-[300] no-underline tracking-[-0.02em] focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cinema-black rounded-sm ${
+                className={`text-[clamp(36px,6vw,64px)] font-switzer font-[300] no-underline tracking-[-0.02em] focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cinema-black rounded-sm transition-colors ${
                   activeSection === item.href
                     ? "text-gold"
                     : "text-cinema-white hover:text-gold"
