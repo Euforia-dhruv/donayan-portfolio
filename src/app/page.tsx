@@ -3,7 +3,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import Brands from "@/components/Brands";
-import ProductionWallSection from "@/components/ProductionWallSection";
+import ProductionWall from "@/components/ProductionWall";
 import PdfWallSection from "@/components/PdfWallSection";
 import Testimonials from "@/components/Testimonials";
 import AboutSection from "@/components/AboutSection";
@@ -17,7 +17,7 @@ export default function Home() {
       <main id="main-content">
         <Hero />
         <Reveal><Brands /></Reveal>
-        <ProductionWallSection />
+        <ProductionWall />
         <PdfWallSection />
         <Reveal><Testimonials /></Reveal>
         <Reveal><AboutSection /></Reveal>
