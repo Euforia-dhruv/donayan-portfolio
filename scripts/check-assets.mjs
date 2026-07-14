@@ -20,15 +20,19 @@ function walk(dir, out = []) {
 
 let failed = false;
 
-// --- 1. Wall assets -------------------------------------------------------
-const wallAssets = JSON.parse(
-  fs.readFileSync(path.join(ROOT, "src/lib/wall-assets.json"), "utf8"),
-);
-console.log(`\n[wall] checking ${wallAssets.length} archive assets...`);
-for (const a of wallAssets) {
-  const abs = path.join(PUBLIC, a.file.replace(/^\//, ""));
-  if (!fs.existsSync(abs)) {
-    console.error(`  ✗ MISSING WALL ASSET: ${a.file} (projectIndex ${a.projectIndex})`);
+// --- 1. Wall assets (scanned from /public/assets/archive) ----------------
+const VIDEO_EXT = new Set([".mp4", ".webm", ".ogg", ".mov", ".m4v"]);
+const IMAGE_EXT = new Set([".jpg", ".jpeg", ".png", ".webp"]);
+const wallAssets = walk(path.join(PUBLIC, "assets/archive"))
+  .map((f) => "/" + path.relative(PUBLIC, f).split(path.sep).join("/"))
+  .filter((f) => {
+    const ext = path.extname(f).toLowerCase();
+    return VIDEO_EXT.has(ext) || IMAGE_EXT.has(ext);
+  });
+console.log(`\n[wall] scanned ${wallAssets.length} archive assets...`);
+for (const f of wallAssets) {
+  if (!fs.existsSync(path.join(PUBLIC, f.replace(/^\//, "")))) {
+    console.error(`  ✗ MISSING WALL ASSET: ${f}`);
     failed = true;
   }
 }

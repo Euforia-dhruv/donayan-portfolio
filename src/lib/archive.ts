@@ -1,25 +1,12 @@
 import { getPlatformLabel, getYouTubeMaxResThumbnail } from "@/lib/video-utils";
+import type { WallItem } from "@/types/wall";
 
-interface WallAsset {
-  file: string;
-  kind: string;
-  aspect: string;
-  source: string;
-  platform: string;
-  label: string;
-  title?: string;
-  category?: string;
-  year?: string;
-  description?: string;
-}
-
-// JSON imports resolved by Next at build time.
-import wallAssetsRaw from "@/lib/wall-assets.json";
+// JSON imports resolved by Next at build time. The wall is assembled by
+// scripts/build-wall.mjs entirely from /public/assets/archive.
+import wallItemsRaw from "@/lib/wall-items.json";
 import { getDrivePdfs } from "@/lib/drive-pdfs";
-import videoDescRaw from "@/lib/video-desc.json";
 
-const WALL = wallAssetsRaw as WallAsset[];
-const VIDEO_DESC = videoDescRaw as Record<string, string>;
+const WALL_ITEMS = wallItemsRaw as WallItem[];
 
 const COLLAB_URLS = new Set([
   "https://www.instagram.com/reel/C9Hady1yVDJ/",
@@ -131,17 +118,17 @@ export function buildArchiveItems(projects: any[]): ArchiveItem[] {
   };
   for (const p of projects || []) {
     const url = p.externalUrl || "";
-    const match = WALL.find((w) => norm(w.source) === norm(url));
+    const match = WALL_ITEMS.find((w) => norm(w.source) === norm(url));
     let preview: string | null = null;
     let aspect = orientationAspect[p.orientation || ""] || "16 / 9";
     let poster: string | null = p.thumbnail || null;
 
     if (match) {
       usedWallSources.add(norm(match.source));
-      if (isLocalVideo(match.file)) preview = match.file;
-      else if (isLocalImage(match.file)) preview = match.file;
+      if (isLocalVideo(match.cover)) preview = match.cover;
+      else if (isLocalImage(match.cover)) preview = match.cover;
       aspect = match.aspect || aspect;
-      if (isLocalImage(match.file)) poster = match.file;
+      if (isLocalImage(match.cover)) poster = match.cover;
     } else if ((p.videos || []).some(isLocalVideo)) {
       preview = (p.videos || []).find(isLocalVideo);
     }
@@ -174,36 +161,28 @@ export function buildArchiveItems(projects: any[]): ArchiveItem[] {
     });
   }
 
-  // 2) Wall-managed media not already represented by a production
-  const wallUnique = WALL.filter(
-    (w, i, a) => a.findIndex((x) => norm(x.source) === norm(w.source)) === i,
-  );
-  for (const w of wallUnique) {
+  // 2) Wall-managed media (data-driven) not already represented by a production
+  for (const w of WALL_ITEMS) {
     if (usedWallSources.has(norm(w.source))) continue;
-    const isVid = isLocalVideo(w.file);
-    const isImg = isLocalImage(w.file);
-    const keys: string[] = ["all"];
-    if (w.platform === "Instagram" && w.label.includes("Reel")) keys.push("reels");
-    else if (w.platform === "Instagram") keys.push("posts");
-    else if (w.platform === "YouTube") keys.push("brand-films");
-    if (isImg) keys.push("images");
-    if (COLLAB_URLS.has(w.source)) keys.push("collaborations");
+    const isVid = isLocalVideo(w.cover);
+    const isImg = isLocalImage(w.cover);
+    const keys: string[] = ["all", ...w.filters.filter((f) => f !== "All")];
 
     items.push({
-      id: `wall-${w.file}`,
+      id: `wall-${w.id}`,
       kind: isVid ? "video" : "image",
-      title: w.title || w.label,
+      title: w.title,
       client: w.platform,
       year: w.year || "",
-      categoryLabel: w.category || w.label,
+      categoryLabel: w.category,
       credits: [],
       tags: [],
       source: w.source,
-      preview: w.file,
-      poster: isImg ? w.file : null,
-       aspect: w.aspect,
-       platform: w.platform,
-       description: VIDEO_DESC[w.file] || w.description || "",
+      preview: w.cover,
+      poster: isImg ? w.cover : null,
+      aspect: w.aspect,
+      platform: w.platform,
+      description: w.description,
       filterKeys: keys,
     });
   }

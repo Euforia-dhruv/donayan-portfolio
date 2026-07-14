@@ -1,31 +1,34 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import wallAssets from "@/lib/wall-assets.json";
-import videoDescRaw from "@/lib/video-desc.json";
-import AutoVideo from "@/components/AutoVideo";
-import Lightbox, { type LightboxData } from "@/components/Lightbox";
+import wallItemsRaw from "@/lib/wall-items.json";
+import type { WallItem } from "@/types/wall";
+import WallVideo from "@/components/WallVideo";
+import WallGallery from "@/components/WallGallery";
 
-const videoDesc = videoDescRaw as Record<string, string>;
+const wallItems = wallItemsRaw as WallItem[];
 
-interface WallAsset {
-  file: string;
-  kind: string;
-  aspect: string;
-  source: string;
-  platform: string;
-  label: string;
-  title?: string;
-  category?: string;
-  year?: string;
-  description?: string;
-}
+const FILTER_ORDER = [
+  "All",
+  "Commercials",
+  "Brand Films",
+  "Fashion Films",
+  "Campaigns",
+  "Reels",
+  "Posts",
+  "Collaborations",
+  "Videos",
+  "Images",
+  "Music Videos",
+  "Print",
+];
 
 export default function ProductionWall() {
   const sectionRef = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
-  const [lightbox, setLightbox] = useState<LightboxData | null>(null);
+  const [active, setActive] = useState("All");
+  const [gallery, setGallery] = useState<WallItem | null>(null);
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -43,19 +46,43 @@ export default function ProductionWall() {
     return () => obs.disconnect();
   }, []);
 
-  const descOf = (a: WallAsset) => videoDesc[a.file] || a.description || "";
-
-  const open = (a: WallAsset) => {
-    setLightbox({
-      type: a.kind === "video" ? "video" : "image",
-      src: a.file,
-      source: a.source,
-      title: a.title || a.label,
-      platform: a.platform,
-      description: descOf(a),
-      category: a.category,
-      year: a.year,
+  // Filters are generated dynamically from the data.
+  const filters = useMemo(() => {
+    const set = new Set<string>();
+    wallItems.forEach((it) => it.filters.forEach((f) => set.add(f)));
+    return [...set].sort((a, b) => {
+      const ia = FILTER_ORDER.indexOf(a);
+      const ib = FILTER_ORDER.indexOf(b);
+      return (ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib);
     });
+  }, []);
+
+  const counts = useMemo(() => {
+    const c: Record<string, number> = {};
+    filters.forEach((f) => {
+      c[f] = f === "All"
+        ? wallItems.length
+        : wallItems.filter((it) => it.filters.includes(f)).length;
+    });
+    return c;
+  }, [filters]);
+
+  const filtered = useMemo(
+    () =>
+      active === "All"
+        ? wallItems
+        : wallItems.filter((it) => it.filters.includes(active)),
+    [active],
+  );
+
+  const open = (it: WallItem) => {
+    // Grouped projects open an in-app gallery so every image can be browsed.
+    if (it.grouping) {
+      setGallery(it);
+      return;
+    }
+    // Every other card opens the ORIGINAL SOURCE (never the local asset).
+    window.open(it.source, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -88,10 +115,36 @@ export default function ProductionWall() {
             The Wall
           </h2>
           <p className="mt-2 font-switzer text-caption font-[400] text-stone/60">
-            {wallAssets.length} selected works · click to view the original
+            {wallItems.length} selected works · click to view the original
           </p>
         </div>
 
+        {/* Filters — generated from the data, counts update automatically. */}
+        <div className="mb-10 flex flex-wrap items-center justify-center gap-2">
+          {filters.map((f) => {
+            const on = f === active;
+            return (
+              <button
+                key={f}
+                type="button"
+                onClick={() => setActive(f)}
+                aria-pressed={on}
+                className={`rounded-full border px-4 py-2 font-switzer text-caption uppercase tracking-[0.06em] transition-colors ${
+                  on
+                    ? "border-gold bg-gold text-cinema-black"
+                    : "border-white/15 text-cinema-white/70 hover:border-gold/50 hover:text-cinema-white"
+                }`}
+              >
+                {f}
+                <span className={on ? "ml-1.5 opacity-70" : "ml-1.5 text-gold/70"}>
+                  {counts[f]}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Masonry wall — every card is data-driven from the manifest. */}
         <div
           className="columns-2 gap-6 [column-fill:_balance] sm:columns-3 lg:columns-4"
           style={{
@@ -100,62 +153,70 @@ export default function ProductionWall() {
             transition: "opacity 0.7s ease, transform 0.7s ease",
           }}
         >
-          {wallAssets.map((a: WallAsset, i: number) => (
-            <div
-              key={a.file}
-              role="button"
-              tabIndex={0}
-              onClick={() => open(a)}
-              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(a); } }}
-              className="group mb-4 block w-full break-inside-avoid overflow-hidden rounded-2xl bg-charcoal text-left outline-none ring-gold/0 transition-shadow duration-500 hover:shadow-[0_24px_60px_rgba(0,0,0,0.55)] focus-visible:ring-2 focus-visible:ring-gold"
-              style={{
-                aspectRatio: a.aspect,
-                animation: visible
-                  ? `cardEntrance 0.6s ease ${0.02 + i * 0.03}s forwards`
-                  : "none",
-                opacity: 0,
-              }}
-                aria-label={`${a.title || a.label} — open original`}
-            >
-              <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.04]">
-                {a.kind === "video" ? (
-                  <AutoVideo src={a.file} mode="autoplay" />
-                ) : (
-                  <Image
-                    src={a.file}
-                    alt={a.label}
-                    fill
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 14vw"
-                    className="object-cover"
-                    priority={i < 6}
-                  />
-                )}
-              </div>
+          {filtered.map((it, i) => {
+            const isVideo = it.kind === "video";
+            return (
+              <div
+                key={it.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => open(it)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    open(it);
+                  }
+                }}
+                className="group mb-4 block w-full break-inside-avoid overflow-hidden rounded-2xl bg-charcoal text-left outline-none ring-gold/0 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(0,0,0,0.55)] focus-visible:ring-2 focus-visible:ring-gold"
+                style={{
+                  aspectRatio: it.aspect,
+                  animation: visible
+                    ? `cardEntrance 0.6s ease ${0.02 + i * 0.03}s forwards`
+                    : "none",
+                  opacity: 0,
+                }}
+                aria-label={`${it.title} — view project`}
+              >
+                <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.03]">
+                  {isVideo ? (
+                    <WallVideo src={it.cover} sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 23vw" />
+                  ) : (
+                    <Image
+                      src={it.cover}
+                      alt={it.title}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 23vw"
+                      className="object-cover"
+                      priority={i < 6}
+                    />
+                  )}
+                </div>
 
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-1 p-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                <p className="font-switzer text-[10px] font-[400] uppercase tracking-[0.1em] text-gold/75">
-                  {a.category || a.platform}
-                  {a.year ? ` · ${a.year}` : ""}
-                </p>
-                <p className="mt-0.5 font-switzer text-caption font-[400] leading-tight text-cinema-white">
-                  {a.title || a.label}
-                </p>
-                {descOf(a) && (
-                  <p className="mt-1 line-clamp-3 font-switzer text-[11px] font-[300] leading-snug text-cinema-white/70">
-                    {descOf(a)}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-1 p-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                  <p className="font-switzer text-[10px] font-[400] uppercase tracking-[0.1em] text-gold/75">
+                    {it.category}
+                    {it.year ? ` · ${it.year}` : ""}
                   </p>
-                )}
-                <span className="mt-1 inline-block text-[10px] font-switzer uppercase tracking-[0.1em] text-gold/80">
-                  View Original
-                </span>
+                  <p className="mt-0.5 font-switzer text-caption font-[400] leading-tight text-cinema-white">
+                    {it.title}
+                  </p>
+                  {it.description && (
+                    <p className="mt-1 line-clamp-3 font-switzer text-[11px] font-[300] leading-snug text-cinema-white/70">
+                      {it.description}
+                    </p>
+                  )}
+                  <span className="mt-1 inline-block text-[10px] font-switzer uppercase tracking-[0.1em] text-gold/80">
+                    {it.grouping ? "View Gallery →" : "View Project →"}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
-      <Lightbox data={lightbox} onClose={() => setLightbox(null)} />
+      {gallery && <WallGallery item={gallery} onClose={() => setGallery(null)} />}
     </section>
   );
 }

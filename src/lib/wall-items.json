@@ -1,0 +1,563 @@
+[
+  {
+    "id": "p1",
+    "number": 1,
+    "kind": "video",
+    "cover": "/assets/archive/1.mp4",
+    "gallery": [
+      "/assets/archive/1.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.youtube.com/watch?v=1wqdb9s3kfo",
+    "title": "Pee Safe × Smriti Mandhana — #BeInYourComfortZone",
+    "category": "Commercial",
+    "year": "2023",
+    "platform": "YouTube",
+    "description": "Pee Safe teams up with cricketer Smriti Mandhana in this spirited commercial built around the #BeInYourComfortZone campaign. The film celebrates breaking taboos around women's intimate wellness through candid, confidence-led storytelling and bright, energetic framing. A female-first narrative positions Pee Safe as a companion for everyday comfort, strength, and unapologetic self-assurance.",
+    "aspect": "16 / 9",
+    "collab": false,
+    "filters": [
+      "All",
+      "Commercials",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p2",
+    "number": 2,
+    "kind": "video",
+    "cover": "/assets/archive/2.mp4",
+    "gallery": [
+      "/assets/archive/2.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.youtube.com/watch?v=zlQc2GHojL8",
+    "title": "Aarohi Loans for Women",
+    "category": "Brand Film",
+    "year": "2023",
+    "platform": "YouTube",
+    "description": "Aarohi Loans for Women champions financial independence for Indian women through a warm, aspirational brand film. Following the journeys of women turning big dreams into reality, the film uses intimate, real-world vignettes and an uplifting score to frame Aarohi as a trusted partner. It reframes borrowing as empowerment, not burden.",
+    "aspect": "16 / 9",
+    "collab": false,
+    "filters": [
+      "All",
+      "Brand Films",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p3",
+    "number": 3,
+    "kind": "video",
+    "cover": "/assets/archive/3.mp4",
+    "gallery": [
+      "/assets/archive/3.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.youtube.com/watch?v=E924AYIaCRw",
+    "title": "Centrum × Kajal Aggarwal — Chief Claims Advocate",
+    "category": "Commercial",
+    "year": "2023",
+    "platform": "YouTube",
+    "description": "Centrum enlists actor Kajal Aggarwal as its Chief Claims Advocate in this polished commercial that demystifies daily nutritional gaps. Through clean, credibility-driven direction and a confident on-screen presence, the film communicates Centrum's science-backed multivitamin promise, balancing star appeal with product clarity to earn the trust of health-conscious households.",
+    "aspect": "16 / 9",
+    "collab": false,
+    "filters": [
+      "All",
+      "Commercials",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p4",
+    "number": 4,
+    "kind": "video",
+    "cover": "/assets/archive/4.mp4",
+    "gallery": [
+      "/assets/archive/4.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.instagram.com/reel/DPVoyKujVe4/",
+    "title": "Vertical Campaign Reel",
+    "category": "Social Reel",
+    "year": "2023",
+    "platform": "Instagram",
+    "description": "A vertical Instagram reel crafted for mobile-first storytelling, pairing tight, energetic framing with a syncopated edit built to stop the scroll. Designed for discovery and shareability, it distils a campaign moment into seconds of punchy, platform-native motion that rewards repeated viewing in the feed.",
+    "aspect": "9 / 16",
+    "collab": false,
+    "filters": [
+      "All",
+      "Reels",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p5",
+    "number": 5,
+    "kind": "video",
+    "cover": "/assets/archive/5.mp4",
+    "gallery": [
+      "/assets/archive/5.mp4"
+    ],
+    "grouping": false,
+    "source": "https://youtu.be/F9m4xEH2-dU",
+    "title": "Armani Exchange × Kartik Aaryan — Fall 2024 Watch Collection",
+    "category": "Fashion Film",
+    "year": "2024",
+    "platform": "YouTube",
+    "description": "Armani Exchange taps actor Kartik Aaryan for its Fall 2024 watch collection in a slick, rhythm-driven fashion film. Shot with editorial precision and a metropolitan mood, the spot fuses product hero shots with Kartik's effortless charm. The result is a youthful, premium statement that frames the watches as essential everyday luxury.",
+    "aspect": "16 / 9",
+    "collab": false,
+    "filters": [
+      "All",
+      "Fashion Films",
+      "Brand Films",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p6",
+    "number": 6,
+    "kind": "image",
+    "cover": "/assets/archive/6.1.jpg",
+    "gallery": [
+      "/assets/archive/6.1.jpg",
+      "/assets/archive/6.2.jpg",
+      "/assets/archive/6.3.jpg",
+      "/assets/archive/6.4.jpg",
+      "/assets/archive/6.5.jpg"
+    ],
+    "grouping": true,
+    "source": "https://www.instagram.com/p/Cz-2Mi0C6Bg/",
+    "title": "Collaboration Still",
+    "category": "Campaign Still",
+    "year": "2022",
+    "platform": "Instagram",
+    "description": "A square collaboration still for Instagram, captured from the set and framed for a clean grid. The image carries an easy, behind-the-scenes mood, pairing the studio's craft with a partner brand in a single, editorial composition that feels spontaneous yet considered.",
+    "aspect": "1440 / 923",
+    "collab": true,
+    "filters": [
+      "All",
+      "Campaigns",
+      "Collaborations",
+      "Images"
+    ]
+  },
+  {
+    "id": "p9",
+    "number": 9,
+    "kind": "video",
+    "cover": "/assets/archive/9.mp4",
+    "gallery": [
+      "/assets/archive/9.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.instagram.com/pocketfm.stories/reel/C24lSvovffw/",
+    "title": "PocketFM — Audio Stories Reel",
+    "category": "Social Reel",
+    "year": "2023",
+    "platform": "Instagram",
+    "description": "PocketFM's audio-storytelling world comes alive in this vertical Instagram reel. Built to convert scrollers into listeners, the cut uses snappy, sound-led editing and expressive motion to dramatise the platform's immersive fiction. It's a punchy, platform-native tease engineered for instant curiosity and tap-through.",
+    "aspect": "9 / 16",
+    "collab": false,
+    "filters": [
+      "All",
+      "Reels",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p10",
+    "number": 10,
+    "kind": "video",
+    "cover": "/assets/archive/10.mp4",
+    "gallery": [
+      "/assets/archive/10.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.instagram.com/p/C7bjXlbtp4Z/",
+    "title": "Square Campaign Post",
+    "category": "Social Post",
+    "year": "2023",
+    "platform": "Instagram",
+    "description": "A square Instagram post still from a social campaign, composed for a clean grid presence. The frame favours brand clarity with a confident, editorial mood, extending the campaign's visual language into the feed with restraint and polish that reads instantly at thumbnail scale.",
+    "aspect": "1 / 1",
+    "collab": false,
+    "filters": [
+      "All",
+      "Posts",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p11",
+    "number": 11,
+    "kind": "video",
+    "cover": "/assets/archive/11.mp4",
+    "gallery": [
+      "/assets/archive/11.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.instagram.com/p/C-MkhP6ykXP/",
+    "title": "Square Lifestyle Post",
+    "category": "Social Post",
+    "year": "2023",
+    "platform": "Instagram",
+    "description": "A square campaign post built for Instagram's grid, balancing product clarity with a warm, lifestyle-led mood. The still translates a larger campaign idea into a single, self-contained frame designed to read instantly at feed scale without losing its editorial composure.",
+    "aspect": "1 / 1",
+    "collab": false,
+    "filters": [
+      "All",
+      "Posts",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p12",
+    "number": 12,
+    "kind": "video",
+    "cover": "/assets/archive/12.mp4",
+    "gallery": [
+      "/assets/archive/12.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.instagram.com/p/C4h8FkuN7Li/",
+    "title": "Square Brand Post",
+    "category": "Social Post",
+    "year": "2022",
+    "platform": "Instagram",
+    "description": "A square Instagram post still from a campaign, composed for strong grid presence. The frame pairs brand clarity with a calm, editorial mood, extending the production's visual language into the feed with restraint and a confident sense of composition.",
+    "aspect": "1 / 1",
+    "collab": false,
+    "filters": [
+      "All",
+      "Posts",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p13",
+    "number": 13,
+    "kind": "video",
+    "cover": "/assets/archive/13.mp4",
+    "gallery": [
+      "/assets/archive/13.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.instagram.com/p/C7RB6gGoVDQ/",
+    "title": "Collaboration Set Still",
+    "category": "Campaign Still",
+    "year": "2022",
+    "platform": "Instagram",
+    "description": "A square collaboration still from the set, framed for Instagram with a casual, story-led mood. The image documents a partnership moment between the studio and a brand, captured with candid, on-set energy that feels alive rather than staged.",
+    "aspect": "1 / 1",
+    "collab": true,
+    "filters": [
+      "All",
+      "Campaigns",
+      "Collaborations",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p14",
+    "number": 14,
+    "kind": "image",
+    "cover": "/assets/archive/14.jpg",
+    "gallery": [
+      "/assets/archive/14.jpg"
+    ],
+    "grouping": false,
+    "source": "https://www.instagram.com/p/C6BbgzXoyLR/",
+    "title": "Collaboration Grid Still",
+    "category": "Campaign Still",
+    "year": "2022",
+    "platform": "Instagram",
+    "description": "A square collaboration still from a production, composed for Instagram's grid with a relaxed, on-set mood. The frame captures a candid brand moment, balancing polish with the spontaneity of a working shoot and the ease of a shared creative partnership.",
+    "aspect": "2048 / 2048",
+    "collab": true,
+    "filters": [
+      "All",
+      "Campaigns",
+      "Collaborations",
+      "Images"
+    ]
+  },
+  {
+    "id": "p15",
+    "number": 15,
+    "kind": "image",
+    "cover": "/assets/archive/15.jpg",
+    "gallery": [
+      "/assets/archive/15.jpg"
+    ],
+    "grouping": false,
+    "source": "https://www.instagram.com/p/C2Zu8u2p7di/",
+    "title": "Square Campaign Still",
+    "category": "Campaign Still",
+    "year": "2023",
+    "platform": "Instagram",
+    "description": "A square campaign still for Instagram, styled with clean light and confident framing. The image distils the production's tone into one grid-ready frame built to hold attention at feed scale while keeping its editorial calm.",
+    "aspect": "1440 / 1799",
+    "collab": false,
+    "filters": [
+      "All",
+      "Campaigns",
+      "Images"
+    ]
+  },
+  {
+    "id": "p16",
+    "number": 16,
+    "kind": "video",
+    "cover": "/assets/archive/16.mp4",
+    "gallery": [
+      "/assets/archive/16.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.instagram.com/p/C9Hady1yVDJ/",
+    "title": "Collaboration Post",
+    "category": "Social Post",
+    "year": "2023",
+    "platform": "Instagram",
+    "description": "A square collaboration post for Instagram, pairing the studio with a partner brand in a single, grid-ready frame. The still balances both identities with a relaxed, editorial mood, capturing a behind-the-moment feel from the set.",
+    "aspect": "1 / 1",
+    "collab": true,
+    "filters": [
+      "All",
+      "Posts",
+      "Collaborations",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p17",
+    "number": 17,
+    "kind": "video",
+    "cover": "/assets/archive/17.mp4",
+    "gallery": [
+      "/assets/archive/17.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.instagram.com/reel/C22aMEvoiJl/?utm_source=ig_web_copy_link",
+    "title": "Vertical Brand Reel",
+    "category": "Social Reel",
+    "year": "2023",
+    "platform": "Instagram",
+    "description": "A vertical Instagram reel engineered for the feed, using brisk pacing and clean, mobile-first composition to deliver a campaign beat in seconds. The edit is built around retention and shareability, translating a brand moment into scroll-stopping motion that feels native to the platform and invites a second watch.",
+    "aspect": "9 / 16",
+    "collab": false,
+    "filters": [
+      "All",
+      "Reels",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p18",
+    "number": 18,
+    "kind": "video",
+    "cover": "/assets/archive/18.mp4",
+    "gallery": [
+      "/assets/archive/18.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.instagram.com/reel/Cr0W-g_NBpu/?utm_source=ig_web_copy_link",
+    "title": "Vertical Social Cut",
+    "category": "Social Reel",
+    "year": "2023",
+    "platform": "Instagram",
+    "description": "A vertical Instagram reel tuned for discovery, layering rhythmic editing with confident, platform-native framing. Crafted to reward a glance and earn a tap, it compresses a campaign idea into a few seconds of energetic, feed-ready motion designed to travel across shares and saves.",
+    "aspect": "9 / 16",
+    "collab": false,
+    "filters": [
+      "All",
+      "Reels",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p19",
+    "number": 19,
+    "kind": "video",
+    "cover": "/assets/archive/19.mp4",
+    "gallery": [
+      "/assets/archive/19.mp4"
+    ],
+    "grouping": false,
+    "source": "https://youtube.com/shorts/kVqN7LIbLUM?si=oTajKf2mpI3djwMy",
+    "title": "Vicks Roll On + Inhaler Ad — ft. Guneet Sandhu",
+    "category": "Commercial",
+    "year": "2023",
+    "platform": "YouTube",
+    "description": "Vicks brings fast relief to the feed with a punchy YouTube Shorts ad featuring Guneet Sandhu. In under a minute, the vertical cut demonstrates the Roll On and Inhaler's on-the-go comfort with snappy edits and relatable, congestion-era humour. The film is built for thumb-stopping recall and instant, mobile-first brand association.",
+    "aspect": "9 / 16",
+    "collab": false,
+    "filters": [
+      "All",
+      "Commercials",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p22",
+    "number": 22,
+    "kind": "image",
+    "cover": "/assets/archive/22.jpg",
+    "gallery": [
+      "/assets/archive/22.jpg"
+    ],
+    "grouping": false,
+    "source": "https://www.instagram.com/p/C2uMuHjJmk_/",
+    "title": "Square Brand Still",
+    "category": "Campaign Still",
+    "year": "2023",
+    "platform": "Instagram",
+    "description": "A square campaign still composed for the feed, favouring brand clarity and an editorial calm. The frame extends the shoot's visual language into a single, self-contained social image that reads cleanly at thumbnail scale.",
+    "aspect": "1440 / 1440",
+    "collab": false,
+    "filters": [
+      "All",
+      "Campaigns",
+      "Images"
+    ]
+  },
+  {
+    "id": "p23",
+    "number": 23,
+    "kind": "video",
+    "cover": "/assets/archive/23.mp4",
+    "gallery": [
+      "/assets/archive/23.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.youtube.com/watch?app=desktop&v=or5XQteDzYU",
+    "title": "Disney+ Hotstar — The Night Manager Pranks (Aditya Roy Kapur)",
+    "category": "Brand Film",
+    "year": "2023",
+    "platform": "YouTube",
+    "description": "Disney+ Hotstar launched The Night Manager with a mischievous guerrilla promo starring Aditya Roy Kapur surprising unsuspecting hotel guests. Blending scripted comedy with hidden-camera spontaneity, the film amplifies the series' intrigue while showcasing Aditya's charisma. It's a playful, shareable tease engineered to drive streaming sign-ups and social buzz.",
+    "aspect": "16 / 9",
+    "collab": false,
+    "filters": [
+      "All",
+      "Brand Films",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p24",
+    "number": 24,
+    "kind": "video",
+    "cover": "/assets/archive/24.mp4",
+    "gallery": [
+      "/assets/archive/24.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.instagram.com/p/CmoS25uhkQG/",
+    "title": "Square Campaign Shoot",
+    "category": "Social Post",
+    "year": "2023",
+    "platform": "Instagram",
+    "description": "A square Instagram still from a campaign shoot, framed for strong grid impact. The composition leans on clean light and confident styling to carry the brand story in a single, scroll-resistant image that rewards a closer look.",
+    "aspect": "1 / 1",
+    "collab": false,
+    "filters": [
+      "All",
+      "Posts",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p25",
+    "number": 25,
+    "kind": "video",
+    "cover": "/assets/archive/25.mp4",
+    "gallery": [
+      "/assets/archive/25.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.instagram.com/p/ClgcOJiDf2n/",
+    "title": "Square Social Still",
+    "category": "Social Post",
+    "year": "2022",
+    "platform": "Instagram",
+    "description": "A square social post still composed for Instagram, distilling a campaign's tone into one polished frame. Restrained and brand-forward, it extends the visual narrative into the feed without competing for attention, letting the product and mood speak.",
+    "aspect": "1 / 1",
+    "collab": false,
+    "filters": [
+      "All",
+      "Posts",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p26",
+    "number": 26,
+    "kind": "video",
+    "cover": "/assets/archive/26.mp4",
+    "gallery": [
+      "/assets/archive/26.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.youtube.com/watch?v=W2KMt80-Kg0",
+    "title": "Skinn Noura — A Gift From You, To You",
+    "category": "Brand Film",
+    "year": "2023",
+    "platform": "YouTube",
+    "description": "Skinn's Noura fragrance is celebrated as a gift from you, to you in this sensorial brand film. Soft, feminine cinematography and a delicate rhythm frame Noura as an act of self-love rather than occasion-wear luxury. The film leans into intimacy and ritual, positioning the scent as a daily, personal indulgence.",
+    "aspect": "16 / 9",
+    "collab": false,
+    "filters": [
+      "All",
+      "Brand Films",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p27",
+    "number": 27,
+    "kind": "video",
+    "cover": "/assets/archive/27.mp4",
+    "gallery": [
+      "/assets/archive/27.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.youtube.com/watch?feature=shared&fbclid=PAZXh0bgNhZW0CMTEAAadpVEpFYvty656IN9z_noVfym2_c5Bs8TR4Og10GSvEkgiJ0uM1E29xRg22Cw_aem_8GNvfG_hk81mjmB0XyyD0A&v=OjwGqh_jB6Y",
+    "title": "Dell Futurist — Make Music With Lost Stories On Alienware",
+    "category": "Brand Film",
+    "year": "2023",
+    "platform": "YouTube",
+    "description": "Dell's Futurist initiative teams Alienware with electronic duo Lost Stories to turn cutting-edge tech into music. This brand film follows the artists composing on high-performance machines, merging product capability with creative ambition. Energetic, tech-glossy visuals position Alienware as the instrument for makers pushing what's possible next.",
+    "aspect": "16 / 9",
+    "collab": false,
+    "filters": [
+      "All",
+      "Brand Films",
+      "Videos"
+    ]
+  },
+  {
+    "id": "p28",
+    "number": 28,
+    "kind": "video",
+    "cover": "/assets/archive/28.mp4",
+    "gallery": [
+      "/assets/archive/28.mp4"
+    ],
+    "grouping": false,
+    "source": "https://www.youtube.com/watch?v=RKjF5jTDbC8&t=1s",
+    "title": "World Is Yours To Take — Sustainability Streetwear India",
+    "category": "Brand Film",
+    "year": "2022",
+    "platform": "YouTube",
+    "description": "'World Is Yours To Take' is a brand film championing sustainability in Indian streetwear. Following young creators reimagining fashion through conscious choices, it pairs documentary warmth with bold, street-styled visuals. The film frames responsible design as cultural ownership, encouraging a generation to wear its values and claim the future on its own terms.",
+    "aspect": "16 / 9",
+    "collab": false,
+    "filters": [
+      "All",
+      "Brand Films",
+      "Videos"
+    ]
+  }
+]
