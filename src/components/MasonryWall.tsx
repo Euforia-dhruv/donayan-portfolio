@@ -2,33 +2,21 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import WallVideo from "@/components/WallVideo";
-import {
-  parseAspect,
-  type WallCardItem,
-} from "@/lib/wall-items";
+import PosterFrame from "@/components/WallVideo";
+import { parseAspect, type WallCardItem } from "@/lib/wall-items";
 
 interface Filter {
   key: string;
   label: string;
 }
 
-function spanFor(item: WallCardItem, columns: number): number {
-  if (columns < 3) return 1;
-  const ar = parseAspect(item.aspect);
-  if (item.kind === "video" || item.kind === "youtube") return ar >= 1.4 ? 2 : 1;
-  if (item.kind === "image") return ar >= 1.4 ? 2 : 1;
-  if (item.kind === "pdf") {
-    // deterministic editorial rhythm: ~1 in 4 docs becomes a feature tile
-    let h = 0;
-    for (let i = 0; i < item.id.length; i++) h = (h * 31 + item.id.charCodeAt(i)) | 0;
-    return Math.abs(h) % 4 === 0 ? 2 : 1;
-  }
-  return ar >= 1.4 ? 2 : 1;
-}
+const isImageUrl = (u?: string | null) =>
+  !!u && /\.(jpe?g|png|webp|gif|avif)(\?|$)/i.test(u);
+const isVideoUrl = (u?: string | null) =>
+  !!u && /\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(u);
 
 function columnsForWidth(w: number): number {
-  if (w === 0) return 3;
+  if (!w) return 2;
   if (w < 640) return 2;
   if (w < 1024) return 3;
   if (w < 1500) return 4;
@@ -37,29 +25,79 @@ function columnsForWidth(w: number): number {
   return 7;
 }
 
+function colSpanFor(item: WallCardItem, cols: number): number {
+  if (item.uniform) return 1;
+  if (cols < 4) return 1;
+  if (parseAspect(item.aspect) >= 1.6) return 2;
+  return 1;
+}
+
+/** Blur-up image using next/image (lazy, optimized, high quality). */
+function BlurImage({
+  src,
+  alt,
+  sizes,
+  priority,
+  rounded = "rounded-[14px]",
+}: {
+  src: string;
+  alt: string;
+  sizes: string;
+  priority?: boolean;
+  rounded?: string;
+}) {
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+  if (failed) {
+    return (
+      <div className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br from-charcoal to-black ${rounded}`}>
+        <span className="font-switzer text-caption uppercase tracking-[0.18em] text-stone/60">{alt}</span>
+      </div>
+    );
+  }
+  return (
+    <div className={`absolute inset-0 overflow-hidden ${rounded}`}>
+      <div
+        className="absolute inset-0 bg-charcoal transition-opacity duration-700"
+        style={{ opacity: loaded ? 0 : 1 }}
+      />
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes={sizes}
+        priority={priority}
+        loading={priority ? "eager" : "lazy"}
+        className={`object-cover transition-[opacity,filter] duration-700 ease-out ${
+          loaded ? "opacity-100 blur-0" : "opacity-0 blur-2xl"
+        }`}
+        onLoad={() => setLoaded(true)}
+        onError={() => setFailed(true)}
+      />
+    </div>
+  );
+}
+
 function WallCard({
   item,
-  x,
-  y,
-  w,
-  h,
-  index,
+  colSpan,
+  rowSpan,
+  sizes,
   priority,
+  index,
   onOpen,
 }: {
   item: WallCardItem;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  index: number;
+  colSpan: number;
+  rowSpan: number;
+  sizes: string;
   priority: boolean;
+  index: number;
   onOpen: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const [hovered, setHovered] = useState(false);
-  const [imgReady, setImgReady] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -71,77 +109,43 @@ function WallCard({
           io.disconnect();
         }
       },
-      { threshold: 0.06, rootMargin: "0px 0px -4% 0px" },
+      { threshold: 0.05, rootMargin: "0px 0px -4% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
   }, []);
 
-  const isCampaign =
-    item.filterKeys.includes("campaigns") ||
-    item.agency !== undefined;
+  const posterImage = isImageUrl(item.poster)
+    ? item.poster
+    : isImageUrl(item.preview)
+      ? item.preview
+      : null;
+  const isVideo = item.kind === "video" || isVideoUrl(item.preview);
+  const isPdf = item.kind === "pdf";
+  const playable = isVideo || item.kind === "image";
 
   const media = (() => {
-    if (item.kind === "video") {
-      return (
-        <WallVideo src={item.preview || ""} poster={item.poster} hovered={hovered} priority={priority} />
-      );
-    }
-    if (item.kind === "youtube" || item.kind === "instagram") {
-      return item.poster ? (
-        <>
-          <Image
-            src={item.poster}
-            alt={item.title}
-            fill
-            sizes={`${Math.round(w)}px`}
-            priority={priority}
-            className="object-cover"
-            onLoad={() => setImgReady(true)}
-            onError={() => setImgReady(true)}
-          />
-          {!imgReady && <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-charcoal to-black" />}
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-md">
-              <svg viewBox="0 0 24 24" fill="currentColor" className="ml-0.5 h-6 w-6"><path d="M8 5v14l11-7z" /></svg>
-            </div>
-          </div>
-        </>
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-charcoal to-black" />
-      );
-    }
-    // image / pdf
-    return item.preview ? (
-      <>
-        <Image
-          src={item.preview}
-          alt={item.title}
-          fill
-          sizes={`${Math.round(w)}px`}
-          priority={priority}
-          className={`object-cover transition-[opacity,transform] duration-700 ${imgReady ? "opacity-100" : "opacity-0"}`}
-          onLoad={() => setImgReady(true)}
-          onError={() => setImgReady(true)}
-        />
-        {!imgReady && <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-charcoal to-black" />}
-      </>
-    ) : (
-      <div className="absolute inset-0 bg-gradient-to-br from-charcoal to-black" />
+    if (posterImage) return <BlurImage src={posterImage} alt={item.title} sizes={sizes} priority={priority} />;
+    if (isVideo && item.preview) return <PosterFrame src={item.preview} />;
+    // last-resort designed surface (never a black box, never a broken image)
+    return (
+      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-charcoal to-black">
+        <span className="font-switzer text-body-sm uppercase tracking-[0.18em] text-stone/70">{item.categoryLabel}</span>
+      </div>
     );
   })();
+
+  const showPlay = isVideo || item.kind === "youtube" || item.kind === "instagram";
 
   return (
     <div
       ref={ref}
-      className="group absolute"
       style={{
-        transform: `translate3d(${x}px, ${y}px, 0) translateY(${visible ? 0 : 26}px)`,
-        width: w,
-        height: h,
+        gridColumn: `span ${colSpan}`,
+        gridRow: `span ${rowSpan}`,
         opacity: visible ? 1 : 0,
-        transition:
-          "transform 0.8s cubic-bezier(0.22,1,0.36,1), opacity 0.8s ease",
+        transform: visible ? "translateY(0)" : "translateY(26px)",
+        transition: "transform 0.8s cubic-bezier(0.22,1,0.36,1), opacity 0.8s ease",
         transitionDelay: visible ? `${(index % 8) * 45}ms` : "0ms",
         willChange: "transform, opacity",
       }}
@@ -153,44 +157,59 @@ function WallCard({
         onMouseLeave={() => setHovered(false)}
         onFocus={() => setHovered(true)}
         onBlur={() => setHovered(false)}
-        aria-label={`${item.title} — open`}
-        className="relative block h-full w-full cursor-pointer overflow-hidden rounded-[14px] bg-charcoal text-left outline-none ring-1 ring-white/[0.06] transition-[transform,box-shadow] duration-500 ease-out focus-visible:ring-2 focus-visible:ring-gold"
+        aria-label={`${item.title} — ${isPdf ? "open deck" : "view project"}`}
+        className="group relative block h-full w-full cursor-pointer overflow-hidden rounded-[14px] bg-charcoal text-left outline-none ring-1 ring-white/[0.05] transition-[transform,box-shadow] duration-500 ease-out focus-visible:ring-2 focus-visible:ring-gold"
         style={{
           boxShadow: hovered
-            ? "0 30px 70px -30px rgba(0,0,0,0.8), 0 0 0 1px rgba(200,162,77,0.22)"
+            ? "0 30px 70px -30px rgba(0,0,0,0.85), 0 0 0 1px rgba(200,162,77,0.22)"
             : "0 10px 30px -24px rgba(0,0,0,0.6)",
         }}
       >
         <div
           className="absolute inset-0 transition-transform duration-700 ease-out"
-          style={{ transform: hovered ? "scale(1.045)" : "scale(1)" }}
+          style={{ transform: hovered ? "scale(1.05)" : "scale(1)" }}
         >
           {media}
         </div>
 
+        {showPlay && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <span
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-white/15 text-white opacity-0 backdrop-blur-md transition-opacity duration-500 group-hover:opacity-100"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="ml-0.5 h-6 w-6">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+          </div>
+        )}
+
         {/* persistent minimal label */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 sm:p-5">
-          <p className="font-switzer text-[clamp(14px,1vw,18px)] font-[300] leading-[1.1] text-cinema-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)]">
+          <p className="font-switzer text-[clamp(14px,1vw,18px)] font-[300] leading-[1.1] text-cinema-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.7)]">
             {item.title}
           </p>
         </div>
 
         {/* hover metadata */}
-        <div
-          className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/30 to-transparent p-4 opacity-0 transition-opacity duration-500 group-hover:opacity-100 sm:p-5"
-        >
+        <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/92 via-black/35 to-transparent p-4 opacity-0 transition-opacity duration-500 group-hover:opacity-100 sm:p-5">
           <div className="mb-3 flex flex-col gap-0.5 text-[10px] font-switzer uppercase tracking-[0.14em] text-cinema-white/70">
             {item.year && <span className="text-gold/80">{item.year}</span>}
             {item.categoryLabel && <span>{item.categoryLabel}</span>}
-            {item.client && item.client !== item.title && <span className="text-cinema-white/55">{item.client}</span>}
+            {item.client && item.client !== item.title && (
+              <span className="text-cinema-white/55">{item.client}</span>
+            )}
           </div>
           <h3 className="font-switzer text-[clamp(16px,1.2vw,22px)] font-[300] leading-[1.08] text-cinema-white">
             {item.title}
           </h3>
           {item.description && (
-            <p className="mt-1 text-caption font-switzer font-[300] text-cinema-white/60">{item.description}</p>
+            <p className="mt-1 text-caption font-switzer font-[300] text-cinema-white/60">
+              {item.description}
+            </p>
           )}
-          {isCampaign && (
+          {item.agency !== undefined && (
             <div className="mt-2 space-y-0.5 text-[10px] font-switzer uppercase tracking-[0.08em] text-cinema-white/55">
               {item.agency && <p>Agency · {item.agency}</p>}
               {item.role && <p>Role · {item.role}</p>}
@@ -198,8 +217,10 @@ function WallCard({
             </div>
           )}
           <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-switzer uppercase tracking-[0.08em] text-gold/90">
-            View Project
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="M3 7h8M11 7L7 3M11 7L7 11" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            {isPdf ? "View Deck" : "View Project"}
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+              <path d="M3 7h8M11 7L7 3M11 7L7 11" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
         </div>
       </button>
@@ -213,20 +234,24 @@ export default function MasonryWall({
   title,
   eyebrow,
   searchPlaceholder = "Search…",
+  pdfWall = false,
 }: {
   items: WallCardItem[];
   filters: readonly Filter[];
   title: string;
   eyebrow: string;
   searchPlaceholder?: string;
+  pdfWall?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const [active, setActive] = useState("all");
   const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState<WallCardItem | null>(null);
 
-  const columns = useMemo(() => columnsForWidth(width), [width]);
-  const gutter = width > 0 && width < 640 ? 16 : 24;
+  const rawColumns = useMemo(() => columnsForWidth(width), [width]);
+  const columns = pdfWall ? Math.min(rawColumns, 5) : rawColumns;
+  const gap = width > 0 && width < 640 ? 14 : 24;
 
   useEffect(() => {
     const el = containerRef.current;
@@ -236,6 +261,17 @@ export default function MasonryWall({
     setWidth(el.clientWidth);
     return () => ro.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!selected) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setSelected(null);
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [selected]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -251,32 +287,16 @@ export default function MasonryWall({
     });
   }, [items, active, query]);
 
-  const { placed, height } = useMemo(() => {
-    if (!width) return { placed: [] as Array<{ item: WallCardItem; x: number; y: number; w: number; h: number }>, height: 0 };
-    const colW = (width - (columns - 1) * gutter) / columns;
-    const colH = new Array(columns).fill(0);
-    const out: Array<{ item: WallCardItem; x: number; y: number; w: number; h: number }> = [];
-    filtered.forEach((it) => {
-      let span = Math.min(spanFor(it, columns), columns);
-      let bestC = 0;
-      let bestH = Infinity;
-      for (let c = 0; c <= columns - span; c++) {
-        let m = 0;
-        for (let k = 0; k < span; k++) m = Math.max(m, colH[c + k]);
-        if (m < bestH) {
-          bestH = m;
-          bestC = c;
-        }
-      }
-      const x = bestC * (colW + gutter);
-      const y = bestH;
-      const w = span * colW + (span - 1) * gutter;
-      const h = w / parseAspect(it.aspect);
-      out.push({ item: it, x, y, w, h });
-      for (let k = 0; k < span; k++) colH[bestC + k] = y + h + gutter;
+  const layout = useMemo(() => {
+    const colW = columns > 0 ? (width - (columns - 1) * gap) / columns : 0;
+    return filtered.map((it) => {
+      const c = colSpanFor(it, columns);
+      const w = c * colW + (c - 1) * gap;
+      const h = parseAspect(it.aspect) > 0 ? w / parseAspect(it.aspect) : w;
+      const r = Math.max(1, Math.round((h + gap) / (1 + gap)));
+      return { it, c, r };
     });
-    return { placed: out, height: Math.max(0, ...colH) };
-  }, [filtered, width, columns, gutter]);
+  }, [filtered, width, columns, gap]);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = {};
@@ -286,10 +306,24 @@ export default function MasonryWall({
     return c;
   }, [items, filters]);
 
+  const open = (item: WallCardItem) => {
+    if (item.kind === "pdf") {
+      window.open(item.source, "_blank", "noopener,noreferrer");
+      return;
+    }
+    if (item.kind === "youtube" || item.kind === "instagram") {
+      window.open(item.source, "_blank", "noopener,noreferrer");
+      return;
+    }
+    setSelected(item);
+  };
+
+  const sizesFor = (c: number) =>
+    `(max-width:640px) 50vw, (max-width:1024px) 33vw, ${Math.round(100 / Math.max(columns, c))}vw`;
+
   return (
     <section className="relative w-full bg-cinema-black" style={{ padding: "clamp(56px, 8vw, 120px) 0" }}>
       <div className="mx-auto max-w-[2400px] px-4 sm:px-6 lg:px-10">
-        {/* header */}
         <div className="mb-10 flex flex-col gap-6 md:mb-14 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="font-switzer text-caption font-[400] uppercase tracking-[0.16em] text-gold/70">{eyebrow}</p>
@@ -302,7 +336,10 @@ export default function MasonryWall({
           </div>
           <div className="w-full max-w-sm md:w-80">
             <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.03] px-5 py-3 transition-colors focus-within:border-gold/60">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true" className="shrink-0 text-stone"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4-4" strokeLinecap="round" /></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true" className="shrink-0 text-stone">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M21 21l-4-4" strokeLinecap="round" />
+              </svg>
               <input
                 type="search"
                 value={query}
@@ -315,7 +352,6 @@ export default function MasonryWall({
           </div>
         </div>
 
-        {/* filters */}
         <div className="mb-10 flex flex-wrap gap-2">
           {filters.map((f) => (
             <button
@@ -336,26 +372,75 @@ export default function MasonryWall({
           ))}
         </div>
 
-        {/* masonry */}
-        <div ref={containerRef} className="relative w-full" style={{ height }}>
-          {placed.map((p, i) => (
-            <WallCard
-              key={p.item.id}
-              item={p.item}
-              x={p.x}
-              y={p.y}
-              w={p.w}
-              h={p.h}
-              index={i}
-              priority={p.y < 760}
-              onOpen={() => window.open(p.item.source, "_blank", "noopener,noreferrer")}
+        {width > 0 ? (
+          <div
+            ref={containerRef}
+            className="relative grid"
+            style={{
+              gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+              gridAutoRows: "1px",
+              gridAutoFlow: "row dense",
+              gap: `${gap}px`,
+            }}
+          >
+            {layout.map(({ it, c, r }, i) => (
+              <WallCard
+                key={it.id}
+                item={it}
+                colSpan={c}
+                rowSpan={r}
+                sizes={sizesFor(c)}
+                priority={i < columns * 2}
+                index={i}
+                onOpen={() => open(it)}
+              />
+            ))}
+            {filtered.length === 0 && (
+              <p className="col-span-full py-24 text-center font-switzer text-body text-stone">
+                Nothing here yet.
+              </p>
+            )}
+          </div>
+        ) : (
+          <div ref={containerRef} className="min-h-[60vh]" />
+        )}
+      </div>
+
+      {selected && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={selected.title}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 sm:p-10"
+          onClick={() => setSelected(null)}
+        >
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={() => setSelected(null)}
+            className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl text-cinema-white backdrop-blur-md transition-colors hover:bg-white/20"
+          >
+            ×
+          </button>
+          {selected.kind === "video" && selected.preview ? (
+            <video
+              src={selected.preview}
+              controls
+              autoPlay
+              playsInline
+              className="max-h-[90vh] max-w-[95vw] rounded-lg"
+              onClick={(e) => e.stopPropagation()}
             />
-          ))}
-          {placed.length === 0 && (
-            <p className="py-24 text-center font-switzer text-body text-stone">Nothing here yet.</p>
+          ) : (
+            <img
+              src={selected.poster || selected.preview || ""}
+              alt={selected.title}
+              className="max-h-[90vh] max-w-[95vw] rounded-lg object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
           )}
         </div>
-      </div>
+      )}
     </section>
   );
 }

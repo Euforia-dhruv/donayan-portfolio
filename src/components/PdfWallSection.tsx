@@ -13,6 +13,7 @@ export default function PdfWallSection() {
       eyebrow="Presentations & Treatments"
       title="Creative Library"
       searchPlaceholder="Search decks, pitches, treatments…"
+      pdfWall
     />
   );
 }

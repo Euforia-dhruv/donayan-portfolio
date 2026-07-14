@@ -18,6 +18,7 @@ export interface WallCardItem {
   filterKeys: string[];
   agency?: string;
   role?: string;
+  uniform?: boolean;
 }
 
 export function parseAspect(aspect: string): number {
@@ -53,30 +54,35 @@ function pdfFilterKeys(category: string): string[] {
 
 /** PDF wall — every doc thumbnail, each linking to its Google Drive PDF. */
 export function buildPdfWallItems(): WallCardItem[] {
-  return getDrivePdfs().map((d) => {
-    const { category, description } = pdfMeta(d.title);
-    return {
-      id: d.id,
-      kind: "pdf",
-      title: d.title,
-      client: d.client,
-      year: d.year,
-      categoryLabel: category,
-      description,
-      platform: "PDF",
-      source: d.pdfUrl,
-      preview: d.thumbnail,
-      poster: d.thumbnail,
-      aspect: "3 / 4",
-      tags: [],
-      filterKeys: pdfFilterKeys(category),
-    };
-  });
+  return getDrivePdfs()
+    .filter((d) => !!d.thumbnail)
+    .map((d) => {
+      const { category, description } = pdfMeta(d.title);
+      return {
+        id: d.id,
+        kind: "pdf" as const,
+        title: d.title,
+        client: d.client,
+        year: d.year,
+        categoryLabel: category,
+        description,
+        platform: "PDF",
+        source: d.pdfUrl,
+        preview: d.thumbnail,
+        poster: d.thumbnail,
+        aspect: "3 / 4",
+        tags: [],
+        filterKeys: pdfFilterKeys(category),
+        uniform: true,
+      };
+    });
 }
 
 /** Production wall — every production (videos, reels, posts, brand films…). */
 export function buildProductionWallItems(projects: any[]): WallCardItem[] {
-  const all = buildArchiveItems(projects).filter((i) => i.kind !== "pdf");
+  const all = buildArchiveItems(projects).filter(
+    (i) => i.kind !== "pdf" && (i.poster || i.preview),
+  );
 
   return all.map((i) => {
     const txt = `${i.categoryLabel} ${(i.tags || []).join(" ")}`.toLowerCase();
@@ -114,18 +120,14 @@ export const PRODUCTION_FILTERS = [
   { key: "commercials", label: "Commercials" },
   { key: "brand-films", label: "Brand Films" },
   { key: "music-videos", label: "Music Videos" },
-  { key: "reels", label: "Reels" },
   { key: "posts", label: "Posts" },
-  { key: "campaigns", label: "Campaigns" },
-  { key: "editorial", label: "Editorial" },
-  { key: "fashion", label: "Fashion" },
-  { key: "viral", label: "Virals" },
-  { key: "youtube", label: "YouTube" },
+  { key: "reels", label: "Reels" },
+  { key: "collaborations", label: "Collaborations" },
+  { key: "viral", label: "Viral" },
 ] as const;
 
 export const PDF_FILTERS = [
   { key: "all", label: "All" },
-  { key: "editorial", label: "Editorial" },
   { key: "decks", label: "Decks" },
   { key: "treatments", label: "Treatments" },
   { key: "casting", label: "Casting" },
