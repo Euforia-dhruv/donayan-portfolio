@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
-import PosterFrame from "@/components/WallVideo";
+import {
+  getYouTubeEmbedUrl,
+  getVimeoEmbedUrl,
+} from "@/lib/video-utils";
 import { parseAspect, type WallCardItem } from "@/lib/wall-items";
 
 interface Filter {
@@ -14,6 +17,9 @@ const isImageUrl = (u?: string | null) =>
   !!u && /\.(jpe?g|png|webp|gif|avif)(\?|$)/i.test(u);
 const isVideoUrl = (u?: string | null) =>
   !!u && /\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(u);
+const isYouTube = (u?: string | null) => !!u && (u.includes("youtube.com") || u.includes("youtu.be"));
+const isVimeo = (u?: string | null) => !!u && u.includes("vimeo.com");
+const isInstagram = (u?: string | null) => !!u && u.includes("instagram.com");
 
 function columnsForWidth(w: number): number {
   if (!w) return 2;
@@ -50,7 +56,7 @@ function BlurImage({
   const [failed, setFailed] = useState(false);
   if (failed) {
     return (
-      <div className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br from-charcoal to-black ${rounded}`}>
+      <div className={`absolute inset-0 flex items-center justify-center bg-charcoal bg-gradient-to-br from-charcoal to-black ${rounded}`}>
         <span className="font-switzer text-caption uppercase tracking-[0.18em] text-stone/60">{alt}</span>
       </div>
     );
@@ -75,6 +81,32 @@ function BlurImage({
         onError={() => setFailed(true)}
       />
     </div>
+  );
+}
+
+/** Designed poster for a video that has no image thumbnail (never a black box). */
+function DesignedPoster({ title, rounded = "rounded-[14px]" }: { title: string; rounded?: string }) {
+  return (
+    <div
+      className={`absolute inset-0 flex items-center justify-center bg-charcoal bg-gradient-to-br from-charcoal via-[#16140f] to-black ${rounded}`}
+    >
+      <span className="px-6 text-center font-switzer text-body-sm font-[300] uppercase leading-tight tracking-[0.16em] text-stone/70">
+        {title}
+      </span>
+    </div>
+  );
+}
+
+function PlayIcon() {
+  return (
+    <span
+      className="flex h-14 w-14 items-center justify-center rounded-full bg-white/15 text-white opacity-0 backdrop-blur-md transition-opacity duration-500 group-hover:opacity-100"
+      aria-hidden="true"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor" className="ml-0.5 h-6 w-6">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+    </span>
   );
 }
 
@@ -120,22 +152,12 @@ function WallCard({
     : isImageUrl(item.preview)
       ? item.preview
       : null;
-  const isVideo = item.kind === "video" || isVideoUrl(item.preview);
   const isPdf = item.kind === "pdf";
-  const playable = isVideo || item.kind === "image";
+  const isPlayable = item.kind === "video" || isVideoUrl(item.preview) || isYouTube(item.source) || isVimeo(item.source) || isInstagram(item.source);
 
-  const media = (() => {
-    if (posterImage) return <BlurImage src={posterImage} alt={item.title} sizes={sizes} priority={priority} />;
-    if (isVideo && item.preview) return <PosterFrame src={item.preview} />;
-    // last-resort designed surface (never a black box, never a broken image)
-    return (
-      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-charcoal to-black">
-        <span className="font-switzer text-body-sm uppercase tracking-[0.18em] text-stone/70">{item.categoryLabel}</span>
-      </div>
-    );
-  })();
-
-  const showPlay = isVideo || item.kind === "youtube" || item.kind === "instagram";
+  const media = isPdf || posterImage
+    ? <BlurImage src={posterImage || item.poster || item.preview || ""} alt={item.title} sizes={sizes} priority={priority} />
+    : <DesignedPoster title={item.title} />;
 
   return (
     <div
@@ -172,16 +194,9 @@ function WallCard({
           {media}
         </div>
 
-        {showPlay && (
+        {isPlayable && !isPdf && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <span
-              className="flex h-14 w-14 items-center justify-center rounded-full bg-white/15 text-white opacity-0 backdrop-blur-md transition-opacity duration-500 group-hover:opacity-100"
-              aria-hidden="true"
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor" className="ml-0.5 h-6 w-6">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </span>
+            <PlayIcon />
           </div>
         )}
 
@@ -205,9 +220,7 @@ function WallCard({
             {item.title}
           </h3>
           {item.description && (
-            <p className="mt-1 text-caption font-switzer font-[300] text-cinema-white/60">
-              {item.description}
-            </p>
+            <p className="mt-1 text-caption font-switzer font-[300] text-cinema-white/65">{item.description}</p>
           )}
           {item.agency !== undefined && (
             <div className="mt-2 space-y-0.5 text-[10px] font-switzer uppercase tracking-[0.08em] text-cinema-white/55">
@@ -224,6 +237,77 @@ function WallCard({
           </div>
         </div>
       </button>
+    </div>
+  );
+}
+
+function Lightbox({ item, onClose }: { item: WallCardItem; onClose: () => void }) {
+  const posterImage = isImageUrl(item.poster) ? item.poster : isImageUrl(item.preview) ? item.preview : null;
+  let content: ReactNode;
+  if (item.preview && isVideoUrl(item.preview)) {
+    content = (
+      <video
+        src={item.preview}
+        controls
+        autoPlay
+        playsInline
+        className="max-h-[88vh] max-w-[95vw] rounded-lg bg-black"
+        onError={() => onClose()}
+      />
+    );
+  } else if (isYouTube(item.source)) {
+    const u = getYouTubeEmbedUrl(item.source, true);
+    content = u ? (
+      <iframe src={u} title={item.title} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen className="h-[80vh] w-[95vw] max-w-[1400px] rounded-lg border-0 bg-black" />
+    ) : null;
+  } else if (isVimeo(item.source)) {
+    const u = getVimeoEmbedUrl(item.source);
+    content = u ? (
+      <iframe src={u} title={item.title} allow="autoplay; fullscreen" allowFullScreen className="h-[80vh] w-[95vw] max-w-[1400px] rounded-lg border-0 bg-black" />
+    ) : null;
+  } else if (posterImage) {
+    content = <img src={posterImage} alt={item.title} className="max-h-[88vh] max-w-[95vw] rounded-lg object-contain" />;
+  } else {
+    content = <div className="rounded-lg bg-charcoal p-10 text-cinema-white">Media unavailable.</div>;
+  }
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={item.title}
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/95 p-4 sm:p-10"
+      onClick={onClose}
+    >
+      <button
+        type="button"
+        aria-label="Close"
+        onClick={onClose}
+        className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl text-cinema-white backdrop-blur-md transition-colors hover:bg-white/20"
+      >
+        ×
+      </button>
+      <div className="mb-4 max-w-[1400px] text-center" onClick={(e) => e.stopPropagation()}>
+        <p className="font-switzer text-caption uppercase tracking-[0.16em] text-gold/80">
+          {[item.year, item.categoryLabel].filter(Boolean).join(" · ")}
+        </p>
+        <h3 className="mt-1 font-switzer text-[clamp(18px,2vw,28px)] font-[300] text-cinema-white">{item.title}</h3>
+      </div>
+      <div onClick={(e) => e.stopPropagation()}>{content}</div>
+      {item.source && (
+        <a
+          href={item.source}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="mt-5 inline-flex items-center gap-1.5 text-[11px] font-switzer uppercase tracking-[0.08em] text-gold/90 hover:text-gold"
+        >
+          View Project
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+            <path d="M3 7h8M11 7L7 3M11 7L7 11" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </a>
+      )}
     </div>
   );
 }
@@ -278,7 +362,7 @@ export default function MasonryWall({
     return items.filter((it) => {
       if (active !== "all" && !it.filterKeys.includes(active)) return false;
       if (q) {
-        const hay = [it.title, it.client, it.year, it.categoryLabel, it.platform, ...it.tags]
+        const hay = [it.title, it.client, it.year, it.categoryLabel, it.platform, it.description, ...it.tags]
           .join(" ")
           .toLowerCase();
         if (!hay.includes(q)) return false;
@@ -292,7 +376,8 @@ export default function MasonryWall({
     return filtered.map((it) => {
       const c = colSpanFor(it, columns);
       const w = c * colW + (c - 1) * gap;
-      const h = parseAspect(it.aspect) > 0 ? w / parseAspect(it.aspect) : w;
+      const ar = parseAspect(it.aspect);
+      const h = ar > 0 ? w / ar : w;
       const r = Math.max(1, Math.round((h + gap) / (1 + gap)));
       return { it, c, r };
     });
@@ -311,7 +396,7 @@ export default function MasonryWall({
       window.open(item.source, "_blank", "noopener,noreferrer");
       return;
     }
-    if (item.kind === "youtube" || item.kind === "instagram") {
+    if (item.kind === "instagram" && !item.preview) {
       window.open(item.source, "_blank", "noopener,noreferrer");
       return;
     }
@@ -406,41 +491,7 @@ export default function MasonryWall({
         )}
       </div>
 
-      {selected && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={selected.title}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 sm:p-10"
-          onClick={() => setSelected(null)}
-        >
-          <button
-            type="button"
-            aria-label="Close"
-            onClick={() => setSelected(null)}
-            className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl text-cinema-white backdrop-blur-md transition-colors hover:bg-white/20"
-          >
-            ×
-          </button>
-          {selected.kind === "video" && selected.preview ? (
-            <video
-              src={selected.preview}
-              controls
-              autoPlay
-              playsInline
-              className="max-h-[90vh] max-w-[95vw] rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
-          ) : (
-            <img
-              src={selected.poster || selected.preview || ""}
-              alt={selected.title}
-              className="max-h-[90vh] max-w-[95vw] rounded-lg object-contain"
-              onClick={(e) => e.stopPropagation()}
-            />
-          )}
-        </div>
-      )}
+      {selected && <Lightbox item={selected} onClose={() => setSelected(null)} />}
     </section>
   );
 }

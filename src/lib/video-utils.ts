@@ -56,6 +56,23 @@ export function isEmbeddable(url: string): boolean {
   return url.includes("youtube.com") || url.includes("youtu.be");
 }
 
+export function getVimeoId(url: string): string | null {
+  const m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  return m ? m[1] : null;
+}
+
+export function getVimeoEmbedUrl(url: string): string | null {
+  const id = getVimeoId(url);
+  if (!id) return null;
+  return `https://player.vimeo.com/video/${id}?autoplay=1&title=0&byline=0&portrait=0`;
+}
+
+export function getInstagramEmbedUrl(url: string): string | null {
+  const code = getInstagramCode(url);
+  if (!code) return null;
+  return `https://www.instagram.com/p/${code}/embed/`;
+}
+
 export function getPlatformLabel(url: string): string {
   if (url.includes("youtube.com/shorts")) return "YouTube Shorts";
   if (url.includes("youtube.com") || url.includes("youtu.be")) return "YouTube";

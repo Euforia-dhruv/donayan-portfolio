@@ -78,13 +78,42 @@ export function buildPdfWallItems(): WallCardItem[] {
     });
 }
 
+/** Generic text that should never be shown as a "real" description. */
+const GENERIC = new Set([
+  "creative campaign", "brand project", "campaign", "project", "video", "film",
+  "lorem ipsum", "untitled", "work", "production", "reel", "post",
+]);
+
+function isRealDescription(s?: string): boolean {
+  if (!s || s.trim().length < 4) return false;
+  return !GENERIC.has(s.trim().toLowerCase());
+}
+
+function norm(u?: string): string {
+  return (u || "")
+    .toLowerCase()
+    .replace(/^https?:\/\//, "")
+    .replace(/^www\./, "")
+    .replace(/[?#].*$/, "")
+    .replace(/\/$/, "");
+}
+
 /** Production wall — every production (videos, reels, posts, brand films…). */
 export function buildProductionWallItems(projects: any[]): WallCardItem[] {
   const all = buildArchiveItems(projects).filter(
     (i) => i.kind !== "pdf" && (i.poster || i.preview),
   );
 
-  return all.map((i) => {
+  const seen = new Set<string>();
+  const out: WallCardItem[] = [];
+
+  for (const i of all) {
+    // Dedupe: same media + same client + same year => keep one.
+    const mediaKey = norm(i.preview || i.source);
+    const dupKey = `${mediaKey}|${norm(i.client)}|${norm(i.year)}`;
+    if (seen.has(dupKey)) continue;
+    seen.add(dupKey);
+
     const txt = `${i.categoryLabel} ${(i.tags || []).join(" ")}`.toLowerCase();
     const keys = new Set<string>(i.filterKeys || ["all"]);
     if (/campaign/.test(txt)) keys.add("campaigns");
@@ -94,14 +123,14 @@ export function buildProductionWallItems(projects: any[]): WallCardItem[] {
     keys.add("all");
 
     const isCampaign = keys.has("campaigns") || /campaign/.test(txt);
-    return {
+    out.push({
       id: i.id,
       kind: i.kind,
       title: i.title,
       client: i.client,
       year: i.year,
       categoryLabel: i.categoryLabel,
-      description: (i.tags || []).slice(0, 2).join(" · "),
+      description: isRealDescription(i.description) ? i.description : "",
       platform: i.platform,
       source: i.source,
       preview: i.preview,
@@ -110,9 +139,10 @@ export function buildProductionWallItems(projects: any[]): WallCardItem[] {
       tags: i.tags || [],
       filterKeys: [...keys],
       agency: isCampaign ? i.client : undefined,
-      role: isCampaign ? "Director / Producer" : undefined,
-    };
-  });
+      role: i.role,
+    });
+  }
+  return out;
 }
 
 export const PRODUCTION_FILTERS = [

@@ -49,6 +49,9 @@ export interface ArchiveItem {
   poster: string | null;
   aspect: string;
   platform: string;
+  description: string;
+  role?: string;
+  orientation?: string;
   pdf?: string;
   filterKeys: string[];
 }
@@ -115,18 +118,23 @@ export function buildArchiveItems(projects: any[]): ArchiveItem[] {
   const usedWallSources = new Set<string>();
 
   // 1) Productions
+  const orientationAspect: Record<string, string> = {
+    portrait: "9 / 16",
+    square: "1 / 1",
+    landscape: "16 / 9",
+  };
   for (const p of projects || []) {
     const url = p.externalUrl || "";
     const match = WALL.find((w) => norm(w.source) === norm(url));
     let preview: string | null = null;
-    let aspect = "16 / 9";
+    let aspect = orientationAspect[p.orientation || ""] || "16 / 9";
     let poster: string | null = p.thumbnail || null;
 
     if (match) {
       usedWallSources.add(norm(match.source));
       if (isLocalVideo(match.file)) preview = match.file;
       else if (isLocalImage(match.file)) preview = match.file;
-      aspect = match.aspect;
+      aspect = match.aspect || aspect;
       if (isLocalImage(match.file)) poster = match.file;
     } else if ((p.videos || []).some(isLocalVideo)) {
       preview = (p.videos || []).find(isLocalVideo);
@@ -153,6 +161,9 @@ export function buildArchiveItems(projects: any[]): ArchiveItem[] {
       poster,
       aspect,
       platform: getPlatformLabel(url),
+      description: p.description || "",
+      role: p.role || undefined,
+      orientation: p.orientation || undefined,
       filterKeys: keys,
     });
   }
@@ -186,6 +197,7 @@ export function buildArchiveItems(projects: any[]): ArchiveItem[] {
       poster: isImg ? w.file : null,
       aspect: w.aspect,
       platform: w.platform,
+      description: "",
       filterKeys: keys,
     });
   }
@@ -207,6 +219,7 @@ export function buildArchiveItems(projects: any[]): ArchiveItem[] {
       poster: d.thumbnail,
       aspect: "3 / 4",
       platform: "PDF",
+      description: "",
       pdf: d.pdfUrl,
       filterKeys: ["all", "pdf"],
     });
