@@ -47,7 +47,8 @@ export default function Brands() {
         <div className="flex gap-12 md:gap-16 marquee-animate" style={{ width: "max-content" }}>
           {doubled.map((brand, i) => (
             <div key={`${brand._id}-${i}`} className="flex-shrink-0 flex items-center justify-center group">
-              <span className="text-body-sm font-switzer font-[400] text-cinema-white/25 uppercase tracking-[0.02em] whitespace-nowrap group-hover:text-cinema-white transition-colors duration-500 cursor-default">
+              <span className="text-body-sm font-switzer font-[400] text-cinema-white/25 uppercase tracking-[0.02em] whitespace-nowrap group-hover:text-gold group-hover:tracking-[0.2em] transition-all duration-500 cursor-default"
+                style={{ transitionTimingFunction: "cubic-bezier(0.25,0.46,0.45,0.94)" }}>
                 {brand.name}
               </span>
             </div>
