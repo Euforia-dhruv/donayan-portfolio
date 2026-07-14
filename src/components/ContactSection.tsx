@@ -277,6 +277,19 @@ export default function ContactSection({
             </div>
           </motion.aside>
         </div>
+
+        {/* Thank-you sign-off */}
+        <div className="mt-16 flex flex-col items-center text-center">
+          <img
+            src="/assets/images/thank-you.png"
+            alt="Thank you"
+            loading="lazy"
+            className="h-auto w-[min(320px,72vw)] select-none"
+          />
+          <p className="mt-5 font-switzer text-caption font-[400] uppercase tracking-[0.18em] text-stone/60">
+            Thank you for visiting
+          </p>
+        </div>
       </div>
     </section>
   );
