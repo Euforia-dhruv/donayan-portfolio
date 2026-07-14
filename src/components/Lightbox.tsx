@@ -9,6 +9,9 @@ export interface LightboxData {
   source?: string;
   title?: string;
   platform?: string;
+  description?: string;
+  category?: string;
+  year?: string;
   pdf?: string;
 }
 
@@ -111,16 +114,23 @@ export default function Lightbox({
         </div>
 
         {(data.title || data.source) && (
-          <div className="mt-4 flex w-full flex-wrap items-center justify-between gap-3">
-            <div className="min-w-0">
-              {data.platform && (
+          <div className="mt-4 flex w-full flex-wrap items-start justify-between gap-4">
+            <div className="min-w-0 max-w-[70ch]">
+              {data.category && (
                 <p className="font-switzer text-caption uppercase tracking-[0.12em] text-gold/70">
-                  {data.platform}
+                  {data.category}
+                  {data.year ? ` · ${data.year}` : ""}
+                  {data.platform ? ` · ${data.platform}` : ""}
                 </p>
               )}
               {data.title && (
                 <p className="font-switzer text-body-md font-[300] text-cinema-white">
                   {data.title}
+                </p>
+              )}
+              {data.description && (
+                <p className="mt-2 font-switzer text-caption font-[300] leading-relaxed text-cinema-white/65">
+                  {data.description}
                 </p>
               )}
             </div>

@@ -7,6 +7,9 @@ interface WallAsset {
   source: string;
   platform: string;
   label: string;
+  title?: string;
+  category?: string;
+  year?: string;
   description?: string;
 }
 
@@ -189,10 +192,10 @@ export function buildArchiveItems(projects: any[]): ArchiveItem[] {
     items.push({
       id: `wall-${w.file}`,
       kind: isVid ? "video" : "image",
-      title: w.label,
+      title: w.title || w.label,
       client: w.platform,
-      year: "",
-      categoryLabel: w.label,
+      year: w.year || "",
+      categoryLabel: w.category || w.label,
       credits: [],
       tags: [],
       source: w.source,

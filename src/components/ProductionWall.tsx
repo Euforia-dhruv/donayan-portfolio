@@ -3,8 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import wallAssets from "@/lib/wall-assets.json";
+import videoDescRaw from "@/lib/video-desc.json";
 import AutoVideo from "@/components/AutoVideo";
 import Lightbox, { type LightboxData } from "@/components/Lightbox";
+
+const videoDesc = videoDescRaw as Record<string, string>;
 
 interface WallAsset {
   file: string;
@@ -13,6 +16,10 @@ interface WallAsset {
   source: string;
   platform: string;
   label: string;
+  title?: string;
+  category?: string;
+  year?: string;
+  description?: string;
 }
 
 export default function ProductionWall() {
@@ -36,13 +43,18 @@ export default function ProductionWall() {
     return () => obs.disconnect();
   }, []);
 
+  const descOf = (a: WallAsset) => videoDesc[a.file] || a.description || "";
+
   const open = (a: WallAsset) => {
     setLightbox({
       type: a.kind === "video" ? "video" : "image",
       src: a.file,
       source: a.source,
-      title: a.label,
+      title: a.title || a.label,
       platform: a.platform,
+      description: descOf(a),
+      category: a.category,
+      year: a.year,
     });
   };
 
@@ -103,7 +115,7 @@ export default function ProductionWall() {
                   : "none",
                 opacity: 0,
               }}
-              aria-label={`${a.label} — open original`}
+                aria-label={`${a.title || a.label} — open original`}
             >
               <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.04]">
                 {a.kind === "video" ? (
@@ -120,12 +132,21 @@ export default function ProductionWall() {
                 )}
               </div>
 
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-1 p-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                <p className="font-switzer text-caption font-[400] leading-tight text-cinema-white">
-                  {a.label}
+                <p className="font-switzer text-[10px] font-[400] uppercase tracking-[0.1em] text-gold/75">
+                  {a.category || a.platform}
+                  {a.year ? ` · ${a.year}` : ""}
                 </p>
-                <span className="mt-0.5 inline-block text-[10px] font-switzer uppercase tracking-[0.1em] text-gold/80">
+                <p className="mt-0.5 font-switzer text-caption font-[400] leading-tight text-cinema-white">
+                  {a.title || a.label}
+                </p>
+                {descOf(a) && (
+                  <p className="mt-1 line-clamp-3 font-switzer text-[11px] font-[300] leading-snug text-cinema-white/70">
+                    {descOf(a)}
+                  </p>
+                )}
+                <span className="mt-1 inline-block text-[10px] font-switzer uppercase tracking-[0.1em] text-gold/80">
                   View Original
                 </span>
               </div>
