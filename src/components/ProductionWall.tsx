@@ -26,7 +26,11 @@ const FILTER_ORDER = [
 
 const GAP = 16;
 
-export default function ProductionWall() {
+export default function ProductionWall({
+  titleAs = "h2",
+}: {
+  titleAs?: "h1" | "h2";
+}) {
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -156,12 +160,21 @@ export default function ProductionWall() {
           <p className="font-switzer text-caption font-[400] uppercase tracking-[0.12em] text-stone">
             The Moodboard
           </p>
-          <h2
-            className="mt-3 font-switzer font-[300] leading-[1] tracking-[-0.03em]"
-            style={{ fontSize: "clamp(32px, 4vw, 54px)", color: "#F5F5F2" }}
-          >
-            The Wall
-          </h2>
+          {titleAs === "h1" ? (
+            <h1
+              className="mt-3 font-switzer font-[300] leading-[1] tracking-[-0.03em]"
+              style={{ fontSize: "clamp(32px, 4vw, 54px)", color: "#F5F5F2" }}
+            >
+              The Wall
+            </h1>
+          ) : (
+            <h2
+              className="mt-3 font-switzer font-[300] leading-[1] tracking-[-0.03em]"
+              style={{ fontSize: "clamp(32px, 4vw, 54px)", color: "#F5F5F2" }}
+            >
+              The Wall
+            </h2>
+          )}
           <p className="mt-2 font-switzer text-caption font-[400] text-stone/60">
             {wallItems.length} selected works · click to view the original
           </p>

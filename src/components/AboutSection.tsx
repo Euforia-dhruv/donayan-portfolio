@@ -4,7 +4,13 @@ import { useRef, useEffect } from "react";
 import { getMediaUrl } from "@/lib/media";
 import { useAbout, useSettings } from "@/lib/convex/site-data";
 
-export default function AboutSection() {
+const DEFAULT_BIO = `Donayan Sahdev is a Creative Producer and Director with experience producing commercials, brand films, fashion campaigns, music videos and digital-first content for leading brands and agencies. Passionate about cinematic storytelling, production excellence and building memorable visual experiences across platforms, he partners with agencies and brands to take projects from brief to final delivery. Based in Mumbai, India, Donayan works across the country and worldwide on commercials, brand films, fashion films, photography, creative direction and full-scale production.`;
+
+export default function AboutSection({
+  titleAs = "h2",
+}: {
+  titleAs?: "h1" | "h2";
+}) {
   const { about } = useAbout();
   const { settings } = useSettings();
   const sectionRef = useRef<HTMLElement>(null);
@@ -15,8 +21,11 @@ export default function AboutSection() {
     observer.observe(el); return () => observer.disconnect();
   }, []);
 
-  const title = settings?.seoTitle || settings?.siteTitle || "Bridging creative vision and production execution.";
-  const bio = about?.bio || "";
+  const title =
+    settings?.seoTitle ||
+    settings?.siteTitle ||
+    "Creative Producer & Director crafting cinematic brand stories.";
+  const bio = about?.bio?.trim() || DEFAULT_BIO;
   const paragraphs = bio.split("\n\n").filter(Boolean);
 
   const stats = [
@@ -32,7 +41,15 @@ export default function AboutSection() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-16">
           <div className="lg:col-span-3">
             <p className="text-caption font-switzer font-[400] text-stone uppercase tracking-[0.02em] mb-4 reveal reveal-delay-1">About</p>
-            <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] max-w-2xl mb-8 reveal reveal-delay-2">{title}</h2>
+            {titleAs === "h1" ? (
+              <h1 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] max-w-2xl mb-8 reveal reveal-delay-2">
+                {title}
+              </h1>
+            ) : (
+              <h2 className="text-heading md:text-heading-lg font-switzer font-[300] text-cinema-white leading-[1] tracking-[-0.03em] max-w-2xl mb-8 reveal reveal-delay-2">
+                {title}
+              </h2>
+            )}
             <div className="space-y-4 reveal reveal-delay-3">
               {paragraphs.map((para, i) => (
                 <p key={i} className="text-body md:text-subheading font-switzer font-[300] text-stone leading-[1.6] max-w-2xl tracking-[-0.01em]">{para}</p>

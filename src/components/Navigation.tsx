@@ -1,46 +1,55 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-const navItems = [
-  { label: "Wall", href: "#wall" },
-  { label: "Archive", href: "#featured" },
-  { label: "Timeline", href: "#process" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
-];
+/**
+ * Section-based navigation for a single-page scroll portfolio.
+ *
+ *  • Fixed at top, transparent over the hero, blurs to a dark bar on scroll.
+ *  • Every item scrolls smoothly to its in-page section (Wall / Archive /
+ *    Timeline / About / Contact), accounting for the fixed navbar height.
+ *  • Active section is tracked with an IntersectionObserver scroll-spy and
+ *    highlighted with an animated underline (desktop) / gold text (mobile).
+ *  • Logo returns to the top of the page.
+ *  • On standalone sub-pages the same labels route to `/#section` and the
+ *    homepage then scrolls to the anchored section on arrival.
+ */
+
+const SECTIONS = [
+  { id: "wall", label: "Wall" },
+  { id: "archive", label: "Archive" },
+  { id: "timeline", label: "Timeline" },
+  { id: "about", label: "About" },
+  { id: "contact", label: "Contact" },
+] as const;
+
+const CTA = { label: "Start Project" };
+
+const NAV_H = 80; // h-20 — also read live from the <nav> element
 
 export default function Navigation() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
-  const lastScrollY = useRef(0);
-  const menuOpenRef = useRef(false);
+  const [activeId, setActiveId] = useState<string>("");
+  const navRef = useRef<HTMLElement>(null);
+  const rafRef = useRef<number | null>(null);
+
+  const isHome = pathname === "/";
+
+  // Offset used for both smooth scrolling and the scroll-spy band.
+  const offset = () => (navRef.current?.offsetHeight ?? NAV_H) + 8;
 
   useEffect(() => {
-    menuOpenRef.current = menuOpen;
-  }, [menuOpen]);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const sy = window.scrollY;
-      setScrolled(sy > 60);
-      if (menuOpenRef.current) {
-        setHidden(false);
-        return;
-      }
-      if (sy > 200) {
-        setHidden(sy > lastScrollY.current);
-      } else {
-        setHidden(false);
-      }
-      lastScrollY.current = sy;
-    };
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Lock body scroll while the mobile menu is open.
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => {
@@ -48,137 +57,237 @@ export default function Navigation() {
     };
   }, [menuOpen]);
 
+  // Close the menu on Escape and whenever the route changes.
   useEffect(() => {
-    if (!menuOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMenuOpen(false);
-    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [menuOpen]);
+  }, []);
 
   useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  // --- Scroll-spy: highlight the section currently under the navbar --------
+  useEffect(() => {
+    if (!isHome) return;
+    const visible = new Set<string>();
+    const ids = SECTIONS.map((s) => s.id);
+    const els = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => !!el);
+
+    if (els.length === 0) return;
+
+    const compute = () => {
+      let best: string | null = null;
+      let bestTop = Infinity;
+      visible.forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const top = el.getBoundingClientRect().top;
+        if (top < bestTop) {
+          bestTop = top;
+          best = id;
+        }
+      });
+      if (best) setActiveId(best);
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) setActiveSection(`#${entry.target.id}`);
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
         }
+        compute();
       },
-      { threshold: 0.3, rootMargin: "-80px 0px 0px 0px" },
+      { rootMargin: `-${NAV_H}px 0px -45% 0px`, threshold: 0 }
     );
-    const sections = navItems
-      .map((item) => document.getElementById(item.href.slice(1)))
-      .filter(Boolean);
-    sections.forEach((s) => s && observer.observe(s));
-    return () => observer.disconnect();
-  }, []);
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent, href: string) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        setMenuOpen(false);
-        const id = href.slice(1);
-        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-      }
-    },
-    [],
-  );
+    els.forEach((el) => observer.observe(el));
+    compute();
+    return () => observer.disconnect();
+  }, [isHome, pathname]);
+
+  // --- On arrival at `/#section` (direct load or cross-page nav) scroll ----
+  useEffect(() => {
+    if (!isHome) return;
+    const hash = window.location.hash.replace("#", "");
+    if (!hash || !SECTIONS.some((s) => s.id === hash)) return;
+    const id = window.requestAnimationFrame(() => {
+      const el = document.getElementById(hash);
+      if (!el) return;
+      const y = el.getBoundingClientRect().top + window.scrollY - offset();
+      window.scrollTo({ top: y, behavior: "auto" });
+      setActiveId(hash);
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, [isHome, pathname]);
+
+  // Smoothly scroll to a section (homepage only — the default Link behaviour
+  // handles cross-page navigation to `/#section`).
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const y = el.getBoundingClientRect().top + window.scrollY - offset();
+    window.scrollTo({ top: y, behavior: "smooth" });
+    window.history.pushState(null, "", `#${id}`);
+    setActiveId(id);
+  };
+
+  const handleNav = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    id: string
+  ) => {
+    if (isHome) {
+      e.preventDefault();
+      scrollToSection(id);
+      setMenuOpen(false);
+    }
+    // Not on the homepage: let <Link> navigate to `/#id`; the effect above
+    // will scroll once the homepage mounts.
+  };
+
+  const handleLogo = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (isHome) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.history.pushState(null, "", "/");
+      setMenuOpen(false);
+    }
+  };
+
+  const activeFor = (id: string) =>
+    isHome ? activeId === id : pathname === `/${id}`;
+
+  const solid = scrolled || menuOpen || !isHome;
 
   const linkClass = (active: boolean) =>
     `relative font-switzer text-body-sm font-[400] no-underline transition-colors after:absolute after:bottom-[-6px] after:left-0 after:h-px after:w-full after:rounded-full after:bg-gold after:content-[''] after:transition-transform after:duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black ${
       active
         ? "text-cinema-white after:scale-x-100"
-        : "text-cinema-white/50 after:scale-x-0 hover:text-cinema-white"
+        : "text-cinema-white/55 after:scale-x-0 hover:text-cinema-white"
     }`;
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        hidden ? "-translate-y-full" : "translate-y-0"
-      } ${
-        scrolled || menuOpen
-          ? "bg-cinema-black/80 backdrop-blur-xl border-b border-cinema-white/5"
-          : "bg-transparent"
+      ref={navRef}
+      className={`fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top)] transition-all duration-500 ${
+        solid
+          ? "border-b border-cinema-white/5 bg-cinema-black/85 shadow-[0_8px_30px_rgba(0,0,0,0.45)] backdrop-blur-xl"
+          : "border-b border-transparent bg-transparent"
       }`}
-      role="navigation"
       aria-label="Main navigation"
     >
-      <div className="mx-auto flex h-20 max-w-[1400px] items-center justify-between px-8 md:h-24 md:px-10">
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="shrink-0 cursor-pointer border-none bg-transparent p-0 text-cinema-white outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black rounded-lg"
-          aria-label="Donayan Sahdev — Scroll to top"
+      <div className="mx-auto flex h-20 max-w-[1400px] items-center justify-between px-6 md:px-10">
+        {/* Logo */}
+        <Link
+          href="/"
+          onClick={handleLogo}
+          aria-label="Donayan Sahdev — Home"
+          className="flex shrink-0 items-center rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"
         >
-          <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="text-cinema-white" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" className="text-cinema-white" aria-hidden="true">
             <circle cx="16" cy="16" r="15" stroke="currentColor" strokeWidth="1.5" />
             <path d="M10 16h12M16 10v12" stroke="currentColor" strokeWidth="1.5" />
             <circle cx="16" cy="16" r="5" fill="currentColor" />
           </svg>
-        </button>
+          <span className="ml-3 font-switzer text-body font-[400] tracking-[-0.01em] text-cinema-white">
+            Donayan<span className="text-gold">.</span>
+          </span>
+        </Link>
 
-        <div className="flex items-center gap-10" role="list">
-          {navItems.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className={`${linkClass(activeSection === item.href)} hidden md:inline`}
-              role="listitem"
+        {/* Desktop links */}
+        <div className="hidden flex-1 items-center justify-center gap-10 md:flex">
+          {SECTIONS.map((item) => (
+            <Link
+              key={item.id}
+              href={isHome ? `#${item.id}` : `/#${item.id}`}
+              onClick={(e) => handleNav(e, item.id)}
+              aria-current={activeFor(item.id) ? "true" : undefined}
+              className={linkClass(activeFor(item.id))}
             >
               {item.label}
-            </a>
+            </Link>
           ))}
+        </div>
 
+        {/* Right cluster */}
+        <div className="flex items-center gap-4">
+          <Link
+            href={isHome ? "#contact" : "/contact"}
+            onClick={(e) => handleNav(e, "contact")}
+            className="hidden rounded-full bg-gold px-6 py-2.5 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-cinema-black no-underline transition-opacity duration-300 hover:opacity-85 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black md:inline-flex"
+          >
+            {CTA.label}
+          </Link>
+
+          {/* Mobile hamburger */}
           <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                setMenuOpen(!menuOpen);
-              }
-            }}
-            className="cursor-pointer border-none bg-gold font-switzer text-cinema-black transition-all hover:opacity-85 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"
-            style={{ fontSize: "14px", padding: "10px 22px", borderRadius: "1440px", letterSpacing: "0.03em" }}
+            type="button"
+            onClick={() => setMenuOpen((v) => !v)}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
+            className="relative flex h-11 w-11 items-center justify-center rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black md:hidden"
           >
-            {menuOpen ? "Close" : "Menu"}
+            <span className="relative block h-4 w-6">
+              <span
+                className={`absolute left-0 block h-px w-6 bg-cinema-white transition-all duration-300 ${
+                  menuOpen ? "top-1/2 -translate-y-1/2 rotate-45" : "top-0"
+                }`}
+              />
+              <span
+                className={`absolute left-0 top-1/2 block h-px w-6 -translate-y-1/2 bg-cinema-white transition-all duration-300 ${
+                  menuOpen ? "opacity-0" : "opacity-100"
+                }`}
+              />
+              <span
+                className={`absolute left-0 block h-px w-6 bg-cinema-white transition-all duration-300 ${
+                  menuOpen ? "top-1/2 -translate-y-1/2 -rotate-45" : "bottom-0"
+                }`}
+              />
+            </span>
           </button>
         </div>
       </div>
 
+      {/* Mobile full-screen menu */}
       <div
         id="mobile-menu"
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation"
-        aria-hidden={!menuOpen}
-        className={`fixed inset-0 z-40 flex items-center justify-center bg-cinema-black transition-all duration-300 ${
-          menuOpen
-            ? "pointer-events-auto opacity-100 scale-100"
-            : "pointer-events-none scale-95 opacity-0"
+        className={`fixed inset-0 z-40 flex flex-col bg-cinema-black/95 backdrop-blur-xl transition-all duration-300 md:hidden ${
+          menuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         }`}
+        style={{ paddingTop: "calc(env(safe-area-inset-top) + 5rem)" }}
       >
-        <div className="flex flex-col items-center gap-10" role="list">
-          {navItems.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              onClick={() => setMenuOpen(false)}
-              onKeyDown={(e) => handleKeyDown(e, item.href)}
-              role="listitem"
+        <nav className="flex flex-1 flex-col justify-center gap-2 px-8" aria-label="Mobile">
+          {SECTIONS.map((item) => (
+            <Link
+              key={item.id}
+              href={isHome ? `#${item.id}` : `/#${item.id}`}
+              onClick={(e) => handleNav(e, item.id)}
+              aria-current={activeFor(item.id) ? "true" : undefined}
               tabIndex={menuOpen ? 0 : -1}
-              className={`text-[clamp(36px,6vw,64px)] font-switzer font-[300] no-underline tracking-[-0.02em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black rounded-sm ${
-                activeSection === item.href
-                  ? "text-gold"
-                  : "text-cinema-white hover:text-gold"
+              className={`flex min-h-[44px] items-center border-b border-cinema-white/5 font-switzer text-[clamp(28px,8vw,44px)] font-[300] tracking-[-0.02em] no-underline transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black ${
+                activeFor(item.id) ? "text-gold" : "text-cinema-white hover:text-gold"
               }`}
             >
               {item.label}
-            </a>
+            </Link>
           ))}
-        </div>
+          <Link
+            href={isHome ? "#contact" : "/contact"}
+            onClick={(e) => handleNav(e, "contact")}
+            tabIndex={menuOpen ? 0 : -1}
+            className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-full bg-gold px-8 py-3 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-cinema-black no-underline transition-opacity hover:opacity-85 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"
+          >
+            {CTA.label}
+          </Link>
+        </nav>
       </div>
     </nav>
   );

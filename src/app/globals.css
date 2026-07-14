@@ -66,7 +66,15 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
+  /* Offset every in-page anchor scroll by the fixed navbar height
+     (80px) plus the device safe-area so sections never hide behind it. */
+  scroll-padding-top: calc(5rem + env(safe-area-inset-top, 0px));
+}
+
+/* Belt-and-braces: also give every id'd section its own scroll margin
+   in case it is reached via an internal link rather than a hash nav. */
+section[id] {
+  scroll-margin-top: calc(5rem + env(safe-area-inset-top, 0px));
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -199,4 +207,41 @@ section.reveal.visible .reveal {
 
 .skip-link:focus {
   top: 1rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Cinematic project timeline                                          */
+/* ------------------------------------------------------------------ */
+.tl-card {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.tl-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tl-year-badge {
+  transition: box-shadow 0.6s ease, color 0.6s ease, border-color 0.6s ease,
+              background-color 0.6s ease;
+}
+
+.tl-year-badge[data-glow="true"] {
+  color: var(--color-gold);
+  border-color: rgba(200, 162, 77, 0.7);
+  background-color: rgba(200, 162, 77, 0.1);
+  box-shadow: 0 0 0 1px rgba(200, 162, 77, 0.35),
+              0 0 24px 2px rgba(200, 162, 77, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tl-card {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

@@ -5,6 +5,7 @@ import Hero from "@/components/Hero";
 import Brands from "@/components/Brands";
 import ProductionWall from "@/components/ProductionWall";
 import PdfWallSection from "@/components/PdfWallSection";
+import ProjectTimeline from "@/components/ProjectTimeline";
 import Testimonials from "@/components/Testimonials";
 import AboutSection from "@/components/AboutSection";
 import ContactSection from "@/components/ContactSection";
@@ -18,7 +19,10 @@ export default function Home() {
         <Hero />
         <Reveal><Brands /></Reveal>
         <ProductionWall />
-        <PdfWallSection />
+        <section id="archive" aria-label="Archive">
+          <Reveal><PdfWallSection /></Reveal>
+        </section>
+        <ProjectTimeline />
         <Reveal><Testimonials /></Reveal>
         <Reveal><AboutSection /></Reveal>
         <Reveal><ContactSection /></Reveal>

@@ -1,80 +1,164 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ConvexClientProvider } from "@/lib/convex/provider";
+import WorkWithMePopup from "@/components/WorkWithMePopup";
+
+const BASE_URL = "https://donayan.com";
 
 export const metadata: Metadata = {
-  title: "Donayan Sahdev — Freelance Director's Assistant & Creative Producer",
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: "Donayan Sahdev | Freelance Director's Assistant & Creative Producer",
+    template: "%s | Donayan Sahdev",
+  },
   description:
-    "Mumbai-based Freelance Director's Assistant and Creative Producer. 60+ commercial productions across advertising, fashion, celebrity campaigns, and music videos. Available for freelance and in-house productions.",
+    "Creative Producer & Freelance Director's Assistant working across commercials, brand films, music videos, fashion campaigns and digital productions for India's leading brands.",
   keywords: [
     "Donayan Sahdev",
-    "Director's Assistant",
-    "Creative Producer",
-    "Commercial Production",
-    "Mumbai",
-    "Advertising",
-    "Fashion Campaigns",
-    "Celebrity Shoots",
-    "Music Videos",
-    "Brand Films",
+    "Creative Producer India",
+    "Director Assistant Mumbai",
+    "Commercial Producer",
+    "Brand Film Producer",
+    "Music Video Producer",
+    "Fashion Production",
+    "Production Freelancer India",
   ],
+  applicationName: "Donayan Sahdev Portfolio",
   authors: [{ name: "Donayan Sahdev" }],
   creator: "Donayan Sahdev",
+  publisher: "Donayan Sahdev",
+  category: "portfolio",
+  alternates: { canonical: BASE_URL },
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+    shortcut: "/icon.svg",
+  },
+  manifest: "/manifest.webmanifest",
   openGraph: {
-    title: "Donayan Sahdev — Production Portfolio",
-    description:
-      "Freelance Director's Assistant & Creative Producer. Production · Commercials · Brand Films · Music Videos.",
-    url: "https://donayan.com",
-    siteName: "Donayan Sahdev",
-    locale: "en_IN",
     type: "website",
-    images: [{ url: "/og-image.svg", width: 1200, height: 630, alt: "Donayan Sahdev — Production Portfolio" }],
+    locale: "en_IN",
+    url: BASE_URL,
+    siteName: "Donayan Sahdev",
+    title: "Donayan Sahdev | Freelance Director's Assistant & Creative Producer",
+    description:
+      "Creative Producer & Freelance Director's Assistant working across commercials, brand films, music videos, fashion campaigns and digital productions for India's leading brands.",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Donayan Sahdev — Creative Producer & Director Portfolio",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Donayan Sahdev — Freelance Director's Assistant & Creative Producer",
+    title: "Donayan Sahdev | Freelance Director's Assistant & Creative Producer",
     description:
-      "Mumbai-based Freelance Director's Assistant and Creative Producer. 60+ commercial productions.",
-    images: ["/og-image.svg"],
+      "Creative Producer & Freelance Director's Assistant — commercials, brand films, music videos and fashion productions.",
+    images: ["/og.png"],
   },
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true, "max-video-preview": -1, "max-image-preview": "large", "max-snippet": -1 },
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
-  alternates: { canonical: "https://donayan.com" },
-  metadataBase: new URL("https://donayan.com"),
 };
+
+const SAME_AS = [
+  "https://www.instagram.com/donayansahdev/",
+  "https://www.linkedin.com/in/donayan",
+  BASE_URL,
+];
+
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": `${BASE_URL}/#person`,
+    name: "Donayan Sahdev",
+    givenName: "Donayan",
+    familyName: "Sahdev",
+    url: BASE_URL,
+    email: "email-ads.dani@gmail.com",
+    telephone: "+91 9819317834",
+    image: `${BASE_URL}/og.png`,
+    occupation: "Creative Producer",
+    jobTitle: "Freelance Director's Assistant",
+    description:
+      "Creative Producer & Freelance Director's Assistant working across commercials, brand films, music videos, fashion campaigns and digital productions for India's leading brands.",
+    sameAs: SAME_AS,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Mumbai",
+      addressCountry: "IN",
+    },
+    knowsAbout: [
+      "Commercial Production",
+      "Brand Films",
+      "Fashion Films",
+      "Music Videos",
+      "Creative Direction",
+      "Photography",
+      "Campaign Production",
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${BASE_URL}/#organization`,
+    name: "Donayan Sahdev",
+    url: BASE_URL,
+    email: "email-ads.dani@gmail.com",
+    logo: `${BASE_URL}/og.png`,
+    sameAs: SAME_AS,
+    founder: { "@id": `${BASE_URL}/#person` },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${BASE_URL}/#website`,
+    name: "Donayan Sahdev",
+    url: BASE_URL,
+    publisher: { "@id": `${BASE_URL}/#organization` },
+    inLanguage: "en",
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${BASE_URL}/#portfolio`,
+    name: "Selected Productions",
+    url: `${BASE_URL}/wall`,
+    isPartOf: { "@id": `${BASE_URL}/#website` },
+  },
+];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        <link rel="canonical" href="https://donayan.com" />
+        <link rel="preload" as="image" href="/hero-bg.jpg" fetchPriority="high" />
+        <link rel="alternate" type="application/rss+xml" title="Donayan Sahdev" href="/rss.xml" />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Person",
-              name: "Donayan Sahdev",
-              jobTitle: "Freelance Director's Assistant & Creative Producer",
-              description:
-                "Mumbai-based Freelance Director's Assistant and Creative Producer. 60+ commercial productions across advertising, fashion, celebrity campaigns, and music videos.",
-              url: "https://donayan.com",
-              sameAs: ["https://linkedin.com/in/donayansahdev", "https://www.instagram.com/donayan_"],
-              worksFor: {
-                "@type": "Organization",
-                name: "Freelance",
-              },
-              location: { "@type": "Place", name: "Mumbai, India" },
-            }),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>
       <body className="bg-cinema-black text-cinema-white font-switzer antialiased">
-        <a href="#main-content" className="skip-link">Skip to content</a>
-        <ConvexClientProvider>{children}</ConvexClientProvider>
+        <a href="#main-content" className="skip-link">
+          Skip to content
+        </a>
+        <ConvexClientProvider>
+          {children}
+          <WorkWithMePopup />
+        </ConvexClientProvider>
       </body>
     </html>
   );
