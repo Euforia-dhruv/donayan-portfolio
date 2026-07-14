@@ -164,6 +164,7 @@ async function main() {
       grouping: groupFiles.length > 1,
       source,
       title,
+      brand: m.brand || title,
       category,
       year,
       platform,

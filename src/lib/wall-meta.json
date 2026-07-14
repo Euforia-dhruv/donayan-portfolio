@@ -1,26 +1,218 @@
 {
-  "1":  { "title": "Pee Safe × Smriti Mandhana — #BeInYourComfortZone", "category": "Commercial",    "year": "2023", "platform": "YouTube",   "aspect": "16 / 9", "collab": false },
-  "2":  { "title": "Aarohi Loans for Women",                            "category": "Brand Film",    "year": "2023", "platform": "YouTube",   "aspect": "16 / 9", "collab": false },
-  "3":  { "title": "Centrum × Kajal Aggarwal — Chief Claims Advocate", "category": "Commercial",    "year": "2023", "platform": "YouTube",   "aspect": "16 / 9", "collab": false },
-  "4":  { "title": "Vertical Campaign Reel",                           "category": "Social Reel",   "year": "2023", "platform": "Instagram", "aspect": "9 / 16", "collab": false },
-  "5":  { "title": "Armani Exchange × Kartik Aaryan — Fall 2024 Watch Collection", "category": "Fashion Film", "year": "2024", "platform": "YouTube",   "aspect": "16 / 9", "collab": false },
-  "6":  { "title": "Collaboration Still",                               "category": "Campaign Still", "year": "2022", "platform": "Instagram", "aspect": "1 / 1",  "collab": true  },
-  "9":  { "title": "PocketFM — Audio Stories Reel",                    "category": "Social Reel",   "year": "2023", "platform": "Instagram", "aspect": "9 / 16", "collab": false },
-  "10": { "title": "Square Campaign Post",                             "category": "Social Post",   "year": "2023", "platform": "Instagram", "aspect": "1 / 1",  "collab": false },
-  "11": { "title": "Square Lifestyle Post",                            "category": "Social Post",   "year": "2023", "platform": "Instagram", "aspect": "1 / 1",  "collab": false },
-  "12": { "title": "Square Brand Post",                               "category": "Social Post",   "year": "2022", "platform": "Instagram", "aspect": "1 / 1",  "collab": false },
-  "13": { "title": "Collaboration Set Still",                          "category": "Campaign Still", "year": "2022", "platform": "Instagram", "aspect": "1 / 1",  "collab": true  },
-  "14": { "title": "Collaboration Grid Still",                         "category": "Campaign Still", "year": "2022", "platform": "Instagram", "aspect": "1 / 1",  "collab": true  },
-  "15": { "title": "Square Campaign Still",                           "category": "Campaign Still", "year": "2023", "platform": "Instagram", "aspect": "1 / 1",  "collab": false },
-  "16": { "title": "Collaboration Post",                               "category": "Social Post",   "year": "2023", "platform": "Instagram", "aspect": "1 / 1",  "collab": true  },
-  "17": { "title": "Vertical Brand Reel",                             "category": "Social Reel",   "year": "2023", "platform": "Instagram", "aspect": "9 / 16", "collab": false },
-  "18": { "title": "Vertical Social Cut",                              "category": "Social Reel",   "year": "2023", "platform": "Instagram", "aspect": "9 / 16", "collab": false },
-  "19": { "title": "Vicks Roll On + Inhaler Ad — ft. Guneet Sandhu", "category": "Commercial",    "year": "2023", "platform": "YouTube",   "aspect": "9 / 16", "collab": false },
-  "22": { "title": "Square Brand Still",                              "category": "Campaign Still", "year": "2023", "platform": "Instagram", "aspect": "1 / 1",  "collab": false },
-  "23": { "title": "Disney+ Hotstar — The Night Manager Pranks (Aditya Roy Kapur)", "category": "Brand Film", "year": "2023", "platform": "YouTube", "aspect": "16 / 9", "collab": false },
-  "24": { "title": "Square Campaign Shoot",                            "category": "Social Post",   "year": "2023", "platform": "Instagram", "aspect": "1 / 1",  "collab": false },
-  "25": { "title": "Square Social Still",                              "category": "Social Post",   "year": "2022", "platform": "Instagram", "aspect": "1 / 1",  "collab": false },
-  "26": { "title": "Skinn Noura — A Gift From You, To You",        "category": "Brand Film",    "year": "2023", "platform": "YouTube",   "aspect": "16 / 9", "collab": false },
-  "27": { "title": "Dell Futurist — Make Music With Lost Stories On Alienware", "category": "Brand Film", "year": "2023", "platform": "YouTube", "aspect": "16 / 9", "collab": false },
-  "28": { "title": "World Is Yours To Take — Sustainability Streetwear India", "category": "Brand Film", "year": "2022", "platform": "YouTube", "aspect": "16 / 9", "collab": false }
+  "1": {
+    "title": "Pee Safe × Smriti Mandhana — #BeInYourComfortZone",
+    "category": "Commercial",
+    "year": "2026",
+    "platform": "YouTube",
+    "aspect": "16 / 9",
+    "collab": false,
+    "brand": "Pee Safe"
+  },
+  "2": {
+    "title": "Aarohi Loans for Women",
+    "category": "Brand Film",
+    "year": "2026",
+    "platform": "YouTube",
+    "aspect": "16 / 9",
+    "collab": false,
+    "brand": "Godrej Capital"
+  },
+  "3": {
+    "title": "Centrum × Kajal Aggarwal — Chief Claims Advocate",
+    "category": "Commercial",
+    "year": "2025",
+    "platform": "YouTube",
+    "aspect": "16 / 9",
+    "collab": false,
+    "brand": "Centrum"
+  },
+  "4": {
+    "title": "Armani Exchange × Kartik Aaryan — Lifestyle Reel",
+    "category": "Social Reel",
+    "year": "2023",
+    "platform": "Instagram",
+    "aspect": "9 / 16",
+    "collab": false,
+    "brand": "Armani Exchange"
+  },
+  "5": {
+    "title": "Armani Exchange × Kartik Aaryan — Fall 2024 Watch Collection",
+    "category": "Fashion Film",
+    "year": "2024",
+    "platform": "YouTube",
+    "aspect": "16 / 9",
+    "collab": false,
+    "brand": "Armani Exchange"
+  },
+  "6": {
+    "title": "Pantaloons Winter Campaign",
+    "category": "Campaign Still",
+    "year": "2022",
+    "platform": "Instagram",
+    "aspect": "1440 / 923",
+    "collab": true,
+    "brand": "Pantaloons"
+  },
+  "9": {
+    "title": "Pocket FM × Urfi Javed",
+    "category": "Social Reel",
+    "year": "2023",
+    "platform": "Instagram",
+    "aspect": "9 / 16",
+    "collab": false,
+    "brand": "Pocket FM"
+  },
+  "10": {
+    "title": "Ted To Toe Campaign",
+    "category": "Social Post",
+    "year": "2024",
+    "platform": "Instagram",
+    "aspect": "1 / 1",
+    "collab": false,
+    "brand": "Ted To Toe"
+  },
+  "11": {
+    "title": "Dove — Beauty Test Stops With Me",
+    "category": "Social Post",
+    "year": "2023",
+    "platform": "Instagram",
+    "aspect": "1 / 1",
+    "collab": false,
+    "brand": "Dove"
+  },
+  "12": {
+    "title": "Armani Exchange Social Campaign",
+    "category": "Social Post",
+    "year": "2022",
+    "platform": "Instagram",
+    "aspect": "1 / 1",
+    "collab": false,
+    "brand": "Armani Exchange"
+  },
+  "13": {
+    "title": "Commercial Color Grading Showcase",
+    "category": "Showcase",
+    "year": "2022",
+    "platform": "Instagram",
+    "aspect": "1 / 1",
+    "collab": true,
+    "brand": "Showcase"
+  },
+  "14": {
+    "title": "Tanishq Rivaah Campaign",
+    "category": "Campaign Still",
+    "year": "2024",
+    "platform": "Instagram",
+    "aspect": "2048 / 2048",
+    "collab": true,
+    "brand": "Tanishq"
+  },
+  "15": {
+    "title": "Madhaniya Music Video",
+    "category": "Music Video",
+    "year": "2023",
+    "platform": "Instagram",
+    "aspect": "1440 / 1799",
+    "collab": false,
+    "brand": "Madhaniya"
+  },
+  "16": {
+    "title": "Fossil Campaign",
+    "category": "Social Post",
+    "year": "2023",
+    "platform": "Instagram",
+    "aspect": "1 / 1",
+    "collab": true,
+    "brand": "Fossil"
+  },
+  "17": {
+    "title": "Instagram Brand Reel",
+    "category": "Social Reel",
+    "year": "2023",
+    "platform": "Instagram",
+    "aspect": "9 / 16",
+    "collab": false,
+    "brand": "Showcase"
+  },
+  "18": {
+    "title": "Lakmé Campaign",
+    "category": "Social Reel",
+    "year": "2023",
+    "platform": "Instagram",
+    "aspect": "9 / 16",
+    "collab": false,
+    "brand": "Lakmé"
+  },
+  "19": {
+    "title": "Vicks Roll On + Inhaler Ad — ft. Guneet Sandhu",
+    "category": "Commercial",
+    "year": "2022",
+    "platform": "YouTube",
+    "aspect": "9 / 16",
+    "collab": false,
+    "brand": "Vicks"
+  },
+  "22": {
+    "title": "Simple Skincare Campaign",
+    "category": "Campaign Still",
+    "year": "2023",
+    "platform": "Instagram",
+    "aspect": "1440 / 1440",
+    "collab": false,
+    "brand": "Simple"
+  },
+  "23": {
+    "title": "Disney+ Hotstar — The Night Manager Pranks (Aditya Roy Kapur)",
+    "category": "Brand Film",
+    "year": "2023",
+    "platform": "YouTube",
+    "aspect": "16 / 9",
+    "collab": false,
+    "brand": "Disney+ Hotstar"
+  },
+  "24": {
+    "title": "Taaza Khabar Promotion",
+    "category": "Promotion",
+    "year": "2024",
+    "platform": "Instagram",
+    "aspect": "1 / 1",
+    "collab": false,
+    "brand": "Disney+ Hotstar"
+  },
+  "25": {
+    "title": "Freddy Promotion",
+    "category": "Promotion",
+    "year": "2022",
+    "platform": "Instagram",
+    "aspect": "1 / 1",
+    "collab": false,
+    "brand": "Disney+ Hotstar"
+  },
+  "26": {
+    "title": "Skinn Noura — A Gift From You, To You",
+    "category": "Brand Film",
+    "year": "2023",
+    "platform": "YouTube",
+    "aspect": "16 / 9",
+    "collab": false,
+    "brand": "Skinn"
+  },
+  "27": {
+    "title": "Dell Futurist — Make Music With Lost Stories On Alienware",
+    "category": "Commercial",
+    "year": "2023",
+    "platform": "YouTube",
+    "aspect": "16 / 9",
+    "collab": false,
+    "brand": "Dell"
+  },
+  "28": {
+    "title": "World Is Yours To Take — Sustainability Streetwear India",
+    "category": "Commercial",
+    "year": "2023",
+    "platform": "YouTube",
+    "aspect": "16 / 9",
+    "collab": false,
+    "brand": "World Is Yours To Take"
+  }
 }

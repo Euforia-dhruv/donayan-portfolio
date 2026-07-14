@@ -5,26 +5,28 @@ import Image from "next/image";
 import wallItemsRaw from "@/lib/wall-items.json";
 import type { WallItem } from "@/types/wall";
 import WallVideo from "@/components/WallVideo";
-import WallGallery from "@/components/WallGallery";
+import WallModal from "@/components/WallModal";
 
 const wallItems = wallItemsRaw as WallItem[];
 
-const FILTER_ORDER = [
-  "All",
-  "Commercials",
-  "Brand Films",
-  "Fashion Films",
-  "Campaigns",
-  "Reels",
-  "Posts",
-  "Collaborations",
-  "Videos",
-  "Images",
-  "Music Videos",
-  "Print",
-];
-
 const GAP = 16;
+
+// Masonry column counts by container width (not viewport) so the wall stays
+// balanced at every breakpoint: desktop 5, laptop 4, tablet 3, mobile 2.
+function columnsForWidth(w: number): number {
+  if (w >= 1536) return 5;
+  if (w >= 1024) return 4;
+  if (w >= 640) return 3;
+  return 2;
+}
+
+const SIZES =
+  "(max-width:640px) 50vw, (max-width:1024px) 33vw, (max-width:1536px) 25vw, 20vw";
+
+const parseAspect = (a: string): number => {
+  const [w, h] = a.split("/").map((n) => parseFloat(n.trim()));
+  return h ? w / h : 1;
+};
 
 export default function ProductionWall({
   titleAs = "h2",
@@ -34,8 +36,7 @@ export default function ProductionWall({
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
-  const [active, setActive] = useState("All");
-  const [gallery, setGallery] = useState<WallItem | null>(null);
+  const [modal, setModal] = useState<WallItem | null>(null);
   const [width, setWidth] = useState(0);
 
   useEffect(() => {
@@ -54,8 +55,8 @@ export default function ProductionWall({
     return () => obs.disconnect();
   }, []);
 
-  // Measure the grid width so we can lay out a true masonry (column count +
-  // per-card row span derived from each media's real aspect ratio).
+  // Measure the grid width so we can lay out a true shortest-column masonry
+  // (each card keeps its media's real aspect ratio — no crop, no letterbox).
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -67,75 +68,38 @@ export default function ProductionWall({
     return () => ro.disconnect();
   }, []);
 
-  // Filters are generated dynamically from the data.
-  const filters = useMemo(() => {
-    const set = new Set<string>();
-    wallItems.forEach((it) => it.filters.forEach((f) => set.add(f)));
-    return [...set].sort((a, b) => {
-      const ia = FILTER_ORDER.indexOf(a);
-      const ib = FILTER_ORDER.indexOf(b);
-      return (ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib);
-    });
-  }, []);
+  const cols = columnsForWidth(width);
 
-  const counts = useMemo(() => {
-    const c: Record<string, number> = {};
-    filters.forEach((f) => {
-      c[f] = f === "All"
-        ? wallItems.length
-        : wallItems.filter((it) => it.filters.includes(f)).length;
+  // Distribute items into N columns, always dropping the next card into the
+  // currently shortest column. This guarantees variable heights with zero
+  // empty gaps inside any column.
+  const masonry = useMemo(() => {
+    if (width === 0 || cols === 0) return [] as { it: WallItem; h: number }[][];
+    const colW = (width - (cols - 1) * GAP) / cols;
+    const heights = new Array(cols).fill(0);
+    const columns: { it: WallItem; h: number }[][] = Array.from(
+      { length: cols },
+      () => [],
+    );
+    wallItems.forEach((it) => {
+      const ar = parseAspect(it.aspect);
+      const h = colW / ar;
+      let target = 0;
+      for (let c = 1; c < cols; c++) {
+        if (heights[c] < heights[target]) target = c;
+      }
+      columns[target].push({ it, h });
+      heights[target] += h + GAP;
     });
-    return c;
-  }, [filters]);
+    return columns;
+  }, [wallItems, width, cols]);
 
-  const filtered = useMemo(
-    () =>
-      active === "All"
-        ? wallItems
-        : wallItems.filter((it) => it.filters.includes(active)),
-    [active],
+  const orderIndex = useMemo(
+    () => new Map(wallItems.map((it, i) => [it.id, i])),
+    [],
   );
 
-  // ---- True masonry layout ------------------------------------------------
-  // Column count responds to the container width (not the viewport) so the
-  // wall stays balanced at every breakpoint.
-  const cols = width >= 1024 ? 4 : width >= 640 ? 3 : 2;
-
-  const parseAspect = (a: string): number => {
-    const [w, h] = a.split("/").map((n) => parseFloat(n.trim()));
-    return h ? w / h : 1;
-  };
-
-  // Landscape media spans two columns so it reads as a large cinematic tile
-  // (equal visual weight to a tall portrait), like an Awwwards / Cargo wall.
-  const layout = useMemo(() => {
-    if (width === 0) return [];
-    const colW = (width - (cols - 1) * GAP) / cols;
-    return filtered.map((it) => {
-      const ar = parseAspect(it.aspect);
-      const landscape = ar > 1.1;
-      const colSpan = landscape ? Math.min(2, cols) : 1;
-      const itemW = colSpan * colW + (colSpan - 1) * GAP;
-      const h = itemW / ar;
-      const rowSpan = Math.max(1, Math.round((h + GAP) / (1 + GAP)));
-      return { it, colSpan, rowSpan };
-    });
-  }, [filtered, width, cols]);
-
-  const sizesFor = (colSpan: number) => {
-    const pct = Math.round((100 * colSpan) / cols);
-    return `(max-width:640px) ${colSpan > 1 ? "100vw" : "50vw"}, (max-width:1024px) ${colSpan > 1 ? "100vw" : "33vw"}, ${pct}vw`;
-  };
-
-  const open = (it: WallItem) => {
-    // Grouped projects open an in-app gallery so every image can be browsed.
-    if (it.grouping) {
-      setGallery(it);
-      return;
-    }
-    // Every other card opens the ORIGINAL SOURCE (never the local asset).
-    window.open(it.source, "_blank", "noopener,noreferrer");
-  };
+  const open = (it: WallItem) => setModal(it);
 
   return (
     <section
@@ -156,7 +120,7 @@ export default function ProductionWall({
       />
 
       <div className="relative z-10 mx-auto max-w-[1700px] px-4 sm:px-6 lg:px-10">
-        <div className="mb-10 text-center md:mb-14">
+        <div className="mb-12 text-center md:mb-16">
           <p className="font-switzer text-caption font-[400] uppercase tracking-[0.12em] text-stone">
             The Moodboard
           </p>
@@ -176,120 +140,108 @@ export default function ProductionWall({
             </h2>
           )}
           <p className="mt-2 font-switzer text-caption font-[400] text-stone/60">
-            {wallItems.length} selected works · click to view the original
+            {wallItems.length} selected works · select to explore
           </p>
         </div>
 
-        {/* Filters — generated from the data, counts update automatically. */}
-        <div className="mb-10 flex flex-wrap items-center justify-center gap-2">
-          {filters.map((f) => {
-            const on = f === active;
-            return (
-              <button
-                key={f}
-                type="button"
-                onClick={() => setActive(f)}
-                aria-pressed={on}
-                className={`rounded-full border px-4 py-2 font-switzer text-caption uppercase tracking-[0.06em] transition-colors ${
-                  on
-                    ? "border-gold bg-gold text-cinema-black"
-                    : "border-white/15 text-cinema-white/70 hover:border-gold/50 hover:text-cinema-white"
-                }`}
-              >
-                {f}
-                <span className={on ? "ml-1.5 opacity-70" : "ml-1.5 text-gold/70"}>
-                  {counts[f]}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Masonry wall — CSS grid. Every card keeps its media's real aspect
-            ratio; landscape cards span two columns for equal visual weight. */}
+        {/* True masonry — each card is edge-to-edge media, no overlay text by
+            default. Aspect ratios are preserved exactly so nothing is cropped
+            or letterboxed. */}
         <div ref={containerRef}>
           {width === 0 ? (
             <div className="min-h-[60vh]" />
           ) : (
             <div
+              className="flex"
               style={{
-                display: "grid",
-                gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
-                gridAutoRows: "1px",
-                gridAutoFlow: "row dense",
                 gap: `${GAP}px`,
                 opacity: visible ? 1 : 0,
                 transform: visible ? "translateY(0)" : "translateY(20px)",
                 transition: "opacity 0.7s ease, transform 0.7s ease",
               }}
             >
-              {layout.map(({ it, colSpan, rowSpan }, i) => {
-                const isVideo = it.kind === "video";
-                return (
-                  <div
-                    key={it.id}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => open(it)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        open(it);
-                      }
-                    }}
-                    className="group relative block w-full overflow-hidden rounded-2xl bg-charcoal text-left outline-none transition-transform duration-500 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(0,0,0,0.55)] focus-visible:ring-2 focus-visible:ring-gold"
-                    style={{
-                      gridColumn: `span ${colSpan}`,
-                      gridRow: `span ${rowSpan}`,
-                      animation: visible
-                        ? `cardEntrance 0.6s ease ${0.02 + i * 0.03}s forwards`
-                        : "none",
-                      opacity: visible ? undefined : 0,
-                    }}
-                    aria-label={`${it.title} — view project`}
-                  >
-                    <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.03]">
-                      {isVideo ? (
-                        <WallVideo src={it.cover} sizes={sizesFor(colSpan)} />
-                      ) : (
-                        <Image
-                          src={it.cover}
-                          alt={it.title}
-                          fill
-                          sizes={sizesFor(colSpan)}
-                          className="object-cover"
-                          priority={i < 6}
-                        />
-                      )}
-                    </div>
+              {masonry.map((col, ci) => (
+                <div
+                  key={ci}
+                  className="flex flex-1 flex-col"
+                  style={{ gap: `${GAP}px` }}
+                >
+                  {col.map(({ it, h }) => {
+                    const isVideo = it.kind === "video";
+                    const index = orderIndex.get(it.id) ?? 0;
+                    const priority = index < cols * 2;
+                    return (
+                      <div
+                        key={it.id}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => open(it)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            open(it);
+                          }
+                        }}
+                        aria-label={it.title}
+                        className="group relative block w-full cursor-pointer overflow-hidden rounded-2xl bg-charcoal outline-none transition-shadow duration-[250ms] ease-out hover:shadow-[0_22px_60px_-24px_rgba(0,0,0,0.75)] focus-visible:ring-2 focus-visible:ring-gold"
+                        style={{
+                          height: h,
+                          animation: visible
+                            ? `cardEntrance 0.6s ease ${0.02 + index * 0.03}s forwards`
+                            : "none",
+                          opacity: visible ? undefined : 0,
+                        }}
+                      >
+                        <div className="absolute inset-0 transition-transform duration-[250ms] ease-out group-hover:scale-[1.02]">
+                          {isVideo ? (
+                            <WallVideo src={it.cover} sizes={SIZES} />
+                          ) : (
+                            <Image
+                              src={it.cover}
+                              alt={it.title}
+                              fill
+                              sizes={SIZES}
+                              className="object-cover"
+                              priority={priority}
+                              loading={priority ? "eager" : "lazy"}
+                            />
+                          )}
+                        </div>
 
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100" />
-                    <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-1 p-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                      <p className="font-switzer text-[10px] font-[400] uppercase tracking-[0.1em] text-gold/75">
-                        {it.category}
-                        {it.year ? ` · ${it.year}` : ""}
-                      </p>
-                      <p className="mt-0.5 font-switzer text-caption font-[400] leading-tight text-cinema-white">
-                        {it.title}
-                      </p>
-                      {it.description && (
-                        <p className="mt-1 line-clamp-3 font-switzer text-[11px] font-[300] leading-snug text-cinema-white/70">
-                          {it.description}
-                        </p>
-                      )}
-                      <span className="mt-1 inline-block text-[10px] font-switzer uppercase tracking-[0.1em] text-gold/80">
-                        {it.grouping ? "View Gallery →" : "View Project →"}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
+                        {/* Hover only: subtle dark fade (<=20%) + title + arrow. */}
+                        <div className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-[250ms] ease-out group-hover:bg-black/20 group-focus-visible:bg-black/20" />
+                        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4 opacity-0 transition-opacity duration-[250ms] ease-out group-hover:opacity-100 group-focus-visible:opacity-100">
+                          <p className="font-switzer text-caption font-[400] leading-tight text-cinema-white drop-shadow-[0_1px_6px_rgba(0,0,0,0.6)]">
+                            {it.title}
+                          </p>
+                          <svg
+                            className="shrink-0 text-cinema-white"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 14 14"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.6"
+                            aria-hidden="true"
+                          >
+                            <path
+                              d="M3 7h8M11 7L7 3M11 7L7 11"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
             </div>
           )}
         </div>
       </div>
 
-      {gallery && <WallGallery item={gallery} onClose={() => setGallery(null)} />}
+      {modal && <WallModal item={modal} onClose={() => setModal(null)} />}
     </section>
   );
 }

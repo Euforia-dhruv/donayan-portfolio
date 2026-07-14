@@ -7,6 +7,7 @@ export interface WallItem {
   grouping: boolean;
   source: string;
   title: string;
+  brand?: string;
   category: string;
   year: string;
   platform: string;

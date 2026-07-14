@@ -21,8 +21,7 @@
       "All",
       "Commercials",
       "Videos"
-    ],
-    "meta": "Produced a high-impact digital commercial for Pee Safe featuring Smriti Mandhana, blending cinematic storytelling with a modern brand campaign promoting women's wellness and confidence."
+    ]
   },
   {
     "id": "p2",
@@ -46,8 +45,7 @@
       "All",
       "Brand Films",
       "Videos"
-    ],
-    "meta": "Commercial campaign for Godrej Capital highlighting women's financial empowerment through an emotionally driven brand film focused on aspirations and trust."
+    ]
   },
   {
     "id": "p3",
@@ -71,8 +69,7 @@
       "All",
       "Commercials",
       "Videos"
-    ],
-    "meta": "Premium healthcare and wellness commercial crafted with clean visuals, cinematic lighting, and lifestyle storytelling for Centrum's digital marketing campaign."
+    ]
   },
   {
     "id": "p4",
@@ -96,8 +93,7 @@
       "All",
       "Reels",
       "Videos"
-    ],
-    "meta": "Fashion and lifestyle branded reel featuring Kartik Aaryan with premium cinematography, social-first storytelling, and luxury visual aesthetics."
+    ]
   },
   {
     "id": "p5",
@@ -122,8 +118,7 @@
       "Fashion Films",
       "Brand Films",
       "Videos"
-    ],
-    "meta": "Luxury watch campaign featuring Kartik Aaryan for Armani Exchange showcasing premium fashion filmmaking, dynamic visuals, and commercial production excellence."
+    ]
   },
   {
     "id": "p6",
@@ -152,8 +147,7 @@
       "Campaigns",
       "Collaborations",
       "Images"
-    ],
-    "meta": "Lifestyle fashion campaign promoting Pantaloons' winter collection through vibrant photography, youthful styling, and commercial brand storytelling."
+    ]
   },
   {
     "id": "p9",
@@ -177,8 +171,7 @@
       "All",
       "Reels",
       "Videos"
-    ],
-    "meta": "Viral social media campaign for Pocket FM featuring Urfi Javed, designed to maximize engagement with entertaining, high-impact promotional storytelling."
+    ]
   },
   {
     "id": "p10",
@@ -202,8 +195,7 @@
       "All",
       "Posts",
       "Videos"
-    ],
-    "meta": "Fashion campaign celebrating individuality and confidence through premium commercial photography and digital content production for Ted To Toe."
+    ]
   },
   {
     "id": "p11",
@@ -227,8 +219,7 @@
       "All",
       "Posts",
       "Videos"
-    ],
-    "meta": "Social awareness campaign for Dove challenging beauty stereotypes through authentic storytelling, cinematic visuals, and purpose-driven branded content."
+    ]
   },
   {
     "id": "p12",
@@ -252,8 +243,7 @@
       "All",
       "Posts",
       "Videos"
-    ],
-    "meta": "Sponsored social media campaign featuring Kartik Aaryan promoting Armani Exchange watches with luxury fashion visuals and premium digital storytelling."
+    ]
   },
   {
     "id": "p13",
@@ -275,11 +265,10 @@
     "collab": true,
     "filters": [
       "All",
-      "Campaigns",
+      "Showcases",
       "Collaborations",
       "Videos"
-    ],
-    "meta": "Professional commercial color grading project demonstrating advanced post-production workflows, cinematic finishing, and premium advertising visuals."
+    ]
   },
   {
     "id": "p14",
@@ -304,8 +293,7 @@
       "Campaigns",
       "Collaborations",
       "Images"
-    ],
-    "meta": "Premium bridal jewellery campaign for Tanishq Rivaah featuring elegant photography, luxury styling, and high-end commercial production aesthetics."
+    ]
   },
   {
     "id": "p15",
@@ -327,10 +315,9 @@
     "collab": false,
     "filters": [
       "All",
-      "Campaigns",
+      "Music Videos",
       "Images"
-    ],
-    "meta": "Cinematic music video production featuring emotional storytelling, rich visuals, and premium post-production designed for digital music audiences."
+    ]
   },
   {
     "id": "p16",
@@ -355,8 +342,7 @@
       "Posts",
       "Collaborations",
       "Videos"
-    ],
-    "meta": "Lifestyle commercial for Fossil highlighting modern living, premium craftsmanship, and aspirational storytelling through cinematic brand filmmaking."
+    ]
   },
   {
     "id": "p17",
@@ -380,8 +366,7 @@
       "All",
       "Reels",
       "Videos"
-    ],
-    "meta": "Short-form branded content created for digital platforms featuring engaging storytelling, premium editing, and high-performing social media production."
+    ]
   },
   {
     "id": "p18",
@@ -405,8 +390,7 @@
       "All",
       "Reels",
       "Videos"
-    ],
-    "meta": "Beauty campaign for Lakmé showcasing professional makeup techniques, vibrant visuals, and polished commercial content optimized for social engagement."
+    ]
   },
   {
     "id": "p19",
@@ -430,8 +414,7 @@
       "All",
       "Commercials",
       "Videos"
-    ],
-    "meta": "Fast-paced healthcare product campaign for Vicks combining sports, lifestyle, and product-focused storytelling for digital-first advertising."
+    ]
   },
   {
     "id": "p22",
@@ -455,8 +438,7 @@
       "All",
       "Campaigns",
       "Images"
-    ],
-    "meta": "Skincare awareness campaign featuring clean product visuals, educational storytelling, and premium commercial photography promoting healthy skincare routines."
+    ]
   },
   {
     "id": "p23",
@@ -480,8 +462,7 @@
       "All",
       "Brand Films",
       "Videos"
-    ],
-    "meta": "Promotional campaign for Disney+ Hotstar's The Night Manager, combining entertainment marketing with engaging digital storytelling and celebrity promotion."
+    ]
   },
   {
     "id": "p24",
@@ -503,10 +484,9 @@
     "collab": false,
     "filters": [
       "All",
-      "Posts",
+      "Promotions",
       "Videos"
-    ],
-    "meta": "Digital promotional campaign for Disney+ Hotstar's Taaza Khabar featuring cinematic storytelling, influencer marketing, and entertainment branding."
+    ]
   },
   {
     "id": "p25",
@@ -528,10 +508,9 @@
     "collab": false,
     "filters": [
       "All",
-      "Posts",
+      "Promotions",
       "Videos"
-    ],
-    "meta": "Promotional campaign for Freddy starring Kartik Aaryan, designed for social media engagement with cinematic visuals and entertainment marketing."
+    ]
   },
   {
     "id": "p26",
@@ -543,20 +522,19 @@
     ],
     "grouping": false,
     "source": "https://www.youtube.com/watch?v=W2KMt80-Kg0",
-    "title": "Commercial Brand Film",
-    "brand": "Showcase",
+    "title": "Skinn Noura — A Gift From You, To You",
+    "brand": "Skinn",
     "category": "Brand Film",
     "year": "2023",
     "platform": "YouTube",
-    "description": "A premium advertising film showcasing cinematic production, creative direction and high-quality visual storytelling for a national brand.",
+    "description": "Skinn's Noura fragrance is celebrated as a gift from you, to you in this sensorial brand film. Soft, feminine cinematography and a delicate rhythm frame Noura as an act of self-love rather than occasion-wear luxury. The film leans into intimacy and ritual, positioning the scent as a daily, personal indulgence.",
     "aspect": "16 / 9",
     "collab": false,
     "filters": [
       "All",
       "Brand Films",
       "Videos"
-    ],
-    "meta": "Premium advertising film showcasing cinematic production, creative direction, and high-quality visual storytelling for a national brand campaign."
+    ]
   },
   {
     "id": "p27",
@@ -568,20 +546,19 @@
     ],
     "grouping": false,
     "source": "https://www.youtube.com/watch?feature=shared&fbclid=PAZXh0bgNhZW0CMTEAAadpVEpFYvty656IN9z_noVfym2_c5Bs8TR4Og10GSvEkgiJ0uM1E29xRg22Cw_aem_8GNvfG_hk81mjmB0XyyD0A&v=OjwGqh_jB6Y",
-    "title": "Digital Commercial Campaign",
-    "brand": "Showcase",
+    "title": "Dell Futurist — Make Music With Lost Stories On Alienware",
+    "brand": "Dell",
     "category": "Commercial",
     "year": "2023",
     "platform": "YouTube",
-    "description": "A brand commercial with cinematic visuals and premium production quality, crafted for television and digital audiences.",
+    "description": "Dell's Futurist initiative teams Alienware with electronic duo Lost Stories to turn cutting-edge tech into music. This brand film follows the artists composing on high-performance machines, merging product capability with creative ambition. Energetic, tech-glossy visuals position Alienware as the instrument for makers pushing what's possible next.",
     "aspect": "16 / 9",
     "collab": false,
     "filters": [
       "All",
-      "Brand Films",
+      "Commercials",
       "Videos"
-    ],
-    "meta": "Brand commercial produced with cinematic visuals, premium production quality, and engaging storytelling designed for television and digital audiences."
+    ]
   },
   {
     "id": "p28",
@@ -593,19 +570,18 @@
     ],
     "grouping": false,
     "source": "https://www.youtube.com/watch?v=RKjF5jTDbC8&t=1s",
-    "title": "Advertising Campaign Film",
-    "brand": "Showcase",
+    "title": "World Is Yours To Take — Sustainability Streetwear India",
+    "brand": "World Is Yours To Take",
     "category": "Commercial",
     "year": "2023",
     "platform": "YouTube",
-    "description": "A high-end commercial production combining creative storytelling, polished cinematography and professional post-production for impactful brand communication.",
+    "description": "'World Is Yours To Take' is a brand film championing sustainability in Indian streetwear. Following young creators reimagining fashion through conscious choices, it pairs documentary warmth with bold, street-styled visuals. The film frames responsible design as cultural ownership, encouraging a generation to wear its values and claim the future on its own terms.",
     "aspect": "16 / 9",
     "collab": false,
     "filters": [
       "All",
-      "Brand Films",
+      "Commercials",
       "Videos"
-    ],
-    "meta": "High-end commercial production combining creative storytelling, polished cinematography, and professional post-production for impactful brand communication."
+    ]
   }
 ]
