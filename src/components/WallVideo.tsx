@@ -5,11 +5,13 @@ import { useEffect, useRef } from "react";
 /**
  * Wall video surface.
  *
- *  ✓ autoplay · muted · loop · playsInline · preload=metadata
+ *  ✓ muted · loop · playsInline · preload="metadata"  (spec: "preload metadata"
+ *    + "show first frame immediately" — metadata is tiny, so the first
+ *    painted frame appears almost at once, never a black box)
  *  ✓ IntersectionObserver: plays only while visible (desktop + mobile),
  *    pauses when scrolled away (no hidden autoplay, frees the decoder)
- *  ✓ lazy: metadata is fetched only once the card nears the viewport
- *  ✓ shows the first frame immediately (browsers paint frame 0 on metadata)
+ *  ✓ lazy: playback starts only when the card nears the viewport, and
+ *    a ready-retry guarantees play() succeeds once data arrives
  *  ✓ hover brightens slightly (group-hover:brightness handled by parent)
  */
 export default function WallVideo({
@@ -34,13 +36,23 @@ export default function WallVideo({
     v.muted = true;
     v.defaultMuted = true;
 
+    let inView = false;
+    const tryPlay = () => {
+      if (!inView || !v.paused) return;
+      const p = v.play();
+      if (p) p.catch(() => {});
+    };
+
+    const onReady = () => tryPlay();
+    v.addEventListener("loadeddata", onReady);
+    v.addEventListener("canplay", onReady);
+
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          v.muted = true;
+        inView = entry.isIntersecting;
+        if (inView) {
           v.preload = "metadata";
-          const p = v.play();
-          if (p) p.catch(() => {});
+          tryPlay();
         } else {
           v.pause();
         }
@@ -48,7 +60,12 @@ export default function WallVideo({
       { rootMargin: "300px 0px", threshold: 0.01 },
     );
     io.observe(el);
-    return () => io.disconnect();
+
+    return () => {
+      io.disconnect();
+      v.removeEventListener("loadeddata", onReady);
+      v.removeEventListener("canplay", onReady);
+    };
   }, [src]);
 
   return (
@@ -62,14 +79,11 @@ export default function WallVideo({
         muted
         loop
         playsInline
-        autoPlay
-        preload="none"
+        preload="metadata"
         disablePictureInPicture
         disableRemotePlayback
         className="absolute inset-0 h-full w-full object-cover transition-[filter] duration-500 group-hover:brightness-110"
       />
-      {/* 9:16 / 1:1 trailers carry no audio; the first painted frame is
-          the poster, so there is never a black box. */}
       <span className="sr-only">{src} — playing automatically when visible</span>
     </div>
   );
