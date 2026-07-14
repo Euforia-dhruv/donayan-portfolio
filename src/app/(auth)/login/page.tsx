@@ -9,8 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("ads.donayan@gmail.com");
+  const [password, setPassword] = useState("Dani@admin2109");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
