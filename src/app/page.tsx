@@ -3,10 +3,9 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import Brands from "@/components/Brands";
+import Featured from "@/components/Featured";
 import ProductionWall from "@/components/ProductionWall";
-import ProductionReels from "@/components/ProductionReels";
 import FeaturedProductions from "@/components/FeaturedProductions";
-import ViralWorkSection from "@/components/ViralWorkSection";
 import ProductionTimeline from "@/components/ProductionTimeline";
 import Testimonials from "@/components/Testimonials";
 import AboutSection from "@/components/AboutSection";
@@ -20,10 +19,9 @@ export default function Home() {
       <main id="main-content">
         <Hero />
         <Reveal><Brands /></Reveal>
+        <Reveal><Featured /></Reveal>
         <Reveal><ProductionWall /></Reveal>
-        <Reveal><ProductionReels /></Reveal>
         <Reveal><FeaturedProductions /></Reveal>
-        <Reveal><ViralWorkSection /></Reveal>
         <Reveal><ProductionTimeline /></Reveal>
         <Reveal><Testimonials /></Reveal>
         <Reveal><AboutSection /></Reveal>

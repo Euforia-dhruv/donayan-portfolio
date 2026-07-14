@@ -28,11 +28,15 @@ export function getYouTubeAutoplayUrl(url: string): string | null {
   return getYouTubeEmbedUrl(url, true, true);
 }
 
-export function getYouTubeThumbnail(url: string): string | null {
+export function getYouTubeThumbnail(url: string, quality: "hq" | "maxres" = "hq"): string | null {
   const id = getYouTubeId(url);
   if (!id) return null;
-  return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+  const file = quality === "maxres" ? "maxresdefault" : "hqdefault";
+  return `https://i.ytimg.com/vi/${id}/${file}.jpg`;
 }
+
+export const getYouTubeMaxResThumbnail = (url: string): string | null =>
+  getYouTubeThumbnail(url, "maxres");
 
 export function getDurationLabel(url: string): string {
   if (url.includes("shorts")) return "Short";

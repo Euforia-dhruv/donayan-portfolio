@@ -20,7 +20,9 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center bg-cinema-black overflow-hidden" aria-label="Hero">
+    <>
+      <link rel="preload" as="image" href={getMediaUrl("/hero-bg.jpg")} fetchPriority="high" />
+      <section className="relative min-h-screen flex items-center bg-cinema-black overflow-hidden" aria-label="Hero">
       <div
         ref={bgRef}
         className="absolute inset-0 will-change-transform"
@@ -236,5 +238,6 @@ export default function Hero() {
         </svg>
       </div>
     </section>
+    </>
   );
 }

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useMemo } from "react";
 import { getYouTubeThumbnail } from "@/lib/video-utils";
+import AutoVideo from "@/components/AutoVideo";
 
 export type MediaKind =
   | "image"
@@ -148,23 +149,11 @@ export function Media({
   if (kind === "video") {
     return (
       <div className={`${wrapper} ${radius} ${className} bg-black`}>
-        {!loaded && <Shimmer />}
-        <video
-          src={displaySrc}
+        <AutoVideo
+          src={displaySrc!}
           poster={source.poster}
-          className={`h-full w-full object-cover transition-opacity duration-500 ${
-            loaded ? "opacity-100" : "opacity-0"
-          }`}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          onLoadedData={() => setLoaded(true)}
-          onError={() => {
-            setErrored(true);
-            onError?.();
-          }}
+          mode="autoplay"
+          sizes={sizes}
         />
         {showPlay && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">

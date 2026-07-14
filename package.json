@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/check-assets.mjs",
+    "prebuild": "node scripts/check-assets.mjs && node scripts/build-drive-pdfs.mjs",
     "build": "next build",
+    "predev": "node scripts/check-assets.mjs && node scripts/build-drive-pdfs.mjs",
     "start": "next start"
   },
   "dependencies": {
