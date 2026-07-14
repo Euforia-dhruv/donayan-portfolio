@@ -27,6 +27,10 @@ const SECTIONS = [
 
 const CTA = { label: "Start Project" };
 
+// Every "Start a Project" / inquiry entry point connects straight to the form.
+const INQUIRY_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLSdXeb-btHivYM9OJiNbev68zrPD868AcDY3dArmLIgMOpfoxw/viewform?usp=header";
+
 const NAV_H = 80; // h-20 — also read live from the <nav> element
 
 export default function Navigation() {
@@ -215,13 +219,14 @@ export default function Navigation() {
 
         {/* Right cluster */}
         <div className="flex items-center gap-4">
-          <Link
-            href={isHome ? "#contact" : "/contact"}
-            onClick={(e) => handleNav(e, "contact")}
+          <a
+            href={INQUIRY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="hidden rounded-full bg-gold px-6 py-2.5 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-cinema-black no-underline transition-opacity duration-300 hover:opacity-85 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black md:inline-flex"
           >
             {CTA.label}
-          </Link>
+          </a>
 
           {/* Mobile hamburger */}
           <button
@@ -279,14 +284,16 @@ export default function Navigation() {
               {item.label}
             </Link>
           ))}
-          <Link
-            href={isHome ? "#contact" : "/contact"}
-            onClick={(e) => handleNav(e, "contact")}
+          <a
+            href={INQUIRY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             tabIndex={menuOpen ? 0 : -1}
+            onClick={() => setMenuOpen(false)}
             className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-full bg-gold px-8 py-3 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-cinema-black no-underline transition-opacity hover:opacity-85 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"
           >
             {CTA.label}
-          </Link>
+          </a>
         </nav>
       </div>
     </nav>
