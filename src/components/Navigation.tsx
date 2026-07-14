@@ -38,6 +38,7 @@ export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeId, setActiveId] = useState<string>("");
+  const [overOutro, setOverOutro] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const rafRef = useRef<number | null>(null);
 
@@ -165,7 +166,20 @@ export default function Navigation() {
   const activeFor = (id: string) =>
     isHome ? activeId === id : pathname === `/${id}`;
 
-  const solid = scrolled || menuOpen || !isHome;
+  // When the cinematic ending enters under the navbar, go transparent so
+  // the portrait shows through (its top is a near-black gradient).
+  useEffect(() => {
+    const el = document.getElementById("contact-outro");
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => setOverOutro(e.isIntersecting),
+      { rootMargin: `-${NAV_H}px 0px 0px`, threshold: 0 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [pathname]);
+
+  const solid = (scrolled && !overOutro) || menuOpen || !isHome;
 
   const linkClass = (active: boolean) =>
     `relative font-switzer text-body-sm font-[400] no-underline transition-colors after:absolute after:bottom-[-6px] after:left-0 after:h-px after:w-full after:rounded-full after:bg-gold after:content-[''] after:transition-transform after:duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black ${

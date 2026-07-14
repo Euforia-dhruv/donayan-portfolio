@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 /* ------------------------------------------------------------------ */
@@ -112,6 +113,12 @@ const SERVICES = [
 const INQUIRY_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSdXeb-btHivYM9OJiNbev68zrPD868AcDY3dArmLIgMOpfoxw/viewform?usp=header";
 
+const THANK_YOU = "/assets/images/thank-you.png";
+const IG = "https://www.instagram.com/donayansahdev/";
+const LI =
+  "https://www.linkedin.com/in/donayan?utm_source=share_via&utm_content=profile&utm_medium=member_android";
+const MAIL = "mailto:ads.donayan@gmail.com";
+
 /* ------------------------------------------------------------------ */
 /* Section                                                             */
 /* ------------------------------------------------------------------ */
@@ -121,6 +128,42 @@ export default function ContactSection({
   titleAs?: "h1" | "h2";
 }) {
   const reduce = useReducedMotion();
+
+  const outroImgRef = useRef<HTMLDivElement>(null);
+  const outroOvRef = useRef<HTMLDivElement>(null);
+
+  // Cinematic ending: portrait parallax + overlay parallax as it scrolls through.
+  useEffect(() => {
+    const section = document.getElementById("contact-outro");
+    if (!section) return;
+    let raf: number | null = null;
+    const update = () => {
+      raf = null;
+      const r = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const p = Math.max(
+        -1,
+        Math.min(1, (vh - r.top) / (vh + r.height) - 0.5)
+      );
+      if (outroImgRef.current)
+        outroImgRef.current.style.transform = `translate3d(0, ${(-p * 42).toFixed(1)}px, 0)`;
+      if (outroOvRef.current)
+        outroOvRef.current.style.transform = `translate3d(0, ${(p * 14).toFixed(1)}px, 0)`;
+    };
+    const onScroll = () => {
+      if (raf == null) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf != null) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  const toTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
     <section
@@ -277,20 +320,132 @@ export default function ContactSection({
             </div>
           </motion.aside>
         </div>
-
-        {/* Thank-you sign-off */}
-        <div className="mt-16 flex flex-col items-center text-center">
-          <img
-            src="/assets/images/thank-you.png"
-            alt="Thank you"
-            loading="lazy"
-            className="h-auto w-[min(320px,72vw)] select-none"
-          />
-          <p className="mt-5 font-switzer text-caption font-[400] uppercase tracking-[0.18em] text-stone/60">
-            Thank you for visiting
-          </p>
-        </div>
       </div>
+
+      {/* ── Cinematic ending ───────────────────────────── */}
+      <footer
+        id="contact-outro"
+        className="contact-outro relative w-full overflow-hidden"
+        aria-label="Thank you"
+      >
+        {/* Portrait background (fade-in + Ken Burns + parallax) */}
+        <motion.div
+          initial={reduce ? false : { opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-8% 0px" }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          className="absolute inset-0"
+          aria-hidden="true"
+        >
+          <div
+            ref={outroImgRef}
+            className="absolute inset-x-0 will-change-transform"
+            style={{ top: "-8%", bottom: "-8%" }}
+          >
+            <img
+              src={THANK_YOU}
+              alt=""
+              className="h-full w-full object-cover object-[50%_28%] kenburns"
+            />
+          </div>
+        </motion.div>
+
+        {/* Dark gradient overlay (top / mid / bottom) + parallax */}
+        <div
+          ref={outroOvRef}
+          className="absolute inset-x-0 will-change-transform"
+          style={{
+            top: "-8%",
+            bottom: "-8%",
+            background:
+              "linear-gradient(180deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.96) 100%)",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Vignette */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(130% 90% at 50% 36%, transparent 48%, rgba(0,0,0,0.6) 100%)",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Floating grain */}
+        <div className="grain absolute inset-0" aria-hidden="true" />
+
+        {/* Content */}
+        <div className="relative z-10 mx-auto flex min-h-[55vh] max-w-[1100px] flex-col items-center justify-center px-6 pb-36 pt-28 text-center md:min-h-[72vh] lg:min-h-[86vh]">
+          <motion.div
+            initial={reduce ? false : { opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-12% 0px" }}
+            transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <h2 className="font-switzer font-[300] leading-[0.95] tracking-[-0.03em] text-cinema-white text-[clamp(46px,9vw,120px)]">
+              Thank You.
+            </h2>
+            <p className="mx-auto mt-6 max-w-xl font-switzer text-body font-[300] leading-[1.6] text-stone">
+              Thanks for taking the time to explore my work. Whether it&apos;s a
+              commercial, fashion film, campaign or branded content, I&apos;d love
+              to hear about your next production.
+            </p>
+
+            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+              <a
+                href={INQUIRY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 rounded-full bg-gold px-8 py-3.5 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-cinema-black no-underline transition-shadow duration-300 hover:shadow-[0_0_34px_rgba(200,162,77,0.55)] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"
+              >
+                Start Your Project
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                  <path d="M3 7h8M11 7L7 3M11 7L7 11" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
+              <a
+                href="/assets/docs/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 px-8 py-3.5 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-cinema-white/80 no-underline transition-colors duration-300 hover:border-gold/50 hover:text-cinema-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"
+              >
+                Resume
+              </a>
+              <button
+                type="button"
+                onClick={toTop}
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 px-8 py-3.5 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-cinema-white/80 no-underline transition-colors duration-300 hover:border-gold/50 hover:text-cinema-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"
+              >
+                Back to Top
+                <span aria-hidden="true">↑</span>
+              </button>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Footer */}
+        <div className="absolute inset-x-0 bottom-0 z-10 px-6 pb-8 pt-12 text-center">
+          <p className="font-switzer text-caption font-[400] text-cinema-white/70">
+            © 2026 Donayan Sahdev
+          </p>
+          <p className="mt-1 font-switzer text-caption font-[400] tracking-[0.04em] text-stone/60">
+            Production Director • Creative Producer
+          </p>
+          <div className="mt-4 flex items-center justify-center gap-5 font-switzer text-caption font-[400] uppercase tracking-[0.1em]">
+            <a href={IG} target="_blank" rel="noopener noreferrer" className="text-cinema-white/60 no-underline transition-colors hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-sm">
+              Instagram
+            </a>
+            <a href={LI} target="_blank" rel="noopener noreferrer" className="text-cinema-white/60 no-underline transition-colors hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-sm">
+              LinkedIn
+            </a>
+            <a href={MAIL} className="text-cinema-white/60 no-underline transition-colors hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-sm">
+              Email
+            </a>
+          </div>
+        </div>
+      </footer>
     </section>
   );
 }

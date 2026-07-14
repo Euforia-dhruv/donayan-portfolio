@@ -1,6 +1,5 @@
 import { SiteDataProvider } from "@/lib/convex/site-data";
 import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import Brands from "@/components/Brands";
 import ProductionWall from "@/components/ProductionWall";
@@ -27,7 +26,6 @@ export default function Home() {
         <Reveal><AboutSection /></Reveal>
         <Reveal><ContactSection /></Reveal>
       </main>
-      <Footer />
     </SiteDataProvider>
   );
 }
