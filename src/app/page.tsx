@@ -3,10 +3,8 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import Brands from "@/components/Brands";
-import Featured from "@/components/Featured";
-import ProductionWall from "@/components/ProductionWall";
-import FeaturedProductions from "@/components/FeaturedProductions";
-import ProductionTimeline from "@/components/ProductionTimeline";
+import ProductionWallSection from "@/components/ProductionWallSection";
+import PdfWallSection from "@/components/PdfWallSection";
 import Testimonials from "@/components/Testimonials";
 import AboutSection from "@/components/AboutSection";
 import ContactSection from "@/components/ContactSection";
@@ -19,10 +17,8 @@ export default function Home() {
       <main id="main-content">
         <Hero />
         <Reveal><Brands /></Reveal>
-        <Reveal><Featured /></Reveal>
-        <Reveal><ProductionWall /></Reveal>
-        <Reveal><FeaturedProductions /></Reveal>
-        <Reveal><ProductionTimeline /></Reveal>
+        <ProductionWallSection />
+        <PdfWallSection />
         <Reveal><Testimonials /></Reveal>
         <Reveal><AboutSection /></Reveal>
         <Reveal><ContactSection /></Reveal>
