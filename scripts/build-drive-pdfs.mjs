@@ -10,6 +10,7 @@
 // Runs from prebuild (and predev) so new source entries appear automatically.
 import fs from "fs";
 import path from "path";
+import sharp from "sharp";
 
 const ROOT = process.cwd();
 const PUBLIC = path.join(ROOT, "public");
@@ -76,6 +77,18 @@ const seen = new Set();
 const out = [];
 let skipped = 0;
 
+async function readAspect(served) {
+  try {
+    const meta = await sharp(path.join(PUBLIC, served)).metadata();
+    const w = meta.width || 0;
+    const h = meta.height || 0;
+    if (w && h) return { width: w, height: h, aspect: `${w} / ${h}` };
+  } catch {
+    /* fall through to default */
+  }
+  return { width: 0, height: 0, aspect: "3 / 4" };
+}
+
 for (const entry of source) {
   const id = driveId(entry.pdfUrl);
   const base = (entry.thumbnail || "").split("/").pop() || entry.thumbnail || "";
@@ -97,6 +110,7 @@ for (const entry of source) {
 
   const meta = metaByCover.get(norm(base)) || {};
   const title = meta.name ? prettyName(meta.name) : deriveTitle(base);
+  const dims = await readAspect(served);
 
   out.push({
     id: `drive-${id}`,
@@ -107,6 +121,9 @@ for (const entry of source) {
     client: meta.client || "",
     year: meta.year || "",
     category: "Presentation / Deck",
+    width: dims.width,
+    height: dims.height,
+    aspect: dims.aspect,
   });
 }
 

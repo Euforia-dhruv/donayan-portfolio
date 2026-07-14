@@ -70,10 +70,9 @@ export function buildPdfWallItems(): WallCardItem[] {
         source: d.pdfUrl,
         preview: d.thumbnail,
         poster: d.thumbnail,
-        aspect: "3 / 4",
+        aspect: d.aspect || "3 / 4",
         tags: [],
         filterKeys: pdfFilterKeys(category),
-        uniform: true,
       };
     });
 }

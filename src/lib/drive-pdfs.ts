@@ -12,6 +12,7 @@ export interface DrivePdf {
   year: string;
   client: string;
   category: string;
+  aspect?: string;
 }
 
 function driveId(url: string): string | null {
@@ -36,6 +37,7 @@ export function getDrivePdfs(): DrivePdf[] {
     client?: string;
     year?: string;
     category?: string;
+    aspect?: string;
   }>) {
     const id = driveId(e.pdfUrl);
     if (!id) {
@@ -57,6 +59,7 @@ export function getDrivePdfs(): DrivePdf[] {
       year: e.year || "",
       client: e.client || "",
       category: e.category || "Presentation / Deck",
+      aspect: e.aspect,
     });
   }
 
