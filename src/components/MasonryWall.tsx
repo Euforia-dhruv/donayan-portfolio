@@ -344,7 +344,14 @@ export default function MasonryWall({
   const [selected, setSelected] = useState<WallCardItem | null>(null);
 
   const rawColumns = useMemo(() => columnsForWidth(width), [width]);
-  const columns = pdfWall ? Math.min(rawColumns, 5) : rawColumns;
+  // PDF wall: exactly 3 cards per row on desktop, 2 on tablet, 1 on mobile.
+  const columns = pdfWall
+    ? width >= 1024
+      ? 3
+      : width >= 640
+        ? 2
+        : 1
+    : rawColumns;
   const gap = width > 0 && width < 640 ? 14 : 24;
 
   useEffect(() => {
@@ -402,11 +409,14 @@ export default function MasonryWall({
   }, [items, filters]);
 
   const open = (item: WallCardItem) => {
-    if (item.kind === "pdf") {
-      window.open(item.source, "_blank", "noopener,noreferrer");
-      return;
-    }
-    if (item.kind === "instagram" && !item.preview) {
+    // Videos and PDFs redirect to their original source in a new tab.
+    if (
+      item.kind === "pdf" ||
+      item.kind === "video" ||
+      item.kind === "youtube" ||
+      item.kind === "instagram" ||
+      item.source.includes("vimeo")
+    ) {
       window.open(item.source, "_blank", "noopener,noreferrer");
       return;
     }

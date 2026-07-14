@@ -29,9 +29,15 @@ export default function AutoVideo({
     const el = wrapRef.current;
     const v = vRef.current;
     if (!el || !v) return;
+    // React does not reliably set the `muted` DOM *property* from the JSX
+    // attribute, and browsers block autoplay of unmuted video. Force it here
+    // so the autoplay/loop actually starts.
+    v.muted = true;
+    v.defaultMuted = true;
     const io = new IntersectionObserver(
       ([e]) => {
         if (e.isIntersecting) {
+          v.muted = true;
           v.preload = "auto";
           v.play().catch(() => {});
         } else {

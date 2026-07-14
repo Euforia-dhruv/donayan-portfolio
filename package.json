@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "prebuild": "node scripts/check-assets.mjs && node scripts/build-drive-pdfs.mjs",
-    "build": "next build",
-    "predev": "node scripts/check-assets.mjs && node scripts/build-drive-pdfs.mjs",
-    "start": "next start"
+  "dev": "next dev",
+  "prebuild": "node scripts/check-assets.mjs && node scripts/build-drive-pdfs.mjs && node scripts/build-video-desc.mjs",
+  "build": "next build",
+  "predev": "node scripts/check-assets.mjs && node scripts/build-drive-pdfs.mjs && node scripts/build-video-desc.mjs",
+  "start": "next start"
   },
   "dependencies": {
     "@convex-dev/auth": "^0.0.94",

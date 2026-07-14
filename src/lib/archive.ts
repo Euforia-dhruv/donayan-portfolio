@@ -13,8 +13,10 @@ interface WallAsset {
 // JSON imports resolved by Next at build time.
 import wallAssetsRaw from "@/lib/wall-assets.json";
 import { getDrivePdfs } from "@/lib/drive-pdfs";
+import videoDescRaw from "@/lib/video-desc.json";
 
 const WALL = wallAssetsRaw as WallAsset[];
+const VIDEO_DESC = videoDescRaw as Record<string, string>;
 
 const COLLAB_URLS = new Set([
   "https://www.instagram.com/reel/C9Hady1yVDJ/",
@@ -173,12 +175,6 @@ export function buildArchiveItems(projects: any[]): ArchiveItem[] {
   const wallUnique = WALL.filter(
     (w, i, a) => a.findIndex((x) => norm(x.source) === norm(w.source)) === i,
   );
-  // Carry real descriptions from matching Convex productions onto wall items.
-  const descBySource = new Map<string, string>();
-  for (const p of projects || []) {
-    const d = p.description || "";
-    if (d) descBySource.set(norm(p.externalUrl || ""), d);
-  }
   for (const w of wallUnique) {
     if (usedWallSources.has(norm(w.source))) continue;
     const isVid = isLocalVideo(w.file);
@@ -202,9 +198,9 @@ export function buildArchiveItems(projects: any[]): ArchiveItem[] {
       source: w.source,
       preview: w.file,
       poster: isImg ? w.file : null,
-      aspect: w.aspect,
-      platform: w.platform,
-      description: descBySource.get(norm(w.source)) || w.description || "",
+       aspect: w.aspect,
+       platform: w.platform,
+       description: VIDEO_DESC[w.file] || w.description || "",
       filterKeys: keys,
     });
   }

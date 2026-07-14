@@ -73,6 +73,7 @@ export function buildPdfWallItems(): WallCardItem[] {
         aspect: d.aspect || "3 / 4",
         tags: [],
         filterKeys: pdfFilterKeys(category),
+        uniform: true,
       };
     });
 }
