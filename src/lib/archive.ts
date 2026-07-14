@@ -7,6 +7,7 @@ interface WallAsset {
   source: string;
   platform: string;
   label: string;
+  description?: string;
 }
 
 // JSON imports resolved by Next at build time.
@@ -172,6 +173,12 @@ export function buildArchiveItems(projects: any[]): ArchiveItem[] {
   const wallUnique = WALL.filter(
     (w, i, a) => a.findIndex((x) => norm(x.source) === norm(w.source)) === i,
   );
+  // Carry real descriptions from matching Convex productions onto wall items.
+  const descBySource = new Map<string, string>();
+  for (const p of projects || []) {
+    const d = p.description || "";
+    if (d) descBySource.set(norm(p.externalUrl || ""), d);
+  }
   for (const w of wallUnique) {
     if (usedWallSources.has(norm(w.source))) continue;
     const isVid = isLocalVideo(w.file);
@@ -197,7 +204,7 @@ export function buildArchiveItems(projects: any[]): ArchiveItem[] {
       poster: isImg ? w.file : null,
       aspect: w.aspect,
       platform: w.platform,
-      description: "",
+      description: descBySource.get(norm(w.source)) || w.description || "",
       filterKeys: keys,
     });
   }

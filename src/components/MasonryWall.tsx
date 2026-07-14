@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
+import AutoVideo from "@/components/AutoVideo";
 import {
-  getYouTubeEmbedUrl,
+  getYouTubeAutoplayUrl,
   getVimeoEmbedUrl,
 } from "@/lib/video-utils";
 import { parseAspect, type WallCardItem } from "@/lib/wall-items";
@@ -153,11 +154,18 @@ function WallCard({
       ? item.preview
       : null;
   const isPdf = item.kind === "pdf";
-  const isPlayable = item.kind === "video" || isVideoUrl(item.preview) || isYouTube(item.source) || isVimeo(item.source) || isInstagram(item.source);
+  const isLocalVideo = isVideoUrl(item.preview);
+  const isPlayable = isYouTube(item.source) || isVimeo(item.source) || isInstagram(item.source);
+  // Local mp4 autoplays inline; external platforms load on click (show play icon).
+  const showPlayIcon = isPlayable && !isLocalVideo;
 
-  const media = isPdf || posterImage
-    ? <BlurImage src={posterImage || item.poster || item.preview || ""} alt={item.title} sizes={sizes} priority={priority} />
-    : <DesignedPoster title={item.title} />;
+  const media = isPdf
+    ? <BlurImage src={posterImage || item.preview || ""} alt={item.title} sizes={sizes} priority={priority} />
+    : isLocalVideo
+      ? <AutoVideo src={item.preview || ""} poster={posterImage} sizes={sizes} />
+      : posterImage
+        ? <BlurImage src={posterImage} alt={item.title} sizes={sizes} priority={priority} />
+        : <DesignedPoster title={item.title} />;
 
   return (
     <div
@@ -174,6 +182,7 @@ function WallCard({
     >
       <button
         type="button"
+        data-wall-card
         onClick={onOpen}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -194,7 +203,7 @@ function WallCard({
           {media}
         </div>
 
-        {isPlayable && !isPdf && (
+        {showPlayIcon && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <PlayIcon />
           </div>
@@ -250,13 +259,14 @@ function Lightbox({ item, onClose }: { item: WallCardItem; onClose: () => void }
         src={item.preview}
         controls
         autoPlay
+        loop
         playsInline
         className="max-h-[88vh] max-w-[95vw] rounded-lg bg-black"
         onError={() => onClose()}
       />
     );
   } else if (isYouTube(item.source)) {
-    const u = getYouTubeEmbedUrl(item.source, true);
+    const u = getYouTubeAutoplayUrl(item.source);
     content = u ? (
       <iframe src={u} title={item.title} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen className="h-[80vh] w-[95vw] max-w-[1400px] rounded-lg border-0 bg-black" />
     ) : null;

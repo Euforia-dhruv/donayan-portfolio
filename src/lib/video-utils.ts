@@ -64,7 +64,7 @@ export function getVimeoId(url: string): string | null {
 export function getVimeoEmbedUrl(url: string): string | null {
   const id = getVimeoId(url);
   if (!id) return null;
-  return `https://player.vimeo.com/video/${id}?autoplay=1&title=0&byline=0&portrait=0`;
+  return `https://player.vimeo.com/video/${id}?autoplay=1&loop=1&title=0&byline=0&portrait=0`;
 }
 
 export function getInstagramEmbedUrl(url: string): string | null {
