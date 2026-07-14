@@ -66,7 +66,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     <div className="min-h-screen bg-background">
       <Toaster />
       {/* Mobile header */}
-      <header className="sticky top-0 z-40 flex h-14 items-center gap-4 border-b bg-background px-4 lg:hidden">
+      <header className="sticky top-0 z-40 flex h-14 items-center gap-4 border-b border-border bg-background px-4 lg:hidden">
         <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(!sidebarOpen)}>
           {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
@@ -76,12 +76,12 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 border-r bg-background transform transition-transform duration-200 lg:translate-x-0 lg:static lg:z-auto",
+          "fixed inset-y-0 left-0 z-50 w-64 border-r border-border bg-background transform transition-transform duration-200 lg:translate-x-0 lg:static lg:z-auto",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="flex h-full flex-col">
-          <div className="flex h-14 items-center border-b px-6">
+          <div className="flex h-14 items-center border-b border-border px-6">
             <Link href="/admin" className="font-bold text-lg tracking-tight">
               Donayan
             </Link>
@@ -112,7 +112,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             })}
           </nav>
 
-          <div className="border-t p-3">
+          <div className="border-t border-border p-3">
             <Button variant="ghost" className="w-full justify-start text-muted-foreground" onClick={handleSignOut}>
               <LogOut className="mr-2 h-4 w-4" />
               Sign out
