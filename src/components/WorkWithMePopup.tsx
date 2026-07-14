@@ -5,9 +5,9 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 const FORM = "https://docs.google.com/forms/d/e/1FAIpQLSdXeb-btHivYM9OJiNbev68zrPD868AcDY3dArmLIgMOpfoxw/viewform?usp=header";
 const TEL = "tel:+919819317834";
-const EMAIL = "mailto:email-ads.dani@gmail.com";
+const EMAIL = "mailto:ads.donayan@gmail.com";
 const INSTAGRAM = "https://www.instagram.com/donayansahdev/";
-const LINKEDIN = "https://www.linkedin.com/in/donayan";
+const LINKEDIN = "https://www.linkedin.com/in/donayan?utm_source=share_via&utm_content=profile&utm_medium=member_android";
 
 const DISMISS_KEY = "wwm-dismissed-at";
 const SESSION_KEY = "wwm-shown-session";

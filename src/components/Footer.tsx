@@ -1,10 +1,10 @@
 "use client";
 
-const EMAIL = "email-ads.dani@gmail.com";
+const EMAIL = "ads.donayan@gmail.com";
 const WHATSAPP_HREF = "https://wa.me/919819317834";
 const INSTAGRAM = "https://www.instagram.com/donayansahdev/";
-const LINKEDIN = "https://www.linkedin.com/in/donayan";
-const INQUIRY = "https://docs.google.com/forms/d/e/1FAIpQLSdXeb-btHivYM9OJiNbev68zrPD868AcDY3dArmLIgMOpfoxw/viewform";
+const LINKEDIN = "https://www.linkedin.com/in/donayan?utm_source=share_via&utm_content=profile&utm_medium=member_android";
+const INQUIRY = "https://docs.google.com/forms/d/e/1FAIpQLSdXeb-btHivYM9OJiNbev68zrPD868AcDY3dArmLIgMOpfoxw/viewform?usp=header";
 
 export default function Footer() {
   const year = new Date().getFullYear();

@@ -74,7 +74,7 @@ export const metadata: Metadata = {
 
 const SAME_AS = [
   "https://www.instagram.com/donayansahdev/",
-  "https://www.linkedin.com/in/donayan",
+  "https://www.linkedin.com/in/donayan?utm_source=share_via&utm_content=profile&utm_medium=member_android",
   BASE_URL,
 ];
 
@@ -87,8 +87,8 @@ const structuredData = [
     givenName: "Donayan",
     familyName: "Sahdev",
     url: BASE_URL,
-    email: "email-ads.dani@gmail.com",
-    telephone: "+91 9819317834",
+    email: "ads.donayan@gmail.com",
+    telephone: "+91 98193 17834",
     image: `${BASE_URL}/og.png`,
     occupation: "Creative Producer",
     jobTitle: "Freelance Director's Assistant",
@@ -116,7 +116,7 @@ const structuredData = [
     "@id": `${BASE_URL}/#organization`,
     name: "Donayan Sahdev",
     url: BASE_URL,
-    email: "email-ads.dani@gmail.com",
+    email: "ads.donayan@gmail.com",
     logo: `${BASE_URL}/og.png`,
     sameAs: SAME_AS,
     founder: { "@id": `${BASE_URL}/#person` },
