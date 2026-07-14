@@ -377,50 +377,61 @@ export default function ContactSection({
         <div className="grain absolute inset-0" aria-hidden="true" />
 
         {/* Content */}
-        <div className="relative z-10 mx-auto flex min-h-[55vh] max-w-[1100px] flex-col items-center justify-center px-6 pb-36 pt-28 text-center md:min-h-[72vh] lg:min-h-[86vh]">
+        <div className="relative z-10 mx-auto flex min-h-[58vh] max-w-[1100px] flex-col items-center justify-center px-6 pb-40 pt-28 text-center md:min-h-[72vh] lg:min-h-[88vh]">
           <motion.div
-            initial={reduce ? false : { opacity: 0, y: 30 }}
+            initial={reduce ? false : { opacity: 0, y: 36 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-12% 0px" }}
-            transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col items-center"
           >
-            <h2 className="font-switzer font-[300] leading-[0.95] tracking-[-0.03em] text-cinema-white text-[clamp(46px,9vw,120px)]">
+            <span className="mb-7 h-px w-16 bg-gradient-to-r from-transparent via-gold to-transparent" />
+
+            <h2 className="font-switzer font-[300] leading-[0.95] tracking-[-0.03em] text-cinema-white text-[clamp(44px,9vw,118px)]">
               Thank You.
             </h2>
-            <p className="mx-auto mt-6 max-w-xl font-switzer text-body font-[300] leading-[1.6] text-stone">
+
+            <p className="mx-auto mt-7 max-w-xl font-switzer text-body font-[300] leading-[1.65] text-stone">
               Thanks for taking the time to explore my work. Whether it&apos;s a
               commercial, fashion film, campaign or branded content, I&apos;d love
               to hear about your next production.
             </p>
 
-            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <div className="mt-10 flex flex-col items-center gap-7">
               <a
                 href={INQUIRY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 rounded-full bg-gold px-8 py-3.5 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-cinema-black no-underline transition-shadow duration-300 hover:shadow-[0_0_34px_rgba(200,162,77,0.55)] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"
+                className="group inline-flex items-center gap-2 rounded-full bg-gold px-9 py-4 font-switzer text-body-sm font-[400] uppercase tracking-[0.04em] text-cinema-black no-underline transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_42px_rgba(200,162,77,0.6)] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"
               >
                 Start Your Project
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
                   <path d="M3 7h8M11 7L7 3M11 7L7 11" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
-              <a
-                href="/assets/docs/resume.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 px-8 py-3.5 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-cinema-white/80 no-underline transition-colors duration-300 hover:border-gold/50 hover:text-cinema-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"
-              >
-                Resume
-              </a>
-              <button
-                type="button"
-                onClick={toTop}
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 px-8 py-3.5 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-cinema-white/80 no-underline transition-colors duration-300 hover:border-gold/50 hover:text-cinema-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"
-              >
-                Back to Top
-                <span aria-hidden="true">↑</span>
-              </button>
+
+              <div className="flex items-center gap-6 font-switzer text-caption font-[400] uppercase tracking-[0.12em]">
+                <button
+                  type="button"
+                  onClick={toTop}
+                  className="inline-flex items-center gap-1.5 text-cinema-white/55 no-underline transition-colors duration-300 hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-sm"
+                >
+                  Back to Top
+                  <span aria-hidden="true">↑</span>
+                </button>
+                <span className="h-3 w-px bg-cinema-white/15" aria-hidden="true" />
+                <a
+                  href="/assets/docs/resume.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-cinema-white/55 no-underline transition-colors duration-300 hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-sm"
+                >
+                  Resume
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                    <path d="M7 2v8M4 7l3 3 3-3M3 12h8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </a>
+              </div>
             </div>
           </motion.div>
         </div>
