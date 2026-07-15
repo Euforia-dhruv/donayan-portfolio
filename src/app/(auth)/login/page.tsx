@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useConvex } from "convex/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { api } from "../../../../convex/_generated/api";
 
 type Mode = "signIn" | "signUp" | "resetRequest" | "resetVerify";
 
@@ -22,6 +24,7 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { signIn } = useAuthActions();
+  const convex = useConvex();
 
   const go = (m: Mode) => {
     setMode(m);
@@ -42,10 +45,18 @@ export default function LoginPage() {
     setInfo("");
     setLoading(true);
     try {
+      // In sign-in mode, create the account on first use so the user row
+      // appears in the Convex `users` table (where an admin can be assigned).
+      const existing =
+        mode === "signIn"
+          ? await convex.query(api.users.byEmail, { email })
+          : null;
+      const shouldSignUp = mode === "signUp" || !existing;
+
       const result = await signIn("password", {
         email,
         password,
-        ...(mode === "signUp"
+        ...(shouldSignUp
           ? { flow: "signUp", profile: { name: name.trim() || undefined } }
           : {}),
       });
