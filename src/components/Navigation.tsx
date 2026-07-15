@@ -212,7 +212,7 @@ export default function Navigation() {
             <circle cx="16" cy="16" r="5" fill="currentColor" />
           </svg>
           <span className="ml-3 font-switzer text-body font-[400] tracking-[-0.01em] text-cinema-white">
-            Donayan<span className="text-gold">.</span>
+            Donayan
           </span>
         </Link>
 

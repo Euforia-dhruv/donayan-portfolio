@@ -74,51 +74,47 @@ export default function Hero() {
           className="relative z-10 mx-auto w-full max-w-[1400px] px-6 pb-16 pt-[calc(env(safe-area-inset-top)_+_6rem)] md:px-10 md:pb-20"
         >
           <div className="max-w-[680px]">
-            <p
-              className="font-switzer font-[400] uppercase tracking-[0.12em]"
-              style={{
-                fontSize: "10px",
-                color: "rgba(200,162,77,0.7)",
-                opacity: 0,
-                animation: "heroFade 0.8s cubic-bezier(0.25,0.1,0.25,1) 0.08s forwards",
-                transform: "translateY(16px)",
-              }}
-            >
-              Freelance
-            </p>
-
             <h1
               className="font-switzer font-[500] tracking-[-0.03em]"
               style={{
                 fontSize: "clamp(44px, 11vw, 110px)",
                 lineHeight: "0.95",
                 color: "#F5F5F2",
-                marginTop: "20px",
                 opacity: 0,
                 animation: "heroFade 0.8s cubic-bezier(0.25,0.1,0.25,1) 0.16s forwards",
                 transform: "translateY(16px)",
               }}
             >
-              Donayan
-              <br />
-              Sahdev
+              Donayan Sahdev
             </h1>
 
-            <p
-              className="line-clamp-2 font-switzer font-[300] leading-[1.25]"
+            <div
               style={{
-                fontSize: "clamp(18px, 1.6vw, 26px)",
-                color: "rgba(245,245,242,0.92)",
-                marginTop: "18px",
+                marginTop: "24px",
                 opacity: 0,
                 animation: "heroFade 0.8s cubic-bezier(0.25,0.1,0.25,1) 0.22s forwards",
                 transform: "translateY(16px)",
               }}
             >
-              Freelance Director&apos;s Assistant
-              <br />
-              Creative Producer
-            </p>
+              <p
+                className="font-switzer font-[500] uppercase tracking-[0.16em]"
+                style={{ fontSize: "15px", color: "#C8A24D" }}
+              >
+                Freelance
+              </p>
+              <p
+                className="font-switzer font-[500] tracking-[-0.01em]"
+                style={{ fontSize: "clamp(34px, 4.5vw, 40px)", lineHeight: "1.05", color: "#F5F5F2", marginTop: "10px" }}
+              >
+                Director&apos;s Assistant (DA)
+              </p>
+              <p
+                className="font-switzer font-[500] tracking-[-0.01em]"
+                style={{ fontSize: "clamp(34px, 4.5vw, 40px)", lineHeight: "1.05", color: "#F5F5F2", marginTop: "7px" }}
+              >
+                Creative Producer
+              </p>
+            </div>
 
             <p
               className="line-clamp-4 font-switzer font-[300] leading-[1.6]"
