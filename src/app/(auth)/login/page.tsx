@@ -56,9 +56,8 @@ export default function LoginPage() {
       const result = await signIn("password", {
         email,
         password,
-        ...(shouldSignUp
-          ? { flow: "signUp", profile: { name: name.trim() || undefined } }
-          : {}),
+        flow: shouldSignUp ? "signUp" : "signIn",
+        ...(shouldSignUp ? { profile: { name: name.trim() || undefined } } : {}),
       });
       finish(result);
     } catch (err: any) {
