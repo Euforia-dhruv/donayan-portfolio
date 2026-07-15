@@ -446,7 +446,7 @@ export default function ContactSection({
             © 2026 Donayan Sahdev
           </p>
           <p className="mt-1 font-switzer text-caption font-[400] tracking-[0.04em] text-stone/60">
-            Production Director • Creative Producer
+            Director&apos;s Assistant | Creative Producer
           </p>
           <div className="mt-4 flex items-center justify-center gap-5 font-switzer text-caption font-[400] uppercase tracking-[0.1em]">
             <a href={IG} target="_blank" rel="noopener noreferrer" className="text-cinema-white/60 no-underline transition-colors hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-sm">
