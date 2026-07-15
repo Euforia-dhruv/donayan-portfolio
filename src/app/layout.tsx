@@ -141,6 +141,8 @@ const structuredData = [
   },
 ];
 
+import { jsonLdSafe } from "@/lib/jsonld";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth">
@@ -149,7 +151,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="alternate" type="application/rss+xml" title="Donayan Sahdev" href="/rss.xml" />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdSafe(structuredData) }}
         />
       </head>
       <body className="bg-cinema-black text-cinema-white font-switzer antialiased">

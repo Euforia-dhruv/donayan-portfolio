@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
 import { slugify } from "./lib/utils";
+import { requireAdmin } from "./lib/auth";
 
 export const list = query({
   handler: async (ctx) => {
@@ -22,8 +22,7 @@ export const create = mutation({
     color: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     return await ctx.db.insert("categories", {
       name: args.name,
       slug: slugify(args.name),
@@ -40,8 +39,7 @@ export const update = mutation({
     color: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     const { id, ...fields } = args;
     if (fields.name) (fields as any).slug = slugify(fields.name);
     await ctx.db.patch(id, fields);
@@ -51,8 +49,7 @@ export const update = mutation({
 export const remove = mutation({
   args: { id: v.id("categories") },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     await ctx.db.delete(args.id);
   },
 });

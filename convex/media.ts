@@ -1,10 +1,11 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
+import { requireAdmin } from "./lib/auth";
 
 export const list = query({
   args: { type: v.optional(v.string()) },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     let q = ctx.db.query("media");
     if (args.type !== undefined) q = q.filter((m) => m.eq(m.field("type"), args.type!));
     return await q.collect();
@@ -14,6 +15,7 @@ export const list = query({
 export const listWithUrls = query({
   args: {},
   handler: async (ctx) => {
+    await requireAdmin(ctx);
     const items = await ctx.db.query("media").collect();
     return await Promise.all(
       items.map(async (m) => ({
@@ -33,6 +35,7 @@ export const getUrl = query({
 
 export const generateUploadUrl = mutation({
   handler: async (ctx) => {
+    await requireAdmin(ctx);
     return await ctx.storage.generateUploadUrl();
   },
 });
@@ -46,8 +49,7 @@ export const create = mutation({
     alt: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     return await ctx.db.insert("media", args);
   },
 });
@@ -59,8 +61,7 @@ export const update = mutation({
     alt: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     const { id, ...fields } = args;
     await ctx.db.patch(id, fields);
   },
@@ -69,8 +70,7 @@ export const update = mutation({
 export const remove = mutation({
   args: { id: v.id("media") },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     const item = await ctx.db.get(args.id);
     if (!item) return;
     await ctx.storage.delete(item.fileId);

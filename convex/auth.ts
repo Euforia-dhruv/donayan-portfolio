@@ -4,6 +4,26 @@ import { Email } from "@convex-dev/auth/providers/Email";
 
 const FROM = process.env.AUTH_EMAIL_FROM ?? "Donayan <onboarding@resend.dev>";
 
+// Server-side password strength policy. Enforced on sign-up and password
+// reset (the library calls this for both flows). Throws on weak passwords.
+function validatePasswordRequirements(password: string) {
+  if (!password || password.length < 12) {
+    throw new Error("Password must be at least 12 characters long.");
+  }
+  if (password.length > 128) {
+    throw new Error("Password is too long.");
+  }
+  if (!/[a-z]/.test(password) || !/[A-Z]/.test(password)) {
+    throw new Error("Password must contain both uppercase and lowercase letters.");
+  }
+  if (!/[0-9]/.test(password)) {
+    throw new Error("Password must contain at least one number.");
+  }
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    throw new Error("Password must contain at least one special character.");
+  }
+}
+
 // Email provider used only to deliver the password-reset verification code.
 const resetEmail = Email({
   from: FROM,
@@ -55,6 +75,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [
     Password({
       reset: resetEmail,
+      validatePasswordRequirements,
     }),
   ],
 });

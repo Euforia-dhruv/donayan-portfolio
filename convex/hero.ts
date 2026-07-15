@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
+import { requireAdmin } from "./lib/auth";
 
 export const get = query({
   handler: async (ctx) => {
@@ -26,6 +27,7 @@ export const update = mutation({
     availableFor: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     const existing = await ctx.db.query("hero").first();
     if (existing) {
       await ctx.db.patch(existing._id, args);
@@ -38,6 +40,7 @@ export const update = mutation({
 export const removeMedia = mutation({
   args: { kind: v.union(v.literal("photo"), v.literal("video")) },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     const doc = await ctx.db.query("hero").first();
     if (!doc) return;
     if (args.kind === "photo" && doc.bgPhotoId) {
@@ -53,6 +56,7 @@ export const removeMedia = mutation({
 
 export const generateUploadUrl = mutation({
   handler: async (ctx) => {
+    await requireAdmin(ctx);
     return await ctx.storage.generateUploadUrl();
   },
 });

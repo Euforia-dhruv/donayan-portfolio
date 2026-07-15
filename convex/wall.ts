@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
+import { requireAdmin } from "./lib/auth";
 
 export const list = query({
   args: { published: v.optional(v.boolean()) },
@@ -33,8 +33,7 @@ export const create = mutation({
     published: v.boolean(),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     return await ctx.db.insert("wall", { ...args, sortOrder: Date.now() });
   },
 });
@@ -55,8 +54,7 @@ export const update = mutation({
     published: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     const { id, ...fields } = args;
     await ctx.db.patch(id, fields);
   },
@@ -65,8 +63,7 @@ export const update = mutation({
 export const remove = mutation({
   args: { id: v.id("wall") },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     await ctx.db.delete(args.id);
   },
 });

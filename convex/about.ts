@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
+import { requireAdmin } from "./lib/auth";
 
 export const get = query({
   handler: async (ctx) => {
@@ -17,8 +17,7 @@ export const upsert = mutation({
     education: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     const existing = await ctx.db.query("about").first();
     if (existing) {
       await ctx.db.patch(existing._id, args);

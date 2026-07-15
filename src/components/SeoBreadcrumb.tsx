@@ -1,4 +1,5 @@
 import { BASE_URL } from "@/lib/site-url";
+import { jsonLdSafe } from "@/lib/jsonld";
 
 export default function SeoBreadcrumb({
   items,
@@ -18,7 +19,7 @@ export default function SeoBreadcrumb({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      dangerouslySetInnerHTML={{ __html: jsonLdSafe(jsonLd) }}
     />
   );
 }

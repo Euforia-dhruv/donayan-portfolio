@@ -1,4 +1,5 @@
 import { query } from "./_generated/server";
+import { requireAdmin } from "./lib/auth";
 
 const DAY = 86_400_000;
 
@@ -39,6 +40,7 @@ function bytesSeries(items: { _creationTime?: number; size?: number }[], now: nu
 
 export const getDashboard = query({
   handler: async (ctx) => {
+    await requireAdmin(ctx);
     const now = Date.now();
     const weekAgo = now - 7 * DAY;
     const twoWeeksAgo = now - 14 * DAY;

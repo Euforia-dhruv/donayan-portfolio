@@ -17,6 +17,7 @@ import type * as contact from "../contact.js";
 import type * as dashboard from "../dashboard.js";
 import type * as hero from "../hero.js";
 import type * as http from "../http.js";
+import type * as lib_auth from "../lib/auth.js";
 import type * as lib_utils from "../lib/utils.js";
 import type * as media from "../media.js";
 import type * as projects from "../projects.js";
@@ -43,6 +44,7 @@ declare const fullApi: ApiFromModules<{
   dashboard: typeof dashboard;
   hero: typeof hero;
   http: typeof http;
+  "lib/auth": typeof lib_auth;
   "lib/utils": typeof lib_utils;
   media: typeof media;
   projects: typeof projects;

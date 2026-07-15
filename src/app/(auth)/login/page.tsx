@@ -51,7 +51,7 @@ export default function LoginPage() {
         mode === "signIn"
           ? await convex.query(api.users.byEmail, { email })
           : null;
-      const shouldSignUp = mode === "signUp" || !existing;
+      const shouldSignUp = mode === "signUp" || !existing?.exists;
 
       const result = await signIn("password", {
         email,

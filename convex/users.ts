@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { requireAdmin } from "./lib/auth";
 
 export const me = query({
   handler: async (ctx) => {
@@ -12,8 +13,7 @@ export const me = query({
 
 export const list = query({
   handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     return await ctx.db.query("users").collect();
   },
 });
@@ -21,10 +21,13 @@ export const list = query({
 export const byEmail = query({
   args: { email: v.string() },
   handler: async (ctx, { email }) => {
-    return await ctx.db
+    const user = await ctx.db
       .query("users")
       .withIndex("email", (q) => q.eq("email", email))
       .first();
+    // Only reveal existence (used by the sign-in flow to choose sign-up vs
+    // sign-in). Never return the full document — that would leak role/PII.
+    return { exists: user !== null };
   },
 });
 

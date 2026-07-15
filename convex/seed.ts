@@ -1,10 +1,22 @@
 import { v } from "convex/values";
-import { mutation, action } from "./_generated/server";
-import { createAccount } from "@convex-dev/auth/server";
+import { mutation, action, QueryCtx, MutationCtx } from "./_generated/server";
+import { api } from "./_generated/api";
+import { createAccount, getAuthUserId } from "@convex-dev/auth/server";
+
+async function requireAdminCtx(ctx: QueryCtx | MutationCtx) {
+  const userId = await getAuthUserId(ctx);
+  if (!userId) throw new Error("Not authenticated");
+  const me = await ctx.db.get(userId);
+  if (!me || me.role !== "admin") throw new Error("Admin access required");
+}
 
 export const seedAdmin = action({
   args: { email: v.string(), password: v.string(), role: v.optional(v.string()) },
   handler: async (_ctx, args) => {
+    // Privilege escalation risk: only allow bootstrapping the FIRST admin on a
+    // fresh deployment, or by an existing admin. Prevents anonymous admin creation.
+    const me = await _ctx.runQuery(api.users.me);
+    if (me && me.role !== "admin") throw new Error("Admin access required");
     try {
       const userId = await createAccount(_ctx, {
         provider: "password",
@@ -24,6 +36,7 @@ export const seedAdmin = action({
 export const clearAll = mutation({
   args: {},
   handler: async (ctx) => {
+    await requireAdminCtx(ctx);
     const tables = ["projects", "brands", "categories", "timeline", "testimonials", "settings", "about", "wall", "media", "contactMessages"] as const;
     for (const table of tables) {
       const rows = await ctx.db.query(table).collect();
@@ -108,6 +121,10 @@ export const seed = mutation({
     }),
   },
   handler: async (ctx, args) => {
+    const projectCount = (await ctx.db.query("projects").collect()).length;
+    if (projectCount > 0) {
+      await requireAdminCtx(ctx);
+    }
     const results: Record<string, number> = {};
 
     for (const p of args.projects) {

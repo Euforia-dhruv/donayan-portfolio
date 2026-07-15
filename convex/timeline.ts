@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
+import { requireAdmin } from "./lib/auth";
 
 export const list = query({
   handler: async (ctx) => {
@@ -33,8 +33,7 @@ export const create = mutation({
     associated: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     const count = (await ctx.db.query("timeline").collect()).length;
     return await ctx.db.insert("timeline", { ...args, sortOrder: Date.now() + count });
   },
@@ -55,8 +54,7 @@ export const update = mutation({
     associated: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     const { id, ...fields } = args;
     await ctx.db.patch(id, fields);
   },
@@ -65,8 +63,7 @@ export const update = mutation({
 export const reorder = mutation({
   args: { ids: v.array(v.id("timeline")) },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     const base = Date.now();
     await Promise.all(
       args.ids.map((id, index) =>
@@ -80,8 +77,7 @@ export const reorder = mutation({
 export const remove = mutation({
   args: { id: v.id("timeline") },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     await ctx.db.delete(args.id);
   },
 });

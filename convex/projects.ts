@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
 import { slugify } from "./lib/utils";
+import { requireAdmin } from "./lib/auth";
 
 const projectFields = {
   title: v.string(),
@@ -84,8 +84,7 @@ export const getById = query({
 export const create = mutation({
   args: projectDoc,
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     const slug = (args.slug && args.slug.trim()) || slugify(args.title);
     return await ctx.db.insert("projects", { ...args, slug, sortOrder: args.sortOrder ?? Date.now() });
   },
@@ -94,8 +93,7 @@ export const create = mutation({
 export const update = mutation({
   args: { id: v.id("projects"), ...projectFields, documents: v.optional(v.array(v.object({ label: v.string(), fileId: v.optional(v.id("_storage")), url: v.optional(v.string()) }))) },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     const { id, ...fields } = args;
     const clean: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(fields)) {
@@ -110,8 +108,7 @@ export const update = mutation({
 export const duplicate = mutation({
   args: { id: v.id("projects") },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     const src = await ctx.db.get(args.id);
     if (!src) throw new Error("Project not found");
     const { _id, _creationTime, ...rest } = src as Record<string, any>;
@@ -131,8 +128,7 @@ export const duplicate = mutation({
 export const bulkRemove = mutation({
   args: { ids: v.array(v.id("projects")) },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     for (const id of args.ids) await ctx.db.delete(id);
     return args.ids.length;
   },
@@ -145,8 +141,7 @@ export const bulkSetStatus = mutation({
     published: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     for (const id of args.ids) {
       const patch: Record<string, unknown> = { status: args.status };
       if (args.published !== undefined) patch.published = args.published;
@@ -159,8 +154,7 @@ export const bulkSetStatus = mutation({
 export const remove = mutation({
   args: { id: v.id("projects") },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    await requireAdmin(ctx);
     await ctx.db.delete(args.id);
   },
 });
