@@ -20,12 +20,11 @@ import { usePathname } from "next/navigation";
 const SECTIONS = [
   { id: "wall", label: "Wall" },
   { id: "archive", label: "Archive" },
-  { id: "timeline", label: "Timeline" },
   { id: "about", label: "About" },
   { id: "contact", label: "Contact" },
 ] as const;
 
-const CTA = { label: "Start Project" };
+const CTA = { label: "Let's connect" };
 
 // Every "Start a Project" / inquiry entry point connects straight to the form.
 const INQUIRY_URL =

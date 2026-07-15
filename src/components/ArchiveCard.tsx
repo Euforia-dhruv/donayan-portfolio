@@ -25,10 +25,12 @@ function YouTubeGlyph({ className = "h-7 w-7" }: { className?: string }) {
 export default function ArchiveCard({
   item,
   index,
+  recent,
   onOpen,
 }: {
   item: import("@/lib/archive").ArchiveItem;
   index: number;
+  recent?: boolean;
   onOpen: () => void;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -120,6 +122,14 @@ export default function ArchiveCard({
         }}
         aria-label={`${item.title} — view`}
       >
+        {/* "Recent Works" highlight for pinned client features */}
+        {recent && (
+          <span className="pointer-events-none absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-gold px-3 py-1 text-[10px] font-switzer uppercase tracking-[0.12em] text-cinema-black shadow-[0_6px_18px_rgba(0,0,0,0.45)]">
+            <span className="h-1.5 w-1.5 rounded-full bg-cinema-black/70" />
+            Recent Works
+          </span>
+        )}
+
         {/* media layer (parallax) */}
         <div
           className="absolute inset-0 transition-transform duration-700 ease-out will-change-transform"

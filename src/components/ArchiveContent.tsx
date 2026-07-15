@@ -6,6 +6,16 @@ import { useProjects } from "@/lib/convex/site-data";
 import { buildArchiveItems } from "@/lib/archive";
 import ArchiveCard from "@/components/ArchiveCard";
 
+// Recent client works surfaced at the top of the library with a "Recent Works"
+// highlight. Matched by brand/client (case/space/punctuation insensitive).
+const RECENT_BRANDS = ["Pee Safe", "Centrum", "Godrej"];
+const norm = (s: string) => (s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+const isRecentWork = (it: { client?: string; title?: string }) =>
+  RECENT_BRANDS.some((b) => {
+    const n = norm(b);
+    return norm(it.client || "").includes(n) || norm(it.title || "").includes(n);
+  });
+
 const MediaViewer = dynamic(() => import("@/components/MediaViewer"), {
   ssr: false,
 });
@@ -29,7 +39,12 @@ export default function ArchiveContent() {
   const [query, setQuery] = useState<string>("");
   const [viewer, setViewer] = useState<number | null>(null);
 
-  const items = useMemo(() => buildArchiveItems(projects), [projects]);
+  const items = useMemo(() => {
+    const base = buildArchiveItems(projects);
+    const recent = base.filter(isRecentWork);
+    const rest = base.filter((it) => !isRecentWork(it));
+    return [...recent, ...rest];
+  }, [projects]);
 
   const filtered = useMemo(() => {
     const byFilter =
@@ -161,6 +176,7 @@ export default function ArchiveContent() {
                 key={item.id}
                 item={item}
                 index={i}
+                recent={isRecentWork(item)}
                 onOpen={() => open(i)}
               />
             ))}

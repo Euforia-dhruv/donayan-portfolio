@@ -161,11 +161,11 @@ export default function WorkWithMePopup() {
                 href={FORM}
                 target="_blank"
                 rel="noopener noreferrer"
-                data-cta="Start Project"
+                data-cta="Let's connect"
                 data-contact="1"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold px-7 py-3.5 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-cinema-black no-underline transition-opacity hover:opacity-85 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black sm:w-auto"
               >
-                Open Inquiry Form
+                Let&apos;s connect
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
                   <path d="M3 7h8M11 7L7 3M11 7L7 11" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>

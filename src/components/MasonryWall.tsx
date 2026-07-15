@@ -329,6 +329,7 @@ export default function MasonryWall({
   eyebrow,
   searchPlaceholder = "Search…",
   pdfWall = false,
+  hideFilters = false,
 }: {
   items: WallCardItem[];
   filters: readonly Filter[];
@@ -336,6 +337,7 @@ export default function MasonryWall({
   eyebrow: string;
   searchPlaceholder?: string;
   pdfWall?: boolean;
+  hideFilters?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
@@ -457,25 +459,27 @@ export default function MasonryWall({
           </div>
         </div>
 
-        <div className="mb-10 flex flex-wrap gap-2">
-          {filters.map((f) => (
-            <button
-              key={f.key}
-              type="button"
-              onClick={() => setActive(f.key)}
-              className={`flex items-center gap-2 rounded-full border px-4 py-2 text-caption font-switzer font-[400] uppercase tracking-[0.06em] transition-all duration-300 ${
-                active === f.key
-                  ? "border-gold bg-gold text-cinema-black"
-                  : "border-white/10 text-stone hover:border-white/30 hover:text-cinema-white"
-              }`}
-            >
-              {f.label}
-              <span className={`rounded-full px-1.5 text-[10px] ${active === f.key ? "bg-cinema-black/15 text-cinema-black" : "bg-white/5 text-cinema-white/40"}`}>
-                {counts[f.key] ?? 0}
-              </span>
-            </button>
-          ))}
-        </div>
+        {!hideFilters && (
+          <div className="mb-10 flex flex-wrap gap-2">
+            {filters.map((f) => (
+              <button
+                key={f.key}
+                type="button"
+                onClick={() => setActive(f.key)}
+                className={`flex items-center gap-2 rounded-full border px-4 py-2 text-caption font-switzer font-[400] uppercase tracking-[0.06em] transition-all duration-300 ${
+                  active === f.key
+                    ? "border-gold bg-gold text-cinema-black"
+                    : "border-white/10 text-stone hover:border-white/30 hover:text-cinema-white"
+                }`}
+              >
+                {f.label}
+                <span className={`rounded-full px-1.5 text-[10px] ${active === f.key ? "bg-cinema-black/15 text-cinema-black" : "bg-white/5 text-cinema-white/40"}`}>
+                  {counts[f.key] ?? 0}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
 
         {width > 0 ? (
           <div
