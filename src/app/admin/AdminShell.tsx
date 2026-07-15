@@ -69,15 +69,16 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
       { label: "Creative Library", href: "/admin/projects", icon: Library },
     ],
   },
-  {
-    label: "Studio",
-    items: [
-      { label: "Timeline", href: "/admin/timeline", icon: Timeline },
-      { label: "About", href: "/admin/about", icon: FileText },
-      { label: "Messages", href: "/admin/contact", icon: MessageSquare },
-      { label: "Testimonials", href: "/admin/testimonials", icon: Quote },
-    ],
-  },
+      {
+        label: "Studio",
+        items: [
+          { label: "Timeline", href: "/admin/timeline", icon: Timeline },
+          { label: "About", href: "/admin/about", icon: FileText },
+          { label: "Hero", href: "/admin/hero", icon: ImageIcon },
+          { label: "Messages", href: "/admin/contact", icon: MessageSquare },
+          { label: "Testimonials", href: "/admin/testimonials", icon: Quote },
+        ],
+      },
   {
     label: "Organize",
     items: [
@@ -177,13 +178,15 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   const SidebarContent = (
     <div className="flex h-full flex-col">
-      <div className="flex h-16 items-center gap-3 border-b border-white/5 px-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-fuchsia-500 text-sm font-black text-white shadow-lg shadow-primary/30">
+      <div className="flex h-[72px] shrink-0 items-center gap-3 px-6 py-6">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-fuchsia-500 text-base font-black text-white shadow-lg shadow-primary/30">
           D
         </div>
-        <div className="leading-tight">
-          <div className="text-sm font-bold tracking-tight">Donayan</div>
-          <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+        <div className="min-w-0 leading-tight">
+          <div className="truncate text-[15px] font-bold tracking-tight">
+            Donayan
+          </div>
+          <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
             Studio Console
           </div>
         </div>
@@ -191,13 +194,13 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
       <ScrollNav onNavigate={() => setSidebarOpen(false)} pathname={pathname} />
 
-      <div className="border-t border-white/5 p-3">
+      <div className="mt-auto border-t border-white/10 p-3">
         <Button
           variant="ghost"
-          className="w-full justify-start text-muted-foreground hover:text-foreground"
+          className="w-full justify-start gap-3 text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
           onClick={handleSignOut}
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <LogOut className="h-4 w-4" />
           Sign out
         </Button>
       </div>
@@ -210,52 +213,54 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         <Toaster />
 
         {/* Desktop sidebar */}
-        <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-white/5 bg-sidebar/60 backdrop-blur-xl lg:block">
+        <aside className="fixed inset-y-0 left-0 z-40 hidden w-[280px] border-r border-white/10 bg-sidebar/70 backdrop-blur-xl lg:block">
           {SidebarContent}
         </aside>
 
-        {/* Mobile drawer */}
+        {/* Mobile / tablet drawer */}
         {sidebarOpen && (
           <div className="fixed inset-0 z-50 lg:hidden">
             <div
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               onClick={() => setSidebarOpen(false)}
             />
-            <aside className="absolute inset-y-0 left-0 w-64 border-r border-white/10 bg-sidebar animate-in slide-in-from-left">
+            <aside className="absolute inset-y-0 left-0 flex w-[280px] flex-col border-r border-white/10 bg-sidebar animate-in slide-in-from-left">
               {SidebarContent}
             </aside>
           </div>
         )}
 
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-white/5 bg-background/80 px-4 backdrop-blur-xl lg:pl-64">
+        <header className="sticky top-0 z-30 flex h-[72px] items-center gap-4 border-b border-white/10 bg-background/70 px-8 backdrop-blur-xl lg:pl-[280px]">
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden"
+            className="shrink-0 lg:hidden"
             onClick={() => setSidebarOpen(true)}
           >
             <Menu className="h-5 w-5" />
           </Button>
 
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span className="hidden sm:inline">Donayan</span>
-            <ChevronRight className="hidden h-3.5 w-3.5 sm:inline" />
+          <div className="flex shrink-0 items-center gap-2 text-sm">
+            <span className="hidden text-muted-foreground sm:inline">Donayan</span>
+            <ChevronRight className="hidden h-3.5 w-3.5 text-muted-foreground/50 sm:inline" />
             <span className="font-medium text-foreground">{title}</span>
           </div>
 
-          <div className="ml-auto flex items-center gap-2">
+          <div className="flex flex-1 justify-center px-2">
             <button
               onClick={() => setPaletteOpen(true)}
-              className="flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-muted-foreground transition-colors hover:bg-white/10"
+              className="flex h-10 w-full max-w-[420px] items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-muted-foreground transition-colors hover:border-white/20 hover:bg-white/10"
             >
-              <Search className="h-4 w-4" />
-              <span className="hidden md:inline">Search…</span>
-              <kbd className="hidden rounded border border-white/10 bg-black/30 px-1.5 py-0.5 text-[10px] md:inline">
+              <Search className="h-4 w-4 shrink-0" />
+              <span className="flex-1 text-left">Search…</span>
+              <kbd className="hidden rounded border border-white/10 bg-black/30 px-1.5 py-0.5 text-[10px] sm:inline">
                 ⌘K
               </kbd>
             </button>
+          </div>
 
+          <div className="flex shrink-0 items-center gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon" asChild>
@@ -264,13 +269,14 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   </a>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>View live site</TooltipContent>
+              <TooltipContent>Preview website</TooltipContent>
             </Tooltip>
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="relative">
                   <Bell className="h-4 w-4" />
+                  <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-primary" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Notifications</TooltipContent>
@@ -278,8 +284,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-white/5 pl-1 pr-2 transition-colors hover:bg-white/10">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-primary to-fuchsia-500 text-xs font-bold text-white">
+                <button className="flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/5 pl-1 pr-3 transition-colors hover:border-white/20 hover:bg-white/10">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-fuchsia-500 text-xs font-bold text-white">
                     A
                   </span>
                   <span className="hidden text-sm font-medium sm:inline">Admin</span>
@@ -292,11 +298,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   <Settings className="h-4 w-4" />
                   Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setPaletteOpen(true);
-                  }}
-                >
+                <DropdownMenuItem onClick={() => setPaletteOpen(true)}>
                   <Sparkles className="h-4 w-4" />
                   Command palette
                 </DropdownMenuItem>
@@ -314,7 +316,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </header>
 
         {/* Main */}
-        <main className="lg:pl-64">
+        <main className="lg:pl-[280px]">
           <motion.div
             key={pathname}
             initial={{ opacity: 0, y: 8 }}
@@ -342,11 +344,11 @@ function ScrollNav({
   return (
     <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-4">
       {NAV_GROUPS.map((group) => (
-        <div key={group.label}>
-          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
+        <div key={group.label} className="space-y-2">
+          <div className="px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/50">
             {group.label}
           </div>
-          <div className="space-y-1">
+          <div className="space-y-3">
             {group.items.map((item) => {
               const isActive =
                 item.href !== "#" &&
@@ -356,11 +358,11 @@ function ScrollNav({
                 return (
                   <div
                     key={item.label}
-                    className="flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground/40"
+                    className="flex cursor-not-allowed items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-muted-foreground/40"
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-[18px] w-[18px] shrink-0" />
                     {item.label}
-                    <span className="ml-auto rounded-full bg-white/5 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wide text-muted-foreground/60">
+                    <span className="ml-auto rounded-full bg-white/5 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wide text-muted-foreground/50">
                       Soon
                     </span>
                   </div>
@@ -372,16 +374,16 @@ function ScrollNav({
                   href={item.href}
                   onClick={onNavigate}
                   className={cn(
-                    "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150",
                     isActive
-                      ? "bg-primary/15 text-foreground"
-                      : "text-muted-foreground hover:bg-white/5 hover:text-foreground",
+                      ? "border border-primary/25 bg-primary/10 text-primary shadow-[0_1px_0_0_rgba(200,162,77,0.08)_inset]"
+                      : "border border-transparent text-muted-foreground hover:bg-white/5 hover:text-foreground",
                   )}
                 >
                   {isActive && (
-                    <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-primary" />
+                    <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-primary" />
                   )}
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-[18px] w-[18px] shrink-0" />
                   {item.label}
                 </Link>
               );

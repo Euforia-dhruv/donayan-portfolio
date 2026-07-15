@@ -15,6 +15,7 @@ import type * as brands from "../brands.js";
 import type * as categories from "../categories.js";
 import type * as contact from "../contact.js";
 import type * as dashboard from "../dashboard.js";
+import type * as hero from "../hero.js";
 import type * as http from "../http.js";
 import type * as lib_utils from "../lib/utils.js";
 import type * as media from "../media.js";
@@ -40,6 +41,7 @@ declare const fullApi: ApiFromModules<{
   categories: typeof categories;
   contact: typeof contact;
   dashboard: typeof dashboard;
+  hero: typeof hero;
   http: typeof http;
   "lib/utils": typeof lib_utils;
   media: typeof media;

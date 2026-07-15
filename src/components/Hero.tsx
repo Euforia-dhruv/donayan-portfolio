@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useQuery } from "convex/react";
 import { getMediaUrl } from "@/lib/media";
+import { api } from "../../convex/_generated/api";
 
 const STATS = [
   { value: "60+", label: "Commercial Productions" },
@@ -34,6 +36,21 @@ export default function Hero() {
     }
   };
 
+  const hero = useQuery(api.hero.get);
+  const bgPhoto = hero?.bgPhotoUrl ?? getMediaUrl("/hero-bg.jpg");
+  const bgVideo = hero?.bgVideoUrl ?? getMediaUrl("/assets/archive/4.mp4");
+  const headline = hero?.headline ?? "Donayan Sahdev";
+  const freelance = hero?.freelance ?? "Freelance";
+  const role1 = hero?.role1 ?? "Director's Assistant (DA)";
+  const role2 = hero?.role2 ?? "Creative Producer";
+  const description =
+    hero?.description ??
+    "Helping directors bring creative ideas to life through seamless production, coordination, and execution for India's leading brands, agencies, and artists.";
+  const ctaPrimary = hero?.ctaPrimary ?? "Explore Production Log";
+  const ctaSecondary = hero?.ctaSecondary ?? "Work With Me";
+  const stats = hero?.stats && hero.stats.length ? hero.stats : STATS;
+  const availableFor = hero?.availableFor && hero.availableFor.length ? hero.availableFor : AVAILABLE_FOR;
+
   return (
     <>
       <link rel="preload" as="image" href={getMediaUrl("/hero-bg.jpg")} fetchPriority="high" />
@@ -43,15 +60,15 @@ export default function Hero() {
       >
         <div ref={bgRef} className="absolute inset-0 will-change-transform" style={{ transition: "transform 0.05s linear" }}>
           <img
-            src={getMediaUrl("/hero-bg.jpg")}
+            src={bgPhoto}
             alt=""
             aria-hidden="true"
             className="absolute inset-0 h-full w-full object-cover object-center"
             style={{ filter: "brightness(0.78) contrast(1.3) saturate(1.05)" }}
           />
-          <video
-            src={getMediaUrl("/assets/archive/4.mp4")}
-            poster={getMediaUrl("/hero-bg.jpg")}
+            <video
+              src={bgVideo}
+              poster={bgPhoto}
             autoPlay
             muted
             loop
@@ -85,7 +102,7 @@ export default function Hero() {
                 transform: "translateY(16px)",
               }}
             >
-              Donayan Sahdev
+              {headline}
             </h1>
 
             <div
@@ -100,19 +117,19 @@ export default function Hero() {
                 className="font-switzer font-[500] uppercase tracking-[0.16em]"
                 style={{ fontSize: "15px", color: "#C8A24D" }}
               >
-                Freelance
+                {freelance}
               </p>
               <p
                 className="font-switzer font-[500] tracking-[-0.01em]"
                 style={{ fontSize: "clamp(34px, 4.5vw, 40px)", lineHeight: "1.05", color: "#F5F5F2", marginTop: "10px" }}
               >
-                Director&apos;s Assistant (DA)
+                {role1}
               </p>
               <p
                 className="font-switzer font-[500] tracking-[-0.01em]"
                 style={{ fontSize: "clamp(34px, 4.5vw, 40px)", lineHeight: "1.05", color: "#F5F5F2", marginTop: "7px" }}
               >
-                Creative Producer
+                {role2}
               </p>
             </div>
 
@@ -127,8 +144,7 @@ export default function Hero() {
                 transform: "translateY(16px)",
               }}
             >
-              Helping directors bring creative ideas to life through seamless production, coordination, and
-              execution for India&apos;s leading brands, agencies, and artists.
+              {description}
             </p>
 
             <div
@@ -145,8 +161,8 @@ export default function Hero() {
                 className="inline-flex w-full items-center justify-center gap-3 rounded-lg font-switzer text-body-sm font-[400] no-underline transition-[transform,filter] hover:-translate-y-0.5 hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black sm:w-auto"
                 style={{ height: "52px", padding: "0 32px", background: "#C8A24D", color: "#0A0A0A", letterSpacing: "0.04em" }}
               >
-                Explore Production Log
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-[#0A0A0A]" aria-hidden="true">
+                 {ctaPrimary}
+                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-[#0A0A0A]" aria-hidden="true">
                   <path d="M3 7h8M11 7L7 3M11 7L7 11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
@@ -156,8 +172,8 @@ export default function Hero() {
                 className="inline-flex w-full items-center justify-center rounded-lg border border-gold/40 font-switzer text-body-sm font-[400] no-underline text-gold transition-colors hover:bg-gold/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black sm:w-auto"
                 style={{ height: "52px", padding: "0 28px", letterSpacing: "0.04em" }}
               >
-                Work With Me
-              </button>
+                 {ctaSecondary}
+                </button>
             </div>
 
             <div
@@ -168,7 +184,7 @@ export default function Hero() {
                 transform: "translateY(16px)",
               }}
             >
-              {STATS.map((s) => (
+              {stats.map((s) => (
                 <div key={s.label}>
                   <p className="font-switzer font-[500] leading-[1]" style={{ fontSize: "clamp(22px, 2vw, 30px)", color: "#C8A24D" }}>
                     {s.value}
@@ -192,7 +208,7 @@ export default function Hero() {
                 Available For
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
-                {AVAILABLE_FOR.map((a) => (
+                {availableFor.map((a) => (
                   <span
                     key={a}
                     className="rounded-full border border-gold/30 px-3.5 py-1.5 font-switzer font-[400] text-cinema-white/80"

@@ -135,6 +135,20 @@ export default defineSchema({
     copyright: v.optional(v.string()),
   }),
 
+  hero: defineTable({
+    bgPhotoId: v.optional(v.id("_storage")),
+    bgVideoId: v.optional(v.id("_storage")),
+    headline: v.optional(v.string()),
+    freelance: v.optional(v.string()),
+    role1: v.optional(v.string()),
+    role2: v.optional(v.string()),
+    description: v.optional(v.string()),
+    ctaPrimary: v.optional(v.string()),
+    ctaSecondary: v.optional(v.string()),
+    stats: v.optional(v.array(v.object({ value: v.string(), label: v.string() }))),
+    availableFor: v.optional(v.array(v.string())),
+  }),
+
   contactMessages: defineTable({
     name: v.string(),
     email: v.string(),

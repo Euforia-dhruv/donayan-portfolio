@@ -1,11 +1,26 @@
 "use client";
 
+import Script from "next/script";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, Users, Eye, MessageSquare } from "lucide-react";
 
 export default function AnalyticsPage() {
   return (
     <div className="space-y-6">
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-JMKN76JYS6"
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-JMKN76JYS6');
+          gtag('event', 'page_view', { page_path: '/admin/analytics' });
+        `}
+      </Script>
+
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
         <p className="text-muted-foreground">Site traffic and engagement metrics</p>
