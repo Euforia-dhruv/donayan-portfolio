@@ -42,6 +42,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   Circle,
+  Users,
+  ShieldOff,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery, useMutation } from "convex/react";
@@ -298,13 +300,16 @@ const TABS = [
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "security", label: "Security", icon: ShieldCheck },
   { id: "advanced", label: "Advanced", icon: SlidersHorizontal },
+  { id: "team", label: "Team", icon: Users },
 ] as const;
 
 export default function SettingsPage() {
   const settings = useQuery(api.settings.get);
   const projects = useQuery(api.projects.list, {}) ?? [];
   const media = useQuery(api.media.list, {}) ?? [];
+  const team = useQuery(api.users.list) ?? [];
   const upsert = useMutation(api.settings.upsert);
+  const setRole = useMutation(api.users.setRole);
 
   const [tab, setTab] = React.useState<(typeof TABS)[number]["id"]>("general");
   const [form, setForm] = React.useState<SettingsForm>(EMPTY);
@@ -649,6 +654,74 @@ export default function SettingsPage() {
                   <ToggleRow label="Maintenance mode" hint="Temporarily hide the public site." checked={false} onChange={() => toast.info("Maintenance mode requires a site flag.")} />
                   <ToggleRow label="Cache static assets" hint="Speed up page loads." checked disabled hint2="Always on" />
                   <ToggleRow label="Verbose logs" hint="Log admin actions." checked={false} onChange={() => toast.info("Logging is not configured yet.")} />
+                </SectionCard>
+              )}
+
+              {tab === "team" && (
+                <SectionCard title="Team & Access" description="Only accounts with the admin role can open this console. Promote or revoke access here." icon={Users}>
+                  <div className="space-y-2">
+                    {team.length === 0 && (
+                      <div className="rounded-xl border border-dashed border-zinc-800 p-6 text-center text-sm text-zinc-500">
+                        No users found.
+                      </div>
+                    )}
+                    {team.map((u: any) => {
+                      const isAdmin = u.role === "admin";
+                      return (
+                        <div
+                          key={u._id}
+                          className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800 bg-zinc-900/40 p-3.5"
+                        >
+                          <div className="flex min-w-0 items-center gap-3">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#c8a24d] to-fuchsia-500 text-xs font-bold text-white">
+                              {(u.name || u.email || "?").slice(0, 1).toUpperCase()}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="truncate text-sm font-medium text-zinc-100">
+                                {u.name || "Unnamed"}
+                              </div>
+                              <div className="truncate text-xs text-zinc-500">{u.email}</div>
+                            </div>
+                          </div>
+                          <div className="flex shrink-0 items-center gap-2">
+                            {isAdmin ? (
+                              <StatPill tone="green">
+                                <ShieldCheck className="h-3 w-3" /> Admin
+                              </StatPill>
+                            ) : (
+                              <StatPill tone="zinc">
+                                <ShieldOff className="h-3 w-3" /> Member
+                              </StatPill>
+                            )}
+                            <button
+                              onClick={async () => {
+                                try {
+                                  await setRole({ userId: u._id, role: isAdmin ? "member" : "admin" });
+                                  toast.success(isAdmin ? "Admin access revoked" : "Promoted to admin");
+                                } catch (e: any) {
+                                  toast.error(e?.message || "Could not change role");
+                                }
+                              }}
+                              className={cn(
+                                "rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors",
+                                isAdmin
+                                  ? "border-zinc-800 text-zinc-300 hover:border-red-500/40 hover:text-red-400"
+                                  : "border-[#c8a24d]/40 bg-[#c8a24d]/10 text-[#c8a24d] hover:bg-[#c8a24d]/20",
+                              )}
+                            >
+                              {isAdmin ? "Revoke" : "Make admin"}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-4 text-xs text-zinc-500">
+                    Tip: the very first admin must be created by setting the user’s{" "}
+                    <span className="font-mono text-zinc-300">role</span> to{" "}
+                    <span className="font-mono text-zinc-300">"admin"</span> in the
+                    Convex dashboard (Data → users).
+                  </p>
                 </SectionCard>
               )}
             </motion.div>

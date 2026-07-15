@@ -46,7 +46,7 @@ export default function LoginPage() {
         email,
         password,
         ...(mode === "signUp"
-          ? { flow: "signUp", profile: { name: name.trim() || undefined, role: "admin" } }
+          ? { flow: "signUp", profile: { name: name.trim() || undefined } }
           : {}),
       });
       finish(result);

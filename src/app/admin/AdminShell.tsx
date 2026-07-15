@@ -49,6 +49,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useConvexAuth, useAuthActions } from "@convex-dev/auth/react";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 import { CommandPalette } from "@/components/admin/CommandPalette";
 
 type NavItem = {
@@ -112,6 +114,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const router = useRouter();
   const { isAuthenticated, isLoading } = useConvexAuth();
   const { signOut } = useAuthActions();
+  const me = useQuery(api.users.me);
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [paletteOpen, setPaletteOpen] = React.useState(false);
   const title = useTitle(pathname);
@@ -132,7 +135,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     router.push("/login");
   };
 
-  if (isLoading) {
+  if (isLoading || me === undefined) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="flex items-center gap-2 text-muted-foreground">
@@ -146,6 +149,30 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   if (!isAuthenticated) {
     router.push("/login");
     return null;
+  }
+
+  if (me?.role !== "admin") {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-background px-6 text-center">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5 text-3xl">
+          🔒
+        </div>
+        <div className="space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight">Admin access required</h1>
+          <p className="max-w-md text-sm text-muted-foreground">
+            Your account doesn’t have admin privileges. An existing admin can
+            grant access from <span className="text-foreground">Settings → Team</span>,
+            or have your <span className="text-foreground">role</span> set to{" "}
+            <span className="font-mono text-foreground">"admin"</span> in the Convex
+            dashboard.
+          </p>
+        </div>
+        <Button variant="outline" onClick={handleSignOut}>
+          <LogOut className="mr-2 h-4 w-4" />
+          Sign out
+        </Button>
+      </div>
+    );
   }
 
   const SidebarContent = (

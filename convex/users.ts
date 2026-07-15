@@ -27,3 +27,20 @@ export const byEmail = query({
       .first();
   },
 });
+
+// Promote/demote a user. Guarded so only an existing admin can change roles.
+// To create the FIRST admin, edit the user's `role` field directly in the
+// Convex dashboard (Data → users) and set it to "admin".
+export const setRole = mutation({
+  args: { userId: v.id("users"), role: v.string() },
+  handler: async (ctx, args) => {
+    const callerId = await getAuthUserId(ctx);
+    if (!callerId) throw new Error("Not authenticated");
+    const caller = await ctx.db.get(callerId);
+    if (caller?.role !== "admin") {
+      throw new Error("Only admins can change user roles");
+    }
+    await ctx.db.patch(args.userId, { role: args.role });
+    return args.userId;
+  },
+});
