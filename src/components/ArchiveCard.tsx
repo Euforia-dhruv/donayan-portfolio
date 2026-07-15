@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
-import { getYouTubeThumbnail, getYouTubeMaxResThumbnail } from "@/lib/video-utils";
+import { useMemo, useRef, useState } from "react";
+import { getYouTubeThumbnail } from "@/lib/video-utils";
 import AutoVideo from "@/components/AutoVideo";
+import { useTrack } from "../lib/useTrack";
 
 function PlayIcon({ className = "h-8 w-8" }: { className?: string }) {
   return (
@@ -21,12 +22,6 @@ function YouTubeGlyph({ className = "h-7 w-7" }: { className?: string }) {
   );
 }
 
-function placeholderDataUrl(label: string): string {
-  const safe = label.replace(/[<>&]/g, "");
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='800' height='800'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#211c12'/><stop offset='1' stop-color='#070707'/></linearGradient></defs><rect width='800' height='800' fill='url(#g)'/><circle cx='400' cy='330' r='70' fill='rgba(200,162,77,0.10)'/><path d='M380 294v72l58-36z' fill='rgba(245,245,242,0.55)'/><text x='50%' y='545' fill='#C8A24D' font-family='sans-serif' font-size='52' font-weight='300' text-anchor='middle'>${safe}</text></svg>`;
-  return "data:image/svg+xml," + encodeURIComponent(svg);
-}
-
 export default function ArchiveCard({
   item,
   index,
@@ -42,6 +37,7 @@ export default function ArchiveCard({
   const [posterErr, setPosterErr] = useState(false);
   const [sheen, setSheen] = useState({ x: 50, y: 0 });
   const cardRef = useRef<HTMLDivElement>(null);
+  const track = useTrack();
 
   // Normalize the aspect ratio so a missing/invalid value can never collapse
   // or shrink a card. Falls back to 16:9 (landscape) which is correct for
@@ -62,11 +58,13 @@ export default function ArchiveCard({
   const mediaSrc = item.preview || item.poster;
   const sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
 
-  const posterSrc = isYouTube
-    ? posterErr
-      ? getYouTubeThumbnail(item.source)
-      : item.poster || getYouTubeMaxResThumbnail(item.source) || ""
-    : "";
+  // YouTube thumbnail: mqdefault (16:9, always generated) first, fall back to
+  // hqdefault. Never show an empty dark block — a gradient sits behind it.
+  const ytSrc = useMemo(() => {
+    if (!isYouTube) return "";
+    if (posterErr) return getYouTubeThumbnail(item.source, "hq") ?? "";
+    return getYouTubeThumbnail(item.source, "mq") ?? "";
+  }, [isYouTube, item.source, posterErr]);
 
   const onMove = (e: React.MouseEvent) => {
     const r = cardRef.current?.getBoundingClientRect();
@@ -95,7 +93,22 @@ export default function ArchiveCard({
     >
       <button
         type="button"
-        onClick={onOpen}
+        onClick={() => {
+          const isProd = item.id.startsWith("prod-");
+          if (isPdf)
+            track("pdf_download", { refId: item.id, refTitle: item.title, path: "/archive" });
+          else if (isInstagram)
+            track("instagram_open", { refId: item.id, refTitle: item.title, path: "/archive" });
+          else if (isYouTube)
+            track("youtube_play", { refId: item.id, refTitle: item.title, path: "/archive" });
+          else
+            track(isProd ? "project_open" : "wall_open", {
+              refId: item.id,
+              refTitle: item.title,
+              path: "/archive",
+            });
+          onOpen();
+        }}
         onFocus={() => setHovered(true)}
         onBlur={() => setHovered(false)}
         className="card-inner relative block w-full cursor-pointer overflow-hidden rounded-[26px] bg-charcoal text-left outline-none ring-1 ring-white/[0.06] transition-[transform,box-shadow] duration-500 ease-out hover:-translate-y-2 focus-visible:ring-2 focus-visible:ring-gold"
@@ -116,20 +129,20 @@ export default function ArchiveCard({
             <AutoVideo src={item.preview} poster={item.poster || undefined} mode="autoplay" sizes={sizes} />
           ) : isYouTube ? (
             <>
-              {posterSrc ? (
+              <div className="absolute inset-0 bg-gradient-to-br from-charcoal via-black to-charcoal" />
+              {ytSrc ? (
                 <Image
-                  src={posterSrc}
+                  src={ytSrc}
                   alt={item.title}
                   fill
                   sizes={sizes}
                   priority={index < 3}
                   className="object-cover"
-                  onError={() => setPosterErr(true)}
+                  onError={() => {
+                    if (!posterErr) setPosterErr(true);
+                  }}
                 />
-              ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={placeholderDataUrl(item.platform)} alt={item.title} className="absolute inset-0 h-full w-full object-cover" />
-              )}
+              ) : null}
             </>
           ) : mediaSrc && !imgErr ? (
             <>

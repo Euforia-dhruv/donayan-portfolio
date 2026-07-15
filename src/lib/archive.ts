@@ -133,6 +133,14 @@ export function buildArchiveItems(projects: any[]): ArchiveItem[] {
       preview = (p.videos || []).find(isLocalVideo);
     }
 
+    // Detect YouTube aspect automatically: Shorts are vertical (9:16), regular
+    // watch links are horizontal (16:9). This keeps YouTube cards in the same
+    // responsive aspect-ratio system as every other media type.
+    if (url.includes("youtube") || url.includes("youtu.be")) {
+      if (url.includes("shorts")) aspect = "9 / 16";
+      else if (aspect === "9 / 16" && p.orientation !== "portrait") aspect = "16 / 9";
+    }
+
     const ytThumb = url.includes("youtube") || url.includes("youtu.be") ? getYouTubeMaxResThumbnail(url) : null;
     if (!poster && ytThumb) poster = ytThumb;
 

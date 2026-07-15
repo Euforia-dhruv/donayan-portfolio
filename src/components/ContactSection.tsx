@@ -266,6 +266,8 @@ export default function ContactSection({
                 href={INQUIRY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
+                data-cta="Start Project"
+                data-contact="1"
                 className="inline-flex shrink-0 items-center gap-2 rounded-full bg-gold px-7 py-3 font-switzer text-body-sm font-[400] uppercase tracking-[0.02em] text-cinema-black no-underline transition-opacity duration-300 hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"
               >
                 Start Your Project
@@ -398,12 +400,14 @@ export default function ContactSection({
             </p>
 
             <div className="mt-10 flex flex-col items-center gap-7">
-              <a
+               <a
                 href={INQUIRY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
+                data-cta="Start Project"
+                data-contact="1"
                 className="group inline-flex items-center gap-2 rounded-full bg-gold px-9 py-4 font-switzer text-body-sm font-[400] uppercase tracking-[0.04em] text-cinema-black no-underline transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_42px_rgba(200,162,77,0.6)] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"
-              >
+               >
                 Start Your Project
                 <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
                   <path d="M3 7h8M11 7L7 3M11 7L7 11" strokeLinecap="round" strokeLinejoin="round" />

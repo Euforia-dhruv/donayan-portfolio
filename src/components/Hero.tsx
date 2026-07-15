@@ -158,6 +158,7 @@ export default function Hero() {
             >
               <a
                 href="#wall"
+                data-cta={ctaPrimary}
                 className="inline-flex w-full items-center justify-center gap-3 rounded-lg font-switzer text-body-sm font-[400] no-underline transition-[transform,filter] hover:-translate-y-0.5 hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black sm:w-auto"
                 style={{ height: "52px", padding: "0 32px", background: "#C8A24D", color: "#0A0A0A", letterSpacing: "0.04em" }}
               >
@@ -169,6 +170,7 @@ export default function Hero() {
               <button
                 type="button"
                 onClick={openPopup}
+                data-cta={ctaSecondary}
                 className="inline-flex w-full items-center justify-center rounded-lg border border-gold/40 font-switzer text-body-sm font-[400] no-underline text-gold transition-colors hover:bg-gold/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black sm:w-auto"
                 style={{ height: "52px", padding: "0 28px", letterSpacing: "0.04em" }}
               >

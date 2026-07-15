@@ -53,7 +53,10 @@ export const getDashboard = query({
     const categories = await ctx.db.query("categories").collect();
     const testimonials = await ctx.db.query("testimonials").collect();
     const brands = await ctx.db.query("brands").collect();
-    const pageViews = await ctx.db.query("pageViews").collect();
+    const pageViewsEvents = await ctx.db
+      .query("analyticsEvents")
+      .withIndex("by_type", (q) => q.eq("type", "page_view"))
+      .collect();
     const settings = await ctx.db.query("settings").first();
 
     const countIn = (items: { _creationTime?: number }[], from: number, to: number) =>
@@ -90,19 +93,22 @@ export const getDashboard = query({
       kpi("Timeline", "timeline", timeline, "Clock", "#a855f7"),
     ];
 
-    // Views (real, from pageViews table)
+    // Views (real, from analyticsEvents of type page_view)
+    const toDay = (t: number) => new Date(t).toISOString().slice(0, 10);
     const viewDays = Array.from({ length: 7 }, (_, i) =>
       new Date(now - (6 - i) * DAY).toISOString().slice(0, 10),
     );
-    const viewSeries = viewDays.map((d) => pageViews.find((r) => r.date === d)?.count ?? 0);
+    const viewSeries = viewDays.map(
+      (d) => pageViewsEvents.filter((r) => toDay(r._creationTime ?? 0) === d).length,
+    );
     const viewsLast7 = viewSeries.reduce((a, b) => a + b, 0);
     const prevViewDays = Array.from({ length: 7 }, (_, i) =>
       new Date(now - (13 - i) * DAY).toISOString().slice(0, 10),
     );
     const viewsPrev7 = prevViewDays
-      .map((d) => pageViews.find((r) => r.date === d)?.count ?? 0)
+      .map((d) => pageViewsEvents.filter((r) => toDay(r._creationTime ?? 0) === d).length)
       .reduce((a, b) => a + b, 0);
-    const totalViews = pageViews.reduce((s, r) => s + r.count, 0);
+    const totalViews = pageViewsEvents.length;
     const vg = pct(viewsLast7, viewsPrev7);
     kpis.push({
       key: "views",

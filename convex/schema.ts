@@ -166,8 +166,21 @@ export default defineSchema({
     alt: v.optional(v.string()),
   }).index("by_type", ["type"]),
 
-  pageViews: defineTable({
-    date: v.string(),
-    count: v.number(),
-  }).index("by_date", ["date"]),
+  analyticsEvents: defineTable({
+    type: v.string(),
+    path: v.optional(v.string()),
+    refId: v.optional(v.string()),
+    refTitle: v.optional(v.string()),
+    label: v.optional(v.string()),
+    referrer: v.optional(v.string()),
+    ua: v.optional(v.string()),
+    country: v.optional(v.string()),
+    device: v.optional(v.string()),
+    browser: v.optional(v.string()),
+    sessionId: v.optional(v.string()),
+    ts: v.number(),
+  })
+    .index("by_type", ["type"])
+    .index("by_ts", ["ts"])
+    .index("by_session", ["sessionId"]),
 });

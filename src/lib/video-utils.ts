@@ -28,10 +28,18 @@ export function getYouTubeAutoplayUrl(url: string): string | null {
   return getYouTubeEmbedUrl(url, true, true);
 }
 
-export function getYouTubeThumbnail(url: string, quality: "hq" | "maxres" = "hq"): string | null {
+export function getYouTubeThumbnail(
+  url: string,
+  quality: "mq" | "hq" | "maxres" = "hq",
+): string | null {
   const id = getYouTubeId(url);
   if (!id) return null;
-  const file = quality === "maxres" ? "maxresdefault" : "hqdefault";
+  const file =
+    quality === "maxres"
+      ? "maxresdefault"
+      : quality === "mq"
+        ? "mqdefault"
+        : "hqdefault";
   return `https://i.ytimg.com/vi/${id}/${file}.jpg`;
 }
 

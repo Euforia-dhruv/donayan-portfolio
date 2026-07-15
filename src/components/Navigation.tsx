@@ -237,6 +237,8 @@ export default function Navigation() {
             href={INQUIRY_URL}
             target="_blank"
             rel="noopener noreferrer"
+            data-cta="Start Project"
+            data-contact="1"
             className="hidden rounded-full bg-gold px-6 py-2.5 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-cinema-black no-underline transition-opacity duration-300 hover:opacity-85 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black md:inline-flex"
           >
             {CTA.label}
@@ -302,6 +304,8 @@ export default function Navigation() {
             href={INQUIRY_URL}
             target="_blank"
             rel="noopener noreferrer"
+            data-cta="Start Project"
+            data-contact="1"
             tabIndex={menuOpen ? 0 : -1}
             onClick={() => setMenuOpen(false)}
             className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-full bg-gold px-8 py-3 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-cinema-black no-underline transition-opacity hover:opacity-85 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black"

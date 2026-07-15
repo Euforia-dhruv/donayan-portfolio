@@ -3,6 +3,8 @@ import "./globals.css";
 import { ConvexClientProvider } from "@/lib/convex/provider";
 import WorkWithMePopup from "@/components/WorkWithMePopup";
 import ViewTracker from "@/components/admin/ViewTracker";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 const BASE_URL = "https://donayan.com";
 
@@ -162,7 +164,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <WorkWithMePopup />
           <ViewTracker />
+          <AnalyticsTracker />
         </ConvexClientProvider>
+        <GoogleAnalytics />
       </body>
     </html>
   );

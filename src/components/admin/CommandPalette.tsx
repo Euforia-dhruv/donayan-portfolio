@@ -58,9 +58,9 @@ const GROUPS: { label: string; items: Omit<Command, "group">[] }[] = [
     items: [
       { label: "Categories", href: "/admin/categories", icon: Tags },
       { label: "Media Library", href: "/admin/media", icon: ImageIcon },
-      { label: "Tags", href: "#", icon: Hash, soon: true },
-      { label: "SEO", href: "#", icon: SeoIcon, soon: true },
-      { label: "Navigation", href: "#", icon: Navigation, soon: true },
+      { label: "Tags", href: "/admin/tags", icon: Hash },
+      { label: "SEO", href: "/admin/seo", icon: SeoIcon },
+      { label: "Navigation", href: "/admin/navigation", icon: Navigation },
     ],
   },
   {
@@ -68,9 +68,9 @@ const GROUPS: { label: string; items: Omit<Command, "group">[] }[] = [
     items: [
       { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
       { label: "Settings", href: "/admin/settings", icon: Settings },
-      { label: "Trash", href: "#", icon: Trash2, soon: true },
-      { label: "Users", href: "#", icon: Users, soon: true },
-      { label: "Profile", href: "#", icon: UserCircle, soon: true },
+      { label: "Trash", href: "/admin/trash", icon: Trash2 },
+      { label: "Users", href: "/admin/users", icon: Users },
+      { label: "Profile", href: "/admin/profile", icon: UserCircle },
     ],
   },
 ];

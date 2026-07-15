@@ -161,6 +161,8 @@ export default function WorkWithMePopup() {
                 href={FORM}
                 target="_blank"
                 rel="noopener noreferrer"
+                data-cta="Start Project"
+                data-contact="1"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold px-7 py-3.5 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-cinema-black no-underline transition-opacity hover:opacity-85 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black sm:w-auto"
               >
                 Open Inquiry Form
@@ -170,6 +172,7 @@ export default function WorkWithMePopup() {
               </a>
               <a
                 href={TEL}
+                data-cta="Call Now"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-gold/40 px-7 py-3.5 font-switzer text-body-sm font-[400] uppercase tracking-[0.03em] text-gold no-underline transition-colors hover:bg-gold/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cinema-black sm:w-auto"
               >
                 Call Now

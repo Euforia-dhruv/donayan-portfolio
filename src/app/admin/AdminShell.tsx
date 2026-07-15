@@ -57,7 +57,6 @@ type NavItem = {
   label: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
-  soon?: boolean;
 };
 
 const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
@@ -84,9 +83,9 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
     items: [
       { label: "Categories", href: "/admin/categories", icon: Tags },
       { label: "Media Library", href: "/admin/media", icon: ImageIcon },
-      { label: "Tags", href: "#", icon: Hash, soon: true },
-      { label: "SEO", href: "#", icon: SeoIcon, soon: true },
-      { label: "Navigation", href: "#", icon: Navigation, soon: true },
+      { label: "Tags", href: "/admin/tags", icon: Hash },
+      { label: "SEO", href: "/admin/seo", icon: SeoIcon },
+      { label: "Navigation", href: "/admin/navigation", icon: Navigation },
     ],
   },
   {
@@ -94,9 +93,9 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
     items: [
       { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
       { label: "Settings", href: "/admin/settings", icon: Settings },
-      { label: "Trash", href: "#", icon: Trash2, soon: true },
-      { label: "Users", href: "#", icon: Users, soon: true },
-      { label: "Profile", href: "#", icon: UserCircle, soon: true },
+      { label: "Trash", href: "/admin/trash", icon: Trash2 },
+      { label: "Users", href: "/admin/users", icon: Users },
+      { label: "Profile", href: "/admin/profile", icon: UserCircle },
     ],
   },
 ];
@@ -354,20 +353,6 @@ function ScrollNav({
                 item.href !== "#" &&
                 (pathname === item.href || pathname.startsWith(item.href + "/"));
               const Icon = item.icon;
-              if (item.soon) {
-                return (
-                  <div
-                    key={item.label}
-                    className="flex cursor-not-allowed items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-muted-foreground/40"
-                  >
-                    <Icon className="h-[18px] w-[18px] shrink-0" />
-                    {item.label}
-                    <span className="ml-auto rounded-full bg-white/5 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wide text-muted-foreground/50">
-                      Soon
-                    </span>
-                  </div>
-                );
-              }
               return (
                 <Link
                   key={item.label}
