@@ -8,7 +8,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com",
-      "connect-src 'self' https://*.convex.cloud https://*.convex.site https://www.google-analytics.com",
+      "connect-src 'self' https://*.convex.cloud wss://*.convex.cloud https://*.convex.site wss://*.convex.site https://www.google-analytics.com",
       "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://www.instagram.com",
       "base-uri 'self'",
       "form-action 'self'",

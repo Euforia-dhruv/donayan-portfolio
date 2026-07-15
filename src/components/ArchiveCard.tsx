@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { getYouTubeId, getYouTubeThumbnail, getYouTubeMaxResThumbnail } from "@/lib/video-utils";
+import { getYouTubeThumbnail, getYouTubeMaxResThumbnail } from "@/lib/video-utils";
 import AutoVideo from "@/components/AutoVideo";
 
 function PlayIcon({ className = "h-8 w-8" }: { className?: string }) {
@@ -27,20 +27,6 @@ function placeholderDataUrl(label: string): string {
   return "data:image/svg+xml," + encodeURIComponent(svg);
 }
 
-function YouTubePreview({ url }: { url: string }) {
-  const id = getYouTubeId(url);
-  if (!id) return null;
-  return (
-    <iframe
-      className="absolute inset-0 h-full w-full"
-      src={`https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=0&modestbranding=1&playsinline=1&rel=0&loop=1&playlist=${id}`}
-      allow="autoplay; encrypted-media; picture-in-picture"
-      frameBorder={0}
-      title="Preview"
-    />
-  );
-}
-
 export default function ArchiveCard({
   item,
   index,
@@ -56,6 +42,17 @@ export default function ArchiveCard({
   const [posterErr, setPosterErr] = useState(false);
   const [sheen, setSheen] = useState({ x: 50, y: 0 });
   const cardRef = useRef<HTMLDivElement>(null);
+
+  // Normalize the aspect ratio so a missing/invalid value can never collapse
+  // or shrink a card. Falls back to 16:9 (landscape) which is correct for
+  // YouTube/film content.
+  const safeAspect = (() => {
+    const parts = String(item.aspect || "")
+      .split("/")
+      .map((n) => parseFloat(n.trim()))
+      .filter((n) => !Number.isNaN(n));
+    return parts.length === 2 && parts[1] > 0 ? item.aspect : "16 / 9";
+  })();
 
   const isVideo = item.kind === "video";
   const isYouTube = item.kind === "youtube";
@@ -103,7 +100,7 @@ export default function ArchiveCard({
         onBlur={() => setHovered(false)}
         className="card-inner relative block w-full cursor-pointer overflow-hidden rounded-[26px] bg-charcoal text-left outline-none ring-1 ring-white/[0.06] transition-[transform,box-shadow] duration-500 ease-out hover:-translate-y-2 focus-visible:ring-2 focus-visible:ring-gold"
         style={{
-          aspectRatio: item.aspect,
+          aspectRatio: safeAspect,
           boxShadow: hovered
             ? "0 40px 90px -30px rgba(0,0,0,0.85), 0 0 0 1px rgba(200,162,77,0.18)"
             : "0 18px 50px -28px rgba(0,0,0,0.7)",
@@ -133,7 +130,6 @@ export default function ArchiveCard({
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={placeholderDataUrl(item.platform)} alt={item.title} className="absolute inset-0 h-full w-full object-cover" />
               )}
-              {hovered && <YouTubePreview url={item.source} />}
             </>
           ) : mediaSrc && !imgErr ? (
             <>
