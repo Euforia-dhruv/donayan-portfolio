@@ -151,4 +151,9 @@ export default defineSchema({
     size: v.number(),
     alt: v.optional(v.string()),
   }).index("by_type", ["type"]),
+
+  pageViews: defineTable({
+    date: v.string(),
+    count: v.number(),
+  }).index("by_date", ["date"]),
 });

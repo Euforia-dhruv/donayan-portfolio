@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ConvexClientProvider } from "@/lib/convex/provider";
 import WorkWithMePopup from "@/components/WorkWithMePopup";
+import ViewTracker from "@/components/admin/ViewTracker";
 
 const BASE_URL = "https://donayan.com";
 
@@ -158,6 +159,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ConvexClientProvider>
           {children}
           <WorkWithMePopup />
+          <ViewTracker />
         </ConvexClientProvider>
       </body>
     </html>

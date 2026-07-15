@@ -320,7 +320,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="mx-auto max-w-[1400px] p-4 sm:p-6 lg:p-8"
+            className="mx-auto w-full max-w-[1800px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10"
           >
             {children}
           </motion.div>
