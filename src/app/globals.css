@@ -72,6 +72,8 @@
 @theme {
   --color-background: #0a0a0a;
   --color-foreground: #f5f5f2;
+  --color-sidebar: #0c0c0c;
+  --color-sidebar-foreground: #f5f5f2;
   --color-card: #141414;
   --color-card-foreground: #f5f5f2;
   --color-popover: #141414;

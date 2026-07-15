@@ -18,25 +18,44 @@ export default defineSchema({
   projects: defineTable({
     title: v.string(),
     slug: v.string(),
+    client: v.optional(v.string()),
     brand: v.optional(v.string()),
+    campaign: v.optional(v.string()),
     category: v.optional(v.string()),
     description: v.optional(v.string()),
     role: v.optional(v.string()),
     year: v.optional(v.string()),
     featured: v.boolean(),
     published: v.boolean(),
+    status: v.optional(v.string()),
+    pinned: v.optional(v.boolean()),
     thumbnail: v.optional(v.string()),
     coverImage: v.optional(v.id("_storage")),
     gallery: v.array(v.string()),
+    video: v.optional(v.string()),
     videos: v.array(v.string()),
+    instagramUrl: v.optional(v.string()),
+    youtubeUrl: v.optional(v.string()),
+    externalUrl: v.optional(v.string()),
     documents: v.array(v.object({ label: v.string(), fileId: v.optional(v.id("_storage")), url: v.optional(v.string()) })),
     orientation: v.optional(v.string()),
+    aspectRatio: v.optional(v.string()),
+    mediaType: v.optional(v.string()), // "image" | "video" | "mixed"
+    autoThumbnail: v.optional(v.boolean()),
     tags: v.array(v.string()),
-    externalUrl: v.optional(v.string()),
     credits: v.optional(v.array(v.string())),
     bts: v.optional(v.array(v.string())),
+    metaDescription: v.optional(v.string()),
+    keywords: v.optional(v.array(v.string())),
+    altText: v.optional(v.string()),
     sortOrder: v.optional(v.number()),
-  }).index("by_published", ["published"]).index("by_featured", ["featured"]).index("by_slug", ["slug"]),
+  })
+    .index("by_published", ["published"])
+    .index("by_featured", ["featured"])
+    .index("by_slug", ["slug"])
+    .index("by_status", ["status"])
+    .index("by_category", ["category"])
+    .index("by_year", ["year"]),
 
   wall: defineTable({
     projectId: v.optional(v.id("projects")),
