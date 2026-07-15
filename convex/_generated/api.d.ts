@@ -9,10 +9,12 @@
  */
 
 import type * as about from "../about.js";
+import type * as analytics from "../analytics.js";
 import type * as auth from "../auth.js";
 import type * as brands from "../brands.js";
 import type * as categories from "../categories.js";
 import type * as contact from "../contact.js";
+import type * as dashboard from "../dashboard.js";
 import type * as http from "../http.js";
 import type * as lib_utils from "../lib/utils.js";
 import type * as media from "../media.js";
@@ -32,10 +34,12 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   about: typeof about;
+  analytics: typeof analytics;
   auth: typeof auth;
   brands: typeof brands;
   categories: typeof categories;
   contact: typeof contact;
+  dashboard: typeof dashboard;
   http: typeof http;
   "lib/utils": typeof lib_utils;
   media: typeof media;
